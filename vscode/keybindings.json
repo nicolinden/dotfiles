@@ -59,12 +59,12 @@
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
   },
   {
-    "key": "ctrl-a tab",
+    "key": "tab",
     "command": "workbench.action.nextEditorInGroup",
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
   },
   {
-    "key": "ctrl-a shift-tab",
+    "key": "shift-tab",
     "command": "workbench.action.previousEditorInGroup",
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
   },
