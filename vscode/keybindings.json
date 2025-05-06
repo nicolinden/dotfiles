@@ -46,7 +46,7 @@
   {
     "key": "ctrl-a e",
     "when": "vim.mode == 'Normal' && editorTextFocus && foldersViewVisible",
-    "command": "uuorkbench.action.toggleSidebarVisibility"
+    "command": "workbench.action.toggleSidebarVisibility"
   },
   {
     "key": "ctrl-a \\",
