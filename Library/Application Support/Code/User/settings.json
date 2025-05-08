@@ -22,11 +22,11 @@
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
   "database-client.autoSync": true,
-  "editor.fontSize": 12,
+  "editor.fontSize": 16,
   "editor.cursorSmoothCaretAnimation": "on",
   "workbench.iconTheme": "catppuccin-frappe",
-  "workbench.colorTheme": "Calmppuccin Frappé Blue",
   "editor.lineNumbers": "relative",
+  "editor.cursorBlinking": "expand",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.experimentalTernaries": true,
   "editor.formatOnSave": true,
@@ -100,26 +100,30 @@
     }
   },
   "vim.statusBarColorControl": true,
-  "vim.statusBarColors.normal": ["#8FBCBB", "#000"],
-  "vim.statusBarColors.insert": ["#BF616A", "#000"],
-  "vim.statusBarColors.visual": ["#B48EAD", "#000"],
-  "vim.statusBarColors.visualline": ["#B48EAD", "#000"],
-  "vim.statusBarColors.visualblock": ["#A3BE8C", "#000"],
-  "vim.statusBarColors.replace": "#D08770",
-  "vim.statusBarColors.commandlineinprogress": "#007ACC",
-  "vim.statusBarColors.searchinprogressmode": "#007ACC",
-  "vim.statusBarColors.easymotionmode": "#007ACC",
-  "vim.statusBarColors.easymotioninputmode": "#007ACC",
-  "vim.statusBarColors.surroundinputmode": "#007ACC",
+  "vim.statusBarColors.normal": "#4fa3b1",
+  "vim.statusBarColors.insert": "#e74c3c",
+  "vim.statusBarColors.visual": "#e07b3e",
+  "vim.statusBarColors.visualLine": "#f27855",
+  "vim.statusBarColors.visualBlock": "#9a8cde",
+  "vim.statusBarColors.replace": "#e32e56",
+  "vim.statusBarColors.commandline": "#74c5fc",
+  "vim.statusBarColors.inactive": "#1d1f27",
+  "vim.statusBarColors.commandlineInProgress": "#9c27b0", // Deep Violet
+  "vim.statusBarColors.searchInProgressMode": "#64b5f6", // Light Blue (clear visibility)
+  "vim.statusBarColors.easyMotionMode": "#ffb74d", // Warm Amber (distinct enough)
+  "vim.statusBarColors.easyMotionInputMode": "#f6c5b5", // Soft Peach (not too harsh)
+  "vim.statusBarColors.surroundInputMode": "#80deea", // Aqua Blue (refreshing contrast)
+
   "workbench.colorCustomizations": {
-    "statusBar.background": "#8FBCBB",
-    "statusBar.noFolderBackground": "#8FBCBB",
-    "statusBar.debuggingBackground": "#8FBCBB",
-    "statusBar.foreground": "#000",
-    "statusBar.debuggingForeground": "#000"
+    "statusBar.background": "#4fa3b1",
+    "statusBar.noFolderBackground": "#4fa3b1",
+    "statusBar.debuggingBackground": "#4fa3b1",
+    "statusBar.foreground": "#ffffff",
+    "statusBar.debuggingForeground": "#ffffff"
   },
   "editor.linkedEditing": true,
   "workbench.activityBar.location": "hidden",
   "editor.accessibilitySupport": "off",
-  "editor.fontFamily": "MesloLGS NF, Menlo, Monaco, 'Courier New', monospace"
+  "editor.fontFamily": "MesloLGS NF",
+  "workbench.colorTheme": "Dark Vision"
 }
