@@ -89,7 +89,7 @@
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
   },
   {
-    "key": "ctrl-a ctrl-m",
+    "key": "ctrl-a m",
     "command": "workbench.action.toggleMaximizeEditorGroup",
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
   },
@@ -283,5 +283,10 @@
     "key": "space d c",
     "command": "workbench.action.debug.continue",
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && inDebugMode && debugState == 'stopped'"
+  },
+  {
+    "key": "ctrl+alt+cmd+enter",
+    "command": "github.copilot.completions.toggle",
+    "when": "github.copilot.activated"
   }
 ]
