@@ -21,17 +21,14 @@
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "database-client.autoSync": true,
   "editor.fontSize": 16,
   "editor.cursorSmoothCaretAnimation": "on",
-  "workbench.iconTheme": "catppuccin-frappe",
+  "workbench.iconTheme": "catppuccin-mocha",
   "editor.lineNumbers": "relative",
   "editor.cursorBlinking": "expand",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.experimentalTernaries": true,
   "editor.formatOnSave": true,
-  "eslint.enable": true,
-  "eslint.validate": ["javascript", "typescript", "html"],
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit"
   },
@@ -64,9 +61,6 @@
     "editor.formatOnSave": true,
     "editor.formatOnType": true
   },
-  "xmlTools.splitAttributes": false, // optional, keeps attributes in one line
-  "xmlTools.format.useSingleQuote": false,
-  "xmlTools.format.preserveNewLines": true,
   "editor.semanticTokenColorCustomizations": {
     "[Default Dark+]": {
       "rules": {
@@ -100,24 +94,15 @@
     }
   },
   "vim.statusBarColorControl": true,
-  "vim.statusBarColors.normal": "#4fa3b1",
-  "vim.statusBarColors.insert": "#e74c3c",
-  "vim.statusBarColors.visual": "#e07b3e",
-  "vim.statusBarColors.visualLine": "#f27855",
-  "vim.statusBarColors.visualBlock": "#9a8cde",
-  "vim.statusBarColors.replace": "#e32e56",
-  "vim.statusBarColors.commandline": "#74c5fc",
-  "vim.statusBarColors.inactive": "#1d1f27",
-  "vim.statusBarColors.commandlineInProgress": "#9c27b0", // Deep Violet
-  "vim.statusBarColors.searchInProgressMode": "#64b5f6", // Light Blue (clear visibility)
-  "vim.statusBarColors.easyMotionMode": "#ffb74d", // Warm Amber (distinct enough)
-  "vim.statusBarColors.easyMotionInputMode": "#f6c5b5", // Soft Peach (not too harsh)
-  "vim.statusBarColors.surroundInputMode": "#80deea", // Aqua Blue (refreshing contrast)
-
+  "editor.bracketPairColorization.enabled": true,
   "workbench.colorCustomizations": {
-    "statusBar.background": "#4fa3b1",
-    "statusBar.noFolderBackground": "#4fa3b1",
-    "statusBar.debuggingBackground": "#4fa3b1",
+    "editorBracketHighlight.foreground1": "#FF6F61",
+    "editorBracketHighlight.foreground2": "#6A5ACD",
+    "editorBracketHighlight.foreground3": "#32CD32",
+    "editorBracketHighlight.foreground4": "#FFD700",
+    "statusBar.background": "#005f5f",
+    "statusBar.noFolderBackground": "#005f5f",
+    "statusBar.debuggingBackground": "#005f5f",
     "statusBar.foreground": "#ffffff",
     "statusBar.debuggingForeground": "#ffffff"
   },
@@ -125,5 +110,5 @@
   "workbench.activityBar.location": "hidden",
   "editor.accessibilitySupport": "off",
   "editor.fontFamily": "MesloLGS NF",
-  "workbench.colorTheme": "Dark Vision"
+  "workbench.colorTheme": "Catppuccin Mocha"
 }
