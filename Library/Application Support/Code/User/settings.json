@@ -23,7 +23,7 @@
   },
   "editor.fontSize": 16,
   "editor.cursorSmoothCaretAnimation": "on",
-  "workbench.iconTheme": "catppuccin-mocha",
+  "workbench.iconTheme": "Monokai Pro Icons",
   "editor.lineNumbers": "relative",
   "editor.cursorBlinking": "expand",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -110,5 +110,5 @@
   "workbench.activityBar.location": "hidden",
   "editor.accessibilitySupport": "off",
   "editor.fontFamily": "MesloLGS NF",
-  "workbench.colorTheme": "Catppuccin Mocha"
+  "workbench.colorTheme": "Monokai Pro"
 }
