@@ -100,9 +100,9 @@
     "editorBracketHighlight.foreground2": "#6A5ACD",
     "editorBracketHighlight.foreground3": "#32CD32",
     "editorBracketHighlight.foreground4": "#FFD700",
-    "statusBar.background": "#005f5f",
-    "statusBar.noFolderBackground": "#005f5f",
-    "statusBar.debuggingBackground": "#005f5f",
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000",
     "statusBar.foreground": "#ffffff",
     "statusBar.debuggingForeground": "#ffffff"
   },
