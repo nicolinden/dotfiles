@@ -288,5 +288,13 @@
     "key": "ctrl+alt+cmd+enter",
     "command": "github.copilot.completions.toggle",
     "when": "github.copilot.activated"
+  },
+  {
+    "key": "ctrl+a d",
+    "command": "workbench.view.extension.github-cweijan-mysql"
+  },
+  {
+    "key": "ctrl+a t",
+    "command": "workbench.view.extension.todo-tree-container"
   }
 ]
