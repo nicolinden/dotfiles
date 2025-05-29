@@ -24,7 +24,6 @@
   "editor.fontSize": 13.33,
   "window.zoomLevel": 1,
   "editor.cursorSmoothCaretAnimation": "on",
-  "workbench.iconTheme": "Monokai Pro Icons",
   "editor.lineNumbers": "relative",
   "editor.cursorBlinking": "expand",
   "editor.defaultFormatter": "esbenp.prettier-vscode",
@@ -101,18 +100,17 @@
     "editorBracketHighlight.foreground2": "#6A5ACD",
     "editorBracketHighlight.foreground3": "#32CD32",
     "editorBracketHighlight.foreground4": "#FFD700",
-    "statusBar.background": "#005f5f",
-    "statusBar.noFolderBackground": "#005f5f",
-    "statusBar.debuggingBackground": "#005f5f",
+    "statusBar.background": "#5f0000",
+    "statusBar.noFolderBackground": "#5f0000",
+    "statusBar.debuggingBackground": "#5f0000",
     "statusBar.foreground": "#ffffff",
     "statusBar.debuggingForeground": "#ffffff"
   },
   "editor.linkedEditing": true,
   "editor.accessibilitySupport": "off",
   "editor.fontFamily": "MesloLGS NF",
-  "workbench.colorTheme": "Tokyo Night",
-  "workbench.activityBar.location": "hidden",
   "terminal.integrated.fontFamily": "MesloLGS Nerd Font Mono",
   "terminal.integrated.gpuAcceleration": "on",
-  "terminal.integrated.defaultProfile.osx": "zsh"
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "workbench.activityBar.location": "hidden"
 }
