@@ -33,36 +33,60 @@
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus) && !sideBarFocus"
   },
   {
-    "key": "ctrl-a e",
-    "command": "runCommands",
-    "args": {
-      "commands": [
-        "workbench.action.toggleSidebarVisibility",
-        "workbench.action.focusActiveEditorGroup"
-      ]
-    },
-    "when": "sideBarFocus && !inputFocus"
-  },
-  {
-    "key": "ctrl-a e",
-    "when": "vim.mode == 'Normal' && editorTextFocus && foldersViewVisible",
-    "command": "workbench.action.toggleSidebarVisibility"
+    "key": "ctrl-a 1",
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "sideBarVisible && activeViewlet == 'workbench.view.explorer'"
   },
   {
     "key": "ctrl-a 1",
-    "command": "workbench.view.explorer"
+    "command": "workbench.view.explorer",
+    "when": "!sideBarVisible || activeViewlet != 'workbench.view.explorer'"
   },
   {
     "key": "ctrl-a 2",
-    "command": "workbench.view.search"
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "sideBarVisible && activeViewlet == 'workbench.view.search'"
+  },
+  {
+    "key": "ctrl-a 2",
+    "command": "workbench.view.search",
+    "when": "!sideBarVisible || activeViewlet != 'workbench.view.search'"
   },
   {
     "key": "ctrl-a 3",
-    "command": "workbench.view.scm"
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "sideBarVisible && activeViewlet == 'workbench.view.scm'"
+  },
+  {
+    "key": "ctrl-a 3",
+    "command": "workbench.view.scm",
+    "when": "!sideBarVisible || activeViewlet != 'workbench.view.scm'"
   },
   {
     "key": "ctrl-a 4",
-    "command": "workbench.view.extensions"
+    "command": "workbench.action.toggleSidebarVisibility",
+    "when": "sideBarVisible && activeViewlet == 'workbench.view.extensions'"
+  },
+  {
+    "key": "ctrl-a 4",
+    "command": "workbench.view.extensions",
+    "when": "!sideBarVisible || activeViewlet != 'workbench.view.extensions'"
+  },
+  {
+    "key": "ctrl-a q",
+    "command": "workbench.action.closeSidebar",
+    "when": "sideBarVisible"
+  },
+  // Bonus: ctrl-a 0 toggle focus sidebar/editor
+  {
+    "key": "ctrl-a 0",
+    "command": "workbench.action.focusActiveEditorGroup",
+    "when": "sideBarFocus && !inputFocus"
+  },
+  {
+    "key": "ctrl-a 0",
+    "command": "workbench.action.focusSideBar",
+    "when": "!sideBarFocus && editorTextFocus"
   },
   {
     "key": "ctrl-a \\",
