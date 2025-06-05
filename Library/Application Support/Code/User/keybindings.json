@@ -49,6 +49,22 @@
     "command": "workbench.action.toggleSidebarVisibility"
   },
   {
+    "key": "ctrl-a 1",
+    "command": "workbench.view.explorer"
+  },
+  {
+    "key": "ctrl-a 2",
+    "command": "workbench.view.search"
+  },
+  {
+    "key": "ctrl-a 3",
+    "command": "workbench.view.scm"
+  },
+  {
+    "key": "ctrl-a 4",
+    "command": "workbench.view.extensions"
+  },
+  {
     "key": "ctrl-a \\",
     "command": "workbench.action.splitEditor",
     "when": "vim.mode == 'Normal' && (editorTextFocus || !inputFocus)"
@@ -300,7 +316,7 @@
     "when": "github.copilot.activated"
   },
   {
-    "key": "ctrl+a d",
+    "key": "ctrl+a 5",
     "command": "workbench.view.extension.github-cweijan-mysql"
   },
   {
