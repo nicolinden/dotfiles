@@ -135,6 +135,8 @@ bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
 
 alias ls="eza --icons=always"
+alias sshmacmini='ssh nico@100.115.42.3'
+alias sshmacair='ssh nico@100.65.18.30'
 
 # ---- Zoxide (better cd) ----
 # eval "$(zoxide init zsh)"
