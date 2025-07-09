@@ -21,8 +21,8 @@
   "[typescript]": {
     "editor.defaultFormatter": "vscode.typescript-language-features"
   },
-  "editor.fontSize": 13.33,
-  "window.zoomLevel": 1,
+  "editor.fontSize": 10.75,
+  "window.zoomLevel": 1.2,
   "editor.cursorSmoothCaretAnimation": "on",
   "editor.lineNumbers": "relative",
   "editor.cursorBlinking": "expand",
