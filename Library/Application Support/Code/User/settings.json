@@ -112,5 +112,6 @@
   "terminal.integrated.fontFamily": "MesloLGS Nerd Font Mono",
   "terminal.integrated.gpuAcceleration": "on",
   "terminal.integrated.defaultProfile.osx": "zsh",
-  "workbench.activityBar.location": "hidden"
+  "workbench.activityBar.location": "hidden",
+  "github.copilot.nextEditSuggestions.enabled": true
 }

@@ -141,3 +141,6 @@ alias sshmacair='ssh nico@100.65.18.30'
 # ---- Zoxide (better cd) ----
 # eval "$(zoxide init zsh)"
 # alias cd="z"
+export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
+export SAP_ANDROID_HOME="/Users/nico/Library/Application Support/Google/AndroidStudio2025.1.3/plugins"
+export SAP_ANDROID_HOME="/Users/nico/Development/SAP/BTP/SDK"
