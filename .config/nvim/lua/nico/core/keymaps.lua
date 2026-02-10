@@ -24,3 +24,13 @@ keymap.set("n", "<leader><C-j>", ":resize +5<CR>", { desc = "Resize window down"
 keymap.set("n", "<leader><C-h>", ":vertical resize -5<CR>", { desc = "Resize window left" }) -- resize window left
 keymap.set("n", "<leader><C-l>", ":vertical resize +5<CR>", { desc = "Resize window right" }) -- resize window right
 keymap.set("n", "<leader>sm", ":MaximizerToggle<CR>", { desc = "Toggle Maximizer" }) -- toggle maximizer
+
+-- Normale modus: <leader>yy kopieert de huidige regel via OSC52
+vim.keymap.set("n", "<leader>yy", function()
+  require("osc52").copy(vim.api.nvim_get_current_line())
+end, { desc = "Yank current line via OSC52" })
+
+-- Visuele modus: <leader>y kopieert selectie via OSC52
+vim.keymap.set("v", "<leader>y", function()
+  require("osc52").copy(vim.fn.getreg('"'))
+end, { desc = "Yank visual selection via OSC52" })
