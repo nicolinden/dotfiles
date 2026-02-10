@@ -134,7 +134,7 @@ source ~/.zprofile
 bindkey '^[[A' history-search-backward
 bindkey '^[[B' history-search-forward
 
-alias ls="eza --icons=always"
+# alias ls="eza --icons=always"
 alias sshmacmini='ssh nico@100.115.42.3'
 alias sshmacair='ssh nico@100.65.18.30'
 
@@ -144,3 +144,104 @@ alias sshmacair='ssh nico@100.65.18.30'
 export PATH=$PATH:$HOME/Library/Android/sdk/platform-tools
 export SAP_ANDROID_HOME="/Users/nico/Library/Application Support/Google/AndroidStudio2025.1.3/plugins"
 export SAP_ANDROID_HOME="/Users/nico/Development/SAP/BTP/SDK"
+export SAP_ANDROID_HOME="/Users/nico/Development/SAP/BTP/SDK"
+
+# Use Android Studio bundled JDK
+# export JAVA_HOME="/Applications/Android Studio.app/Contents/jbr/Contents/Home"
+export JAVA_HOME=$(/usr/libexec/java_home -v 17)
+export PATH="$JAVA_HOME/bin:$PATH"
+
+# To use indexes in adb command
+adbdisc() {
+  index="$1"
+  serial=$(adb devices | sed -n "$((index+1))p" | awk '{print $1}')
+
+  if [[ -z "$serial" ]]; then
+    echo "No device at index $index"
+    return
+  fi
+
+  # Emulator? (force kill process)
+  if [[ "$serial" =~ ^emulator-[0-9]+$ ]]; then
+    echo "Killing emulator process for $serial..."
+    # Find PID via ps
+    pid=$(ps aux | grep "$serial" | grep -v grep | awk '{print $2}')
+    
+    if [[ -n "$pid" ]]; then
+      kill "$pid"
+      echo "Killed emulator PID: $pid"
+    else
+      echo "No emulator process found—maybe already closed?"
+    fi
+    return
+  fi
+
+  # TCP device?
+  if [[ "$serial" == *:* ]]; then
+    echo "Disconnecting TCP device: $serial"
+    adb disconnect "$serial"
+    return
+  fi
+
+  echo "USB / physical device, not disconnecting: $serial"
+}
+
+snap() {
+  name="$1"
+  override_device="$2"
+
+  if [[ -z "$name" ]]; then
+    echo "Usage: snap <name> [device-id]"
+    return 1
+  fi
+
+  ADB="$HOME/Library/Android/sdk/platform-tools/adb"
+  mkdir -p "$HOME/Downloads/screenshots"
+
+  # Als device expliciet is opgegeven → gebruik die
+  if [[ -n "$override_device" ]]; then
+    device="$override_device"
+  else
+    # Pak het eerste *echte* device (geen emulator)
+    device=$("$ADB" devices \
+      | awk 'NR>1 && $2=="device" && $1 !~ /^emulator-/ {print $1; exit}')
+  fi
+
+  if [[ -z "$device" ]]; then
+    echo "❌ No physical Android device found"
+    echo "ℹ️ Available devices:"
+    "$ADB" devices
+    return 1
+  fi
+
+  localpath="$HOME/Downloads/screenshots/${name}.png"
+
+  echo "📸 Capturing from $device → $localpath"
+  "$ADB" -s "$device" exec-out screencap -p > "$localpath"
+
+  echo "✔ Saved to $localpath"
+}
+
+
+
+
+# snap() {
+#   name="$1"
+# 
+#   if [[ -z "$name" ]]; then
+#     echo "Usage: snap <name>"
+#     return 1
+#   fi
+# 
+#   ADB="/Users/nico/Library/Android/sdk/platform-tools/adb"
+#   mkdir -p "$HOME/Downloads/screenshots"
+# 
+#   localpath="$HOME/Downloads/screenshots/${name}.png"
+# 
+#   echo "📸 Capturing → $localpath"
+#   "$ADB" exec-out screencap -p > "$localpath"
+# 
+#   echo "✔ Saved to $localpath"
+#   #open "$localpath" &>/dev/null
+# }
+# 
