@@ -12,3 +12,6 @@ if vim.fn.has("unix") == 1 and vim.fn.has("macunix") == 0 then
     },
   }
 end
+
+-- op macOS (of andere gevallen) geen clipboard-plugin nodig:
+return {}
