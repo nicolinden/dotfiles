@@ -1,0 +1,34 @@
+"$schema" = "https://starship.rs/config-schema.json"
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$line_break\
+$character"""
+
+palette = "coolnight"
+
+[palettes.coolnight]
+background = "#011423"
+cyan = "#24EAF7"
+green = "#47FF9C"
+purple = "#A277FF"
+yellow = "#FFE073"
+red = "#E52E2E"
+
+[directory]
+format = "[](fg:cyan)[ 󰉋  $path ](fg:background bg:cyan)"
+truncation_length = 3
+truncate_to_repo = true
+
+[git_branch]
+format = "[](fg:cyan bg:purple)[ $symbol$branch ](fg:background bg:purple)[](fg:purple) "
+symbol = " "
+
+[git_status]
+format = "[](fg:yellow)[ $all_status$ahead_behind ](fg:background bg:yellow)[](fg:yellow) "
+
+[character]
+success_symbol = "[❯](bold green)"
+error_symbol = "[❯](bold red)"
