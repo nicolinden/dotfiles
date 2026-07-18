@@ -3,6 +3,7 @@ vim.pack.add({
   "https://github.com/nvim-tree/nvim-tree.lua",
   "https://github.com/nvim-tree/nvim-web-devicons",
   "https://github.com/ibhagwan/fzf-lua",
+  "https://github.com/goolord/alpha-nvim",
 }, {
   confirm = false,
 })
@@ -10,3 +11,4 @@ vim.pack.add({
 require("plugins.colorscheme")
 require("plugins.filetree")
 require("plugins.fuzzy")
+require("plugins.dashboard")
