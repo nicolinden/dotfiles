@@ -27,7 +27,7 @@ format = "[](fg:cyan bg:purple)[ $symbol$branch ](fg:background bg:purple)[�
 symbol = " "
 
 [git_status]
-format = "[](fg:yellow)[ $all_status$ahead_behind ](fg:background bg:yellow)[](fg:yellow) "
+format = "([](fg:yellow)[ $all_status$ahead_behind ](fg:background bg:yellow)[](fg:yellow) )"
 
 [character]
 success_symbol = "[❯](bold green)"
