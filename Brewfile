@@ -5,5 +5,6 @@ brew "zsh-autosuggestions"
 brew "fzf"
 brew "tmux"
 brew "zsh-syntax-highlighting"
+brew "ripgrep"
 
 cask "wezterm"

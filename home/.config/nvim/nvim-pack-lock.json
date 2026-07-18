@@ -1,0 +1,20 @@
+{
+  "plugins": {
+    "fzf-lua": {
+      "rev": "532d463f5c83595192fe740572d8fd6902b2217a",
+      "src": "https://github.com/ibhagwan/fzf-lua"
+    },
+    "nvim-tree.lua": {
+      "rev": "4213bd6eabac38b16dd6615002b6243b23cf3bf6",
+      "src": "https://github.com/nvim-tree/nvim-tree.lua"
+    },
+    "nvim-web-devicons": {
+      "rev": "0ca28b61a04fe7426cefbdd52c2647ef0e335b5f",
+      "src": "https://github.com/nvim-tree/nvim-web-devicons"
+    },
+    "tokyonight.nvim": {
+      "rev": "cdc07ac78467a233fd62c493de29a17e0cf2b2b6",
+      "src": "https://github.com/folke/tokyonight.nvim"
+    }
+  }
+}
