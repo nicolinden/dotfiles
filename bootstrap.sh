@@ -34,9 +34,11 @@ case "$(uname -s)" in
       exit 1
     fi
 
-    echo "Ubuntu-basispakketten installeren..."
+    echo "Ubuntu-pakketten installeren..."
     sudo apt-get update
     sudo apt-get install -y \
+      curl \
+      fzf \
       git \
       ripgrep \
       stow \
@@ -44,6 +46,23 @@ case "$(uname -s)" in
       zsh \
       zsh-autosuggestions \
       zsh-syntax-highlighting
+
+    mkdir -p "$HOME/.local/bin"
+
+    if ! command -v starship >/dev/null 2>&1 &&
+       [[ ! -x "$HOME/.local/bin/starship" ]]; then
+      echo "Starship installeren..."
+      curl -sS https://starship.rs/install.sh |
+        sh -s -- --yes --bin-dir "$HOME/.local/bin"
+    else
+      echo "Starship is al geïnstalleerd."
+    fi
+
+    if ! command -v nvim >/dev/null 2>&1; then
+      echo
+      echo "Waarschuwing: Neovim is niet geïnstalleerd."
+      echo "Installeer een actuele Neovim 0.12-versie voordat je de configuratie gebruikt."
+    fi
     ;;
 
   *)
