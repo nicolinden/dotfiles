@@ -17,3 +17,6 @@ source "$(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh"
 if command -v starship >/dev/null 2>&1; then
 	eval "$(starship init zsh)"
 fi
+
+# Syntax highlighting must be loaded last
+source "$(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
