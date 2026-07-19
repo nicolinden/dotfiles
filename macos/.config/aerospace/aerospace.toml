@@ -1,0 +1,172 @@
+# Use the current AeroSpace configuration behavior
+config-version = 2
+
+# Start automatically when logging into macOS
+start-at-login = true
+
+# Apply changes whenever this file is saved
+auto-reload-config = true
+
+# Keep a small and predictable set of workspaces available
+persistent-workspaces = ["1", "2", "3", "4", "5", "6"]
+
+# New workspaces start with tiled windows.
+# On a wide screen, windows are initially arranged side by side.
+default-root-container-layout = "tiles"
+default-root-container-orientation = "auto"
+
+# Leave part of inactive windows visible in accordion layout
+accordion-padding = 100
+
+# -------------------------------------------------------------------
+# Automatic app placement
+#
+# These rules only run when a new window is created.
+# Afterwards, every window can still be moved manually.
+# -------------------------------------------------------------------
+
+on-window-detected = [
+  # Web and research
+  {
+    if = "test %{app-bundle-id} = com.apple.Safari",
+    run = "move-node-to-workspace 2",
+  },
+  {
+    if = "test %{app-bundle-id} = com.google.Chrome",
+    run = "move-node-to-workspace 2",
+  },
+  {
+    if = "test %{app-bundle-id} = com.openai.codex",
+    run = "move-node-to-workspace 2",
+  },
+
+  # Development
+  {
+    if = "test %{app-bundle-id} = com.microsoft.VSCode",
+    run = "move-node-to-workspace 3",
+  },
+
+  # Terminal
+  {
+    if = "test %{app-bundle-id} = com.github.wez.wezterm",
+    run = "move-node-to-workspace 4",
+  },
+
+  # File management
+  {
+    if = "test %{app-bundle-id} = com.binarynights.ForkLift",
+    run = "move-node-to-workspace 5",
+  },
+
+  # Communication
+  {
+    if = "test %{app-bundle-id} = net.whatsapp.WhatsApp",
+    run = "move-node-to-workspace 6",
+  },
+  {
+    if = "test %{app-bundle-id} = com.apple.MobileSMS",
+    run = "move-node-to-workspace 6",
+  },
+]
+
+# Keep SketchyBar in sync with the active workspace
+exec-on-workspace-change = [
+  '/bin/bash',
+  '-c',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+]
+
+# Small gaps make separate windows easier to recognize
+[gaps]
+inner.horizontal = 8
+inner.vertical = 8
+outer.left = 8
+outer.bottom = 8
+outer.top = 8
+outer.right = 8
+
+[mode.main.binding]
+
+# ------------------------------------------------------------
+# Focus
+# Select the nearest window without moving anything.
+# ------------------------------------------------------------
+
+alt-h = "focus left"
+alt-j = "focus down"
+alt-k = "focus up"
+alt-l = "focus right"
+
+# ------------------------------------------------------------
+# Move
+# Change the position of the focused window in the layout.
+# ------------------------------------------------------------
+
+alt-shift-h = "move left"
+alt-shift-j = "move down"
+alt-shift-k = "move up"
+alt-shift-l = "move right"
+
+# Cycle through all windows in the current workspace
+alt-leftSquareBracket = "focus dfs-prev"
+alt-rightSquareBracket = "focus dfs-next"
+
+# ------------------------------------------------------------
+# Layout
+# ------------------------------------------------------------
+
+# Temporarily maximize the focused window; press again to restore
+alt-m = "fullscreen --no-outer-gaps"
+
+# Let an exceptional window float, or return it to tiling
+alt-shift-space = "layout floating tiling"
+
+# Switch tiled windows between horizontal and vertical placement
+alt-slash = "layout tiles horizontal vertical"
+
+# Switch between equal tiles and one prominent accordion window
+alt-a = "layout accordion tiles"
+
+# Restore equal window sizes
+alt-b = "balance-sizes"
+
+# Make the focused tiled window smaller or larger
+alt-minus = "resize smart -50"
+alt-equal = "resize smart +50"
+
+# ------------------------------------------------------------
+# Workspaces
+# Switch to a workspace.
+# ------------------------------------------------------------
+
+alt-1 = "workspace 1"
+alt-2 = "workspace 2"
+alt-3 = "workspace 3"
+alt-4 = "workspace 4"
+alt-5 = "workspace 5"
+alt-6 = "workspace 6"
+
+# Move only the focused window to another workspace
+alt-shift-1 = "move-node-to-workspace 1"
+alt-shift-2 = "move-node-to-workspace 2"
+alt-shift-3 = "move-node-to-workspace 3"
+alt-shift-4 = "move-node-to-workspace 4"
+alt-shift-5 = "move-node-to-workspace 5"
+alt-shift-6 = "move-node-to-workspace 6"
+
+# Cycle through all workspaces
+alt-tab = "workspace --wrap-around next"
+alt-shift-tab = "workspace --wrap-around prev"
+
+# Quickly toggle between the current and previous workspace
+alt-backtick = "workspace-back-and-forth"
+
+# ------------------------------------------------------------
+# Multiple monitors
+# ------------------------------------------------------------
+
+# Focus the next monitor
+alt-period = "focus-monitor --wrap-around next"
+
+# Move the focused window to the next monitor and follow it
+alt-shift-period = "move-node-to-monitor --focus-follows-window --wrap-around next"

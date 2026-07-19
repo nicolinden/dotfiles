@@ -1,0 +1,106 @@
+#!/usr/bin/env bash
+
+# Coolnight colours
+BACKGROUND=0xff011423
+FOREGROUND=0xffcbe0f0
+CYAN=0xff24eaf7
+PURPLE=0xffa277ff
+
+CONFIG_DIR="$HOME/.config/sketchybar"
+
+# The bar itself
+sketchybar --bar \
+  position=top \
+  height=36 \
+  color=$BACKGROUND \
+  blur_radius=20 \
+  corner_radius=0 \
+  margin=0 \
+  y_offset=0 \
+  padding_left=8 \
+  padding_right=8
+
+# Defaults inherited by new items
+sketchybar --default \
+  icon.font="MesloLGS Nerd Font Mono:Bold:14.0" \
+  icon.color=$CYAN \
+  label.font="MesloLGS Nerd Font Mono:Regular:14.0" \
+  label.color=$FOREGROUND \
+  padding_left=6 \
+  padding_right=6
+
+# AeroSpace workspaces
+sketchybar --add event aerospace_workspace_change
+
+for WORKSPACE in 1 2 3 4 5 6; do
+  sketchybar --add item "workspace.$WORKSPACE" left \
+             --subscribe "workspace.$WORKSPACE" aerospace_workspace_change \
+             --set "workspace.$WORKSPACE" \
+               icon="$WORKSPACE" \
+               icon.font="MesloLGS Nerd Font Mono:Bold:14.0" \
+               icon.padding_left=8 \
+               icon.padding_right=5 \
+               label.font="sketchybar-app-font:Regular:12.0" \
+               label.padding_left=2 \
+               label.padding_right=8 \
+               background.color=$CYAN \
+               background.height=24 \
+               background.corner_radius=7 \
+               background.drawing=off \
+               click_script="aerospace workspace $WORKSPACE" \
+               script="$CONFIG_DIR/plugins/aerospace.sh $WORKSPACE"
+done
+
+# Separator between workspaces and current application
+sketchybar --add item app_separator left \
+           --set app_separator \
+             icon="❯" \
+             icon.color=$CYAN \
+             icon.padding_left=8 \
+             icon.padding_right=4 \
+             label.drawing=off
+
+# Currently focused application
+sketchybar --add item front_app left \
+           --subscribe front_app front_app_switched \
+           --set front_app \
+             icon.font="sketchybar-app-font:Regular:16.0" \
+             icon.color=$BACKGROUND \
+             icon.padding_left=8 \
+             icon.padding_right=6 \
+             label.color=$BACKGROUND \
+             label.padding_right=10 \
+             label.max_chars=24 \
+             background.color=$CYAN \
+             background.height=24 \
+             background.corner_radius=7 \
+             background.drawing=on \
+             script="$CONFIG_DIR/plugins/front_app.sh"
+
+# Date and time
+sketchybar --add item clock right \
+           --set clock \
+             icon="󰥔" \
+             icon.color=$PURPLE \
+             icon.padding_right=6 \
+             update_freq=30 \
+             script="$CONFIG_DIR/plugins/clock.sh"
+
+# Battery status
+sketchybar --add item battery right \
+           --subscribe battery power_source_change system_woke \
+           --set battery \
+             icon.color=$CYAN \
+             icon.padding_right=6 \
+             update_freq=120 \
+             script="$CONFIG_DIR/plugins/battery.sh"
+
+# System output volume
+sketchybar --add item volume right \
+           --subscribe volume volume_change \
+           --set volume \
+             icon.color=$FOREGROUND \
+             icon.padding_right=6 \
+             script="$CONFIG_DIR/plugins/volume.sh"
+
+sketchybar --update

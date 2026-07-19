@@ -83,4 +83,9 @@ fi
 echo "Dotfiles koppelen..."
 stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose home
 
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  echo "macOS-dotfiles koppelen..."
+  stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose macos
+fi
+
 echo "Setup voltooid."
