@@ -3,6 +3,11 @@ if [[ -d "/Applications/WezTerm.app/Contents/MacOS" ]]; then
   export PATH="$PATH:/Applications/WezTerm.app/Contents/MacOS"
 fi
 
+# User-installed command-line tools on Linux
+if [[ "$OSTYPE" == linux* && -d "$HOME/.local/bin" ]]; then
+  export PATH="$HOME/.local/bin:$PATH"
+fi
+
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME=""
@@ -14,7 +19,15 @@ fi
 
 # Fuzzy history and file search
 if command -v fzf >/dev/null 2>&1; then
-  source <(fzf --zsh)
+  if [[ "$OSTYPE" == darwin* ]]; then
+    source <(fzf --zsh)
+  else
+    [[ -r "/usr/share/doc/fzf/examples/completion.zsh" ]] &&
+      source "/usr/share/doc/fzf/examples/completion.zsh"
+
+    [[ -r "/usr/share/doc/fzf/examples/key-bindings.zsh" ]] &&
+      source "/usr/share/doc/fzf/examples/key-bindings.zsh"
+  fi
 fi
 
 # Command suggestions from shell history

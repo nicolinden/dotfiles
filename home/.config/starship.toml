@@ -1,6 +1,7 @@
 "$schema" = "https://starship.rs/config-schema.json"
 
 format = """
+$hostname\
 $directory\
 ${custom.directory_end}\
 $git_branch\
@@ -17,6 +18,10 @@ green = "#47FF9C"
 purple = "#A277FF"
 yellow = "#FFE073"
 red = "#E52E2E"
+
+[hostname]
+ssh_only = true
+format = "[](fg:red)[ 󰒋  $hostname ](fg:background bg:red)[](fg:red) "
 
 [directory]
 format = "[](fg:cyan)[ 󰉋  $path ](fg:background bg:cyan)"
