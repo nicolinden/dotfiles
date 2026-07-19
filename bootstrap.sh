@@ -12,8 +12,20 @@ case "$(uname -s)" in
       exit 1
     fi
 
+    echo "Beheerdersrechten voorbereiden..."
+    sudo -v
+
+    # Houd sudo alleen tijdens deze installatie beschikbaar
+    while true; do
+      sudo -n true
+      sleep 60
+    done 2>/dev/null &
+    SUDO_KEEPALIVE_PID=$!
+
+    trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT INT TERM
+
     echo "Homebrew-pakketten installeren..."
-    brew bundle install --file="$DOTFILES_DIR/Brewfile"
+    caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
     ;;
 
   Linux)
