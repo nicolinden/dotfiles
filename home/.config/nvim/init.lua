@@ -1,3 +1,7 @@
 require("config.options")
 require("config.keymaps")
-require("plugins")
+
+-- VS Code provides its own interface, file tree and search.
+if not vim.g.vscode then
+  require("plugins")
+end
