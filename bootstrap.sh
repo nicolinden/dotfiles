@@ -142,6 +142,14 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     open "/Applications/AeroSpace.app"
   fi
 
+  # De LaunchAgent start Hammerspoon bij volgende logins. Start hem nu ook,
+  # zodat de sneltoetsen direct beschikbaar zijn na de eerste bootstrap.
+  if [[ -d "$HOME/Applications/Hammerspoon.app" ]]; then
+    open "$HOME/Applications/Hammerspoon.app"
+  elif [[ -d "/Applications/Hammerspoon.app" ]]; then
+    open "/Applications/Hammerspoon.app"
+  fi
+
   # SketchyBar is een Homebrew-gebruikersservice. Herstart hem nadat de eigen
   # configuratie is gekoppeld, zodat wijzigingen direct zichtbaar zijn.
   if command -v brew >/dev/null 2>&1 && brew list sketchybar >/dev/null 2>&1; then
