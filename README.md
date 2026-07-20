@@ -31,8 +31,17 @@ wordt geladen.
 ### Handmatige stappen na de installatie
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
-- Geef AeroSpace de gevraagde Accessibility-permissie in macOS.
-- Start SketchyBar als het niet automatisch draait: `brew services start sketchybar`.
+- AeroSpace start automatisch na de bootstrap en registreert daarna zijn
+  login-item. Geef de gevraagde Accessibility-permissie in macOS.
+- SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
+  iedere volgende login automatisch terug en wordt op alle aangesloten
+  schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk
+  automatisch. SketchyBar tekent bovendien boven de native balk, zodat er geen
+  dubbele of versprongen balken ontstaan wanneer macOS die tijdelijk toont.
+  Elke aangesloten monitor markeert daarbij zijn eigen zichtbare
+  AeroSpace-workspace.
+  Druk `⌥⇧M` om SketchyBar tijdelijk te verbergen en de native menubalk te
+  gebruiken; druk opnieuw om SketchyBar terug te zetten.
 - Installeer Docker Desktop en Tailscale desgewenst apart met:
 
   ```bash

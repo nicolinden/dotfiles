@@ -5,7 +5,20 @@ CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
 source "$CONFIG_DIR/plugins/icon_map.sh"
 
 WORKSPACE="$1"
-ACTIVE_WORKSPACE="${FOCUSED_WORKSPACE:-$(aerospace list-workspaces --focused)}"
+DISPLAY="$2"
+
+# SketchyBar gebruikt dezelfde AppKit-schermvolgorde als AeroSpace. Vertaal
+# daarom de scherm-ID naar AeroSpace's monitor-ID en vraag de zichtbare
+# workspace op voor dat specifieke scherm op.
+MONITOR_ID="$(aerospace list-monitors \
+  --format '%{monitor-appkit-nsscreen-screens-id} %{monitor-id}' \
+  | awk -v display="$DISPLAY" '$1 == display { print $2; exit }')"
+
+ACTIVE_WORKSPACE=""
+if [[ -n "$MONITOR_ID" ]]; then
+  ACTIVE_WORKSPACE="$(aerospace list-workspaces --monitor "$MONITOR_ID" --visible)"
+fi
+
 ICONS=""
 
 while IFS= read -r APP; do

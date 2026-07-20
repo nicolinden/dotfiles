@@ -126,6 +126,26 @@ stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose home
 if [[ "$(uname -s)" == "Darwin" ]]; then
   echo "macOS-dotfiles koppelen..."
   stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose macos
+
+  # SketchyBar vervangt de native menubalk. Verberg die daarom consequent op
+  # alle schermen; SystemUIServer leest deze voorkeur direct opnieuw in.
+  defaults write -g _HIHideMenuBar -bool true
+  defaults write -g AppleMenuBarVisibleInFullscreen -bool false
+  killall SystemUIServer 2>/dev/null || true
+
+  # AeroSpace registreert `start-at-login` pas nadat de app minstens één keer
+  # heeft gedraaid. Start hem daarom na het koppelen van de configuratie.
+  if [[ -d "$HOME/Applications/AeroSpace.app" ]]; then
+    open "$HOME/Applications/AeroSpace.app"
+  elif [[ -d "/Applications/AeroSpace.app" ]]; then
+    open "/Applications/AeroSpace.app"
+  fi
+
+  # SketchyBar is een Homebrew-gebruikersservice. Herstart hem nadat de eigen
+  # configuratie is gekoppeld, zodat wijzigingen direct zichtbaar zijn.
+  if command -v brew >/dev/null 2>&1 && brew list sketchybar >/dev/null 2>&1; then
+    brew services restart felixkratz/formulae/sketchybar
+  fi
 fi
 
 echo "Setup voltooid."

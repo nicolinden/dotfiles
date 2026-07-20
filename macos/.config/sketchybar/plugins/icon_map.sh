@@ -26,8 +26,14 @@ icon_for_app() {
     "Messages")
       echo ":messages:"
       ;;
+    "Microsoft Outlook")
+      echo ":microsoft_outlook:"
+      ;;
+    "Microsoft Teams")
+      echo ":microsoft_teams:"
+      ;;
     "ChatGPT")
-        echo ":chatgpt_atlas:"
+      echo ":chatgpt_atlas:"
       ;;
     "Finder")
       echo ":finder:"

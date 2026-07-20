@@ -11,6 +11,8 @@ CONFIG_DIR="$HOME/.config/sketchybar"
 # The bar itself
 sketchybar --bar \
   position=top \
+  display=all \
+  topmost=on \
   height=36 \
   color=$BACKGROUND \
   blur_radius=20 \
@@ -30,25 +32,32 @@ sketchybar --default \
   padding_right=6
 
 # AeroSpace workspaces
+# Maak een indicatorreeks per mogelijk scherm. Items op niet-aangesloten
+# schermen worden niet getekend; één config werkt dus voor één of meer schermen.
 sketchybar --add event aerospace_workspace_change
 
-for WORKSPACE in 1 2 3 4 5 6; do
-  sketchybar --add item "workspace.$WORKSPACE" left \
-             --subscribe "workspace.$WORKSPACE" aerospace_workspace_change \
-             --set "workspace.$WORKSPACE" \
-               icon="$WORKSPACE" \
-               icon.font="MesloLGS Nerd Font Mono:Bold:14.0" \
-               icon.padding_left=8 \
-               icon.padding_right=5 \
-               label.font="sketchybar-app-font:Regular:12.0" \
-               label.padding_left=2 \
-               label.padding_right=8 \
-               background.color=$CYAN \
-               background.height=24 \
-               background.corner_radius=7 \
-               background.drawing=off \
-               click_script="aerospace workspace $WORKSPACE" \
-               script="$CONFIG_DIR/plugins/aerospace.sh $WORKSPACE"
+for DISPLAY in 1 2 3; do
+  for WORKSPACE in 1 2 3 4 5 6; do
+    ITEM="workspace.$DISPLAY.$WORKSPACE"
+
+    sketchybar --add item "$ITEM" left \
+               --subscribe "$ITEM" aerospace_workspace_change \
+               --set "$ITEM" \
+                 display=$DISPLAY \
+                 icon="$WORKSPACE" \
+                 icon.font="MesloLGS Nerd Font Mono:Bold:14.0" \
+                 icon.padding_left=8 \
+                 icon.padding_right=5 \
+                 label.font="sketchybar-app-font:Regular:12.0" \
+                 label.padding_left=2 \
+                 label.padding_right=8 \
+                 background.color=$CYAN \
+                 background.height=24 \
+                 background.corner_radius=7 \
+                 background.drawing=off \
+                 click_script="aerospace workspace $WORKSPACE" \
+                 script="$CONFIG_DIR/plugins/aerospace.sh $WORKSPACE $DISPLAY"
+  done
 done
 
 # Separator between workspaces and current application

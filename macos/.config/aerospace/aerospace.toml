@@ -67,14 +67,33 @@ on-window-detected = [
     if = "test %{app-bundle-id} = com.apple.MobileSMS",
     run = "move-node-to-workspace 6",
   },
+  {
+    if = "test %{app-bundle-id} = com.microsoft.Outlook",
+    run = "move-node-to-workspace 6",
+  },
+  {
+    if = "test %{app-bundle-id} = com.microsoft.teams2",
+    run = "move-node-to-workspace 6",
+  },
 ]
 
 # Keep SketchyBar in sync with the active workspace
 exec-on-workspace-change = [
   '/bin/bash',
   '-c',
-  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+  'sleep 0.1; sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
 ]
+
+# In een dual-monitor-opstelling houdt het hoofdscherm je hoofdwerk bij en
+# het tweede scherm de vaste neventaken. Bij één monitor valt alles terug op
+# `main`, zodat dezelfde workspaces zonder handmatig herschikken bruikbaar zijn.
+[workspace-to-monitor-force-assignment]
+1 = "main"                 # Algemeen
+2 = "main"                 # Browser en research
+3 = "main"                 # Development
+4 = ["secondary", "main"] # Terminal
+5 = ["secondary", "main"] # Bestandsbeheer
+6 = ["secondary", "main"] # Communicatie
 
 # Small gaps make separate windows easier to recognize
 [gaps]
@@ -117,6 +136,9 @@ alt-rightSquareBracket = "focus dfs-next"
 
 # Temporarily maximize the focused window; press again to restore
 alt-m = "fullscreen --no-outer-gaps"
+
+# Toggle SketchyBar to access the native macOS menu bar when needed
+alt-shift-m = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/toggle-sketchybar-menu'"
 
 # Let an exceptional window float, or return it to tiling
 alt-shift-space = "layout floating tiling"
