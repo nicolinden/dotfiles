@@ -38,6 +38,7 @@ cask "daisydisk"
 cask "fork"
 cask "forklift"
 cask "hazel"
+cask "raindropio"
 
 # Communication and design
 cask "chatgpt"
