@@ -7,9 +7,10 @@ tap "nikitabobko/tap", trusted: {
 }
 
 # Command-line tools
+brew "git"
 brew "stow"
 brew "starship"
-brew "nvim"
+brew "neovim"
 brew "zsh-autosuggestions"
 brew "fzf"
 brew "tmux"
@@ -25,7 +26,6 @@ cask "font-sketchybar-app-font"
 cask "wezterm"
 cask "visual-studio-code"
 cask "bruno"
-cask "docker-desktop"
 
 # macOS productivity
 cask "nikitabobko/tap/aerospace"
@@ -33,7 +33,6 @@ cask "homerow"
 cask "1password"
 cask "daisydisk"
 cask "forklift"
-cask "tailscale-app"
 
 # Communication and design
 cask "chatgpt"

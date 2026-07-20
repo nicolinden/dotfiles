@@ -4,28 +4,53 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+start_sudo_keepalive() {
+  # Vraag eenmaal om het beheerderswachtwoord. De keepalive voorkomt verdere
+  # wachtwoordprompts tijdens de Homebrew-installatie.
+  echo "Beheerdersrechten voorbereiden (eenmalig)..."
+  sudo -v
+
+  while sudo -n true; do
+    sleep 60
+  done 2>/dev/null &
+  SUDO_KEEPALIVE_PID=$!
+
+  trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT INT TERM
+}
+
+configure_homebrew_for_current_shell() {
+  if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  else
+    echo "Homebrew is na installatie niet gevonden."
+    exit 1
+  fi
+}
+
 case "$(uname -s)" in
   Darwin)
-    if ! command -v brew >/dev/null 2>&1; then
-      echo "Homebrew is nog niet geïnstalleerd."
-      echo "Installeer Homebrew eerst via https://brew.sh"
-      exit 1
+    # Een bestaande Homebrew-installatie kan na een verse login nog ontbreken
+    # in PATH. Activeer de standaardlocatie eerst voor dit script.
+    if ! command -v brew >/dev/null 2>&1 &&
+       { [[ -x "/opt/homebrew/bin/brew" ]] || [[ -x "/usr/local/bin/brew" ]]; }; then
+      configure_homebrew_for_current_shell
     fi
 
-    echo "Beheerdersrechten voorbereiden..."
-    sudo -v
-
-    # Houd sudo alleen tijdens deze installatie beschikbaar
-    while true; do
-      sudo -n true
-      sleep 60
-    done 2>/dev/null &
-    SUDO_KEEPALIVE_PID=$!
-
-    trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT INT TERM
+    if ! command -v brew >/dev/null 2>&1; then
+      start_sudo_keepalive
+      echo "Homebrew installeren..."
+      NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+      configure_homebrew_for_current_shell
+    fi
 
     echo "Homebrew-pakketten installeren..."
-    caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
+    # Installeer GUI-apps per gebruiker. Daardoor zijn ze zonder sudo te
+    # installeren en blijven ze gescheiden van door macOS beheerde systeemapps.
+    mkdir -p "$HOME/Applications"
+    HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
+      caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
     ;;
 
   Linux)
@@ -45,6 +70,9 @@ case "$(uname -s)" in
       echo "apt-get is niet beschikbaar."
       exit 1
     fi
+
+    echo "Beheerdersrechten voorbereiden..."
+    sudo -v
 
     echo "Ubuntu-pakketten installeren..."
     sudo apt-get update

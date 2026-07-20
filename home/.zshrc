@@ -1,5 +1,14 @@
+# Homebrew (Apple Silicon and Intel Macs)
+if [[ -x "/opt/homebrew/bin/brew" ]]; then
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+elif [[ -x "/usr/local/bin/brew" ]]; then
+  eval "$(/usr/local/bin/brew shellenv)"
+fi
+
 # WezTerm CLI on macOS
-if [[ -d "/Applications/WezTerm.app/Contents/MacOS" ]]; then
+if [[ -d "$HOME/Applications/WezTerm.app/Contents/MacOS" ]]; then
+  export PATH="$PATH:$HOME/Applications/WezTerm.app/Contents/MacOS"
+elif [[ -d "/Applications/WezTerm.app/Contents/MacOS" ]]; then
   export PATH="$PATH:/Applications/WezTerm.app/Contents/MacOS"
 fi
 

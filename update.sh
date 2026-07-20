@@ -14,18 +14,6 @@ if ! command -v brew >/dev/null 2>&1; then
   exit 1
 fi
 
-echo "Beheerdersrechten voorbereiden..."
-sudo -v
-
-# Houd sudo uitsluitend tijdens deze update geldig
-while true; do
-  sudo -n true
-  sleep 60
-done 2>/dev/null &
-SUDO_KEEPALIVE_PID=$!
-
-trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT INT TERM
-
 echo "Homebrew bijwerken..."
 brew update
 
