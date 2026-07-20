@@ -27,54 +27,24 @@ accordion-padding = 100
 
 on-window-detected = [
   # Web and research
-  {
-    if = "test %{app-bundle-id} = com.apple.Safari",
-    run = "move-node-to-workspace 2",
-  },
-  {
-    if = "test %{app-bundle-id} = com.google.Chrome",
-    run = "move-node-to-workspace 2",
-  },
-  {
-    if = "test %{app-bundle-id} = com.openai.codex",
-    run = "move-node-to-workspace 2",
-  },
+  { if = "test %{app-bundle-id} = com.apple.Safari", run = "move-node-to-workspace 2" },
+  { if = "test %{app-bundle-id} = com.google.Chrome", run = "move-node-to-workspace 2" },
+  { if = "test %{app-bundle-id} = com.openai.codex", run = "move-node-to-workspace 2" },
 
   # Development
-  {
-    if = "test %{app-bundle-id} = com.microsoft.VSCode",
-    run = "move-node-to-workspace 3",
-  },
+  { if = "test %{app-bundle-id} = com.microsoft.VSCode", run = "move-node-to-workspace 3" },
 
   # Terminal
-  {
-    if = "test %{app-bundle-id} = com.github.wez.wezterm",
-    run = "move-node-to-workspace 4",
-  },
+  { if = "test %{app-bundle-id} = com.github.wez.wezterm", run = "move-node-to-workspace 4" },
 
   # File management
-  {
-    if = "test %{app-bundle-id} = com.binarynights.ForkLift",
-    run = "move-node-to-workspace 5",
-  },
+  { if = "test %{app-bundle-id} = com.binarynights.ForkLift", run = "move-node-to-workspace 5" },
 
   # Communication
-  {
-    if = "test %{app-bundle-id} = net.whatsapp.WhatsApp",
-    run = "move-node-to-workspace 6",
-  },
-  {
-    if = "test %{app-bundle-id} = com.apple.MobileSMS",
-    run = "move-node-to-workspace 6",
-  },
-  {
-    if = "test %{app-bundle-id} = com.microsoft.Outlook",
-    run = "move-node-to-workspace 6",
-  },
-  {
-    if = "test %{app-bundle-id} = com.microsoft.teams2",
-    run = "move-node-to-workspace 6",
-  },
+  { if = "test %{app-bundle-id} = net.whatsapp.WhatsApp", run = "move-node-to-workspace 6" },
+  { if = "test %{app-bundle-id} = com.apple.MobileSMS", run = "move-node-to-workspace 6" },
+  { if = "test %{app-bundle-id} = com.microsoft.Outlook", run = "move-node-to-workspace 6" },
+  { if = "test %{app-bundle-id} = com.microsoft.teams2", run = "move-node-to-workspace 6" },
 ]
 
 # Keep SketchyBar in sync with the active workspace
