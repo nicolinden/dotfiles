@@ -40,20 +40,6 @@ wordt geladen.
   Pro, moet de app eerst aan hetzelfde Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
-- Hammerspoon start automatisch na bootstrap en bij volgende logins. Geef ook
-  Hammerspoon één keer Accessibility-permissie. De systeemtoetsen zijn:
-
-  | Toets | Actie |
-  | --- | --- |
-  | `⌃⌥⌘L` | Vergrendel scherm |
-  | `⌃⌥⌘S` | Slaapstand |
-  | `⌃⌥⌘W` | Wifi aan/uit |
-  | `⌃⌥⌘R` | Herstart, na bevestiging |
-  | `⌃⌥⌘Q` | Uitloggen, na bevestiging |
-
-  Deze combinatie botst niet met de bestaande AeroSpace-toetsen. De
-  configuratie staat in `macos/.hammerspoon/init.lua` en wordt via Stow
-  gesynchroniseerd.
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
   iedere volgende login automatisch terug en wordt op alle aangesloten
   schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk
@@ -120,7 +106,7 @@ install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
 office-installer.sh  Losse installatie van Office-apps uit de App Store
 home/          Gedeelde shell-, terminal- en editorconfiguratie
-macos/         AeroSpace-, SketchyBar- en Hammerspoon-configuratie
+macos/         AeroSpace- en SketchyBar-configuratie
 ```
 
 De installatie gebruikt Stow en stopt bij bestaande, conflicterende bestanden

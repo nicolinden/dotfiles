@@ -31,7 +31,6 @@ cask "bruno"
 # macOS productivity
 cask "nikitabobko/tap/aerospace"
 cask "homerow"
-cask "hammerspoon"
 cask "raycast"
 cask "1password"
 cask "daisydisk"
