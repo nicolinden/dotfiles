@@ -22,8 +22,9 @@ macOS-configuratie voor AeroSpace en SketchyBar.
 
 Het script vraagt op macOS eenmaal om het beheerderswachtwoord. Als Homebrew
 nog niet aanwezig is, installeert het script dit met de officiële,
-non-interactive installer. Daarna worden alle formules, casks, Oh My Zsh en
-de symlinks geïnstalleerd. Tijdens lange downloads blijft de Mac wakker.
+non-interactive installer. Daarna worden alle formules, casks, App Store-apps,
+Oh My Zsh en de symlinks geïnstalleerd. Tijdens lange downloads blijft de Mac
+wakker.
 
 Na afloop open je een nieuw terminalvenster zodat de nieuwe shellconfiguratie
 wordt geladen.
@@ -31,10 +32,10 @@ wordt geladen.
 ### Handmatige stappen na de installatie
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
-- Log in bij de Mac App Store en voer `./bootstrap.sh` opnieuw uit om PastePal,
-  Goodnotes, Tailscale, Caffeinated, The Unarchiver en Pixelmator Pro
-  automatisch te installeren. Voor betaalde apps, zoals Caffeinated en
-  Pixelmator Pro, moet de app eerst aan hetzelfde Apple-account zijn gekoppeld.
+- Log vóór bootstrap in bij de Mac App Store. Daarna worden PastePal, Goodnotes,
+  Tailscale, Caffeinated, The Unarchiver en Pixelmator Pro automatisch
+  verwerkt. Voor betaalde apps, zoals Caffeinated en Pixelmator Pro, moet de
+  app eerst aan hetzelfde Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij

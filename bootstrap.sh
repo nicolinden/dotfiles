@@ -52,15 +52,22 @@ case "$(uname -s)" in
     HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
       caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
 
-    if command -v mas >/dev/null 2>&1 && mas account >/dev/null 2>&1; then
+    if command -v mas >/dev/null 2>&1; then
       echo "Mac App Store-apps installeren..."
+      # mas 7 gebruikt sudo voor App Store-downloads. Houd die autorisatie
+      # levend, zodat een lange reeks downloads niet telkens opnieuw om het
+      # macOS-wachtwoord vraagt. App Store-aanmelding zelf blijft via macOS.
+      if [[ -z "${SUDO_KEEPALIVE_PID:-}" ]]; then
+        start_sudo_keepalive
+      fi
+
       # Een betaalde of nog niet aan dit Apple-account gekoppelde app kan
       # mislukken. Laat dat de rest van een verse-Mac-installatie niet breken.
       if ! caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.mas"; then
-        echo "Sommige Mac App Store-apps zijn overgeslagen. Controleer in de App Store of ze zijn gekocht of geclaimd en voer bootstrap opnieuw uit."
+        echo "Sommige Mac App Store-apps zijn overgeslagen. Controleer je App Store-aanmelding en of betaalde apps zijn gekocht of geclaimd; voer bootstrap daarna opnieuw uit."
       fi
     else
-      echo "Mac App Store-apps overgeslagen: log eerst in bij de App Store en voer bootstrap opnieuw uit."
+      echo "Mac App Store-apps overgeslagen: mas ontbreekt. Voer bootstrap opnieuw uit."
     fi
     ;;
 
