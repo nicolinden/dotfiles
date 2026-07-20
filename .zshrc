@@ -245,3 +245,7 @@ snap() {
 #   #open "$localpath" &>/dev/null
 # }
 # 
+
+
+# Load Angular CLI autocompletion.
+source <(ng completion script)

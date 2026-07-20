@@ -113,5 +113,10 @@
   "terminal.integrated.gpuAcceleration": "on",
   "terminal.integrated.defaultProfile.osx": "zsh",
   "workbench.activityBar.location": "hidden",
-  "github.copilot.nextEditSuggestions.enabled": true
+  "github.copilot.nextEditSuggestions.enabled": true,
+  "editor.quickSuggestions": {
+    "strings": "on"
+  },
+  "tailwindCSS.experimental.configFile": "frontend/src/styles.scss",
+  "chat.viewSessions.orientation": "stacked"
 }
