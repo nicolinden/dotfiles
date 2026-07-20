@@ -20,6 +20,12 @@ icon_for_app() {
     "ForkLift")
       echo ":forklift:"
       ;;
+    "Fork")
+      echo ":fork:"
+      ;;
+    "Hazel")
+      echo ":hazel:"
+      ;;
     *"WhatsApp"*)
       echo ":whatsapp:"
       ;;

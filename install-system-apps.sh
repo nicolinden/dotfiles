@@ -6,12 +6,10 @@ set -euo pipefail
 # Houd de volgorde van SYSTEM_CASKS en SYSTEM_LABELS gelijk.
 SYSTEM_CASKS=(
   "docker-desktop"
-  "tailscale-app"
 )
 
 SYSTEM_LABELS=(
   "Docker Desktop — containerplatform met privileged helpers"
-  "Tailscale — VPN met een macOS-systeemextensie"
 )
 
 configure_homebrew_for_current_shell() {

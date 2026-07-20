@@ -31,6 +31,10 @@ wordt geladen.
 ### Handmatige stappen na de installatie
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
+- Log in bij de Mac App Store en voer `./bootstrap.sh` opnieuw uit om PastePal,
+  Goodnotes, Tailscale, Caffeinated, The Unarchiver en Pixelmator Pro
+  automatisch te installeren. Voor betaalde apps, zoals Caffeinated en
+  Pixelmator Pro, moet de app eerst aan hetzelfde Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
@@ -42,15 +46,26 @@ wordt geladen.
   AeroSpace-workspace.
   Druk `⌥⇧M` om SketchyBar tijdelijk te verbergen en de native menubalk te
   gebruiken; druk opnieuw om SketchyBar terug te zetten.
-- Installeer Docker Desktop en Tailscale desgewenst apart met:
+- Installeer Docker Desktop desgewenst apart met:
 
   ```bash
   ./install-system-apps.sh
   ```
 
-  Dit keuzemenu vraagt alleen voor de gekozen systeemapps om je wachtwoord.
-  Docker en Tailscale staan bewust niet in de unattended bootstrap, omdat ze
-  privileged helpers of een macOS-pakket in systeemlocaties plaatsen.
+  Dit keuzemenu vraagt alleen voor Docker om je wachtwoord. Docker staat bewust
+  niet in de unattended bootstrap, omdat het privileged helpers in
+  systeemlocaties plaatst. Tailscale komt via de Mac App Store.
+
+- Installeer Apple iWork en Microsoft Office los, nadat je bij de Mac App Store
+  bent ingelogd:
+
+  ```bash
+  ./office-installer.sh
+  ```
+
+  Dit installeert Numbers, Keynote, Pages, Excel, Outlook, Word en PowerPoint.
+  Een Microsoft 365-licentie of -account kan daarna nog nodig zijn om de
+  Microsoft-apps te gebruiken.
 
 Apps uit de Brewfile komen in `~/Applications`, niet in de systeemmap
 `/Applications`. Daardoor hoeft Homebrew voor gewone GUI-apps niet om
@@ -80,9 +95,12 @@ brew bundle check --file=Brewfile
 
 ```text
 Brewfile       Homebrew-formules, taps en macOS-apps
+Brewfile.mas   Persoonlijke Mac App Store-apps
+Brewfile.office.mas  Apple iWork- en Microsoft Office-apps
 bootstrap.sh   Installatie voor macOS en Ubuntu
 update.sh      Homebrew-updates voor macOS
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
+office-installer.sh  Losse installatie van Office-apps uit de App Store
 home/          Gedeelde shell-, terminal- en editorconfiguratie
 macos/         AeroSpace- en SketchyBar-configuratie
 ```

@@ -1,0 +1,8 @@
+# Apple- en Microsoft Office-apps uit de Mac App Store.
+mas "Numbers", id: 361304891
+mas "Keynote", id: 361285480
+mas "Pages", id: 361309726
+mas "Microsoft Excel", id: 462058435
+mas "Microsoft Outlook", id: 985367838
+mas "Microsoft Word", id: 462054704
+mas "Microsoft PowerPoint", id: 462062816

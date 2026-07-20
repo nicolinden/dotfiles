@@ -8,6 +8,7 @@ tap "nikitabobko/tap", trusted: {
 
 # Command-line tools
 brew "git"
+brew "mas"
 brew "stow"
 brew "starship"
 brew "neovim"
@@ -32,7 +33,9 @@ cask "nikitabobko/tap/aerospace"
 cask "homerow"
 cask "1password"
 cask "daisydisk"
+cask "fork"
 cask "forklift"
+cask "hazel"
 
 # Communication and design
 cask "chatgpt"
