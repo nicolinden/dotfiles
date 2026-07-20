@@ -52,23 +52,6 @@ case "$(uname -s)" in
     HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
       caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
 
-    if command -v mas >/dev/null 2>&1; then
-      echo "Mac App Store-apps installeren..."
-      # mas 7 gebruikt sudo voor App Store-downloads. Houd die autorisatie
-      # levend, zodat een lange reeks downloads niet telkens opnieuw om het
-      # macOS-wachtwoord vraagt. App Store-aanmelding zelf blijft via macOS.
-      if [[ -z "${SUDO_KEEPALIVE_PID:-}" ]]; then
-        start_sudo_keepalive
-      fi
-
-      # Een betaalde of nog niet aan dit Apple-account gekoppelde app kan
-      # mislukken. Laat dat de rest van een verse-Mac-installatie niet breken.
-      if ! caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.mas"; then
-        echo "Sommige Mac App Store-apps zijn overgeslagen. Controleer je App Store-aanmelding en of betaalde apps zijn gekocht of geclaimd; voer bootstrap daarna opnieuw uit."
-      fi
-    else
-      echo "Mac App Store-apps overgeslagen: mas ontbreekt. Voer bootstrap opnieuw uit."
-    fi
     ;;
 
   Linux)
@@ -164,6 +147,19 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   if command -v brew >/dev/null 2>&1 && brew list sketchybar >/dev/null 2>&1; then
     brew services restart felixkratz/formulae/sketchybar
   fi
+
+  echo
+  read -r -p "Mac App Store-apps nu installeren? [y/N] " install_mac_apps
+  case "${install_mac_apps:-}" in
+    y|Y|yes|YES|Yes)
+      if ! "$DOTFILES_DIR/install-mac-apps.sh"; then
+        echo "Mac App Store-apps zijn niet volledig geïnstalleerd; start ./install-mac-apps.sh later opnieuw."
+      fi
+      ;;
+    *)
+      echo "Mac App Store-apps overgeslagen. Start later ./install-mac-apps.sh."
+      ;;
+  esac
 fi
 
 echo "Setup voltooid."
