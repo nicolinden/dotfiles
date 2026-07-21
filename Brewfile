@@ -19,6 +19,7 @@ brew "zsh-syntax-highlighting"
 brew "ripgrep"
 brew "tree"
 brew "sketchybar"
+brew "gh"
 
 # Fonts
 cask "font-sketchybar-app-font"
