@@ -5,18 +5,13 @@ set -euo pipefail
 hidden_state="$(sketchybar --query bar | sed -n 's/.*"hidden": "\([^"]*\)".*/\1/p' | head -n 1)"
 
 if [[ "$hidden_state" == "on" ]]; then
-  # SketchyBar terug: verberg de native balk weer automatisch.
-  defaults write -g _HIHideMenuBar -bool true
-  defaults write -g AppleMenuBarVisibleInFullscreen -bool true
-  killall SystemUIServer 2>/dev/null || true
-  killall ControlCenter 2>/dev/null || true
-  sketchybar --bar hidden=off
+  # SketchyBar terug: hij bedekt de permanent zichtbare native menubalk.
+  # `topmost=on` is belangrijk: `off` laat AeroSpace-vensters over de balk
+  # heen tekenen.
+  sketchybar --bar topmost=on hidden=off
 else
-  # SketchyBar weg: maak de echte macOS-menubalk permanent zichtbaar, niet
-  # alleen wanneer de muis de bovenrand raakt.
-  defaults write -g _HIHideMenuBar -bool false
-  defaults write -g AppleMenuBarVisibleInFullscreen -bool true
-  killall SystemUIServer 2>/dev/null || true
-  killall ControlCenter 2>/dev/null || true
-  sketchybar --bar hidden=on
+  # De native menubalk is in macOS ingesteld op "Nooit verbergen".  Deze
+  # verschijnt meteen zodra SketchyBar verdwijnt.  Wijzig die macOS-instelling
+  # niet hier: Tahoe past `defaults` pas na app-herstarts toe.
+  sketchybar --bar topmost=on hidden=on
 fi
