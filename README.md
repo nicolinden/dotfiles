@@ -40,6 +40,11 @@ wordt geladen.
   Pro, moet de app eerst aan hetzelfde Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
+- Bij twee schermen heeft elk scherm zijn eigen workspace-reeks `1` t/m `6`.
+  `⌥1`–`⌥6` opent de reeks op het hoofdscherm; `⌃⌥1`–`⌃⌥6` opent dezelfde
+  nummers op het tweede scherm. Verplaats een app met `⌥⇧1`–`⌥⇧6` naar het
+  hoofdscherm of met `⌃⌥⇧1`–`⌃⌥⇧6` naar het tweede scherm. De standaard
+  appindeling komt op het hoofdscherm terecht.
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
   iedere volgende login automatisch terug en wordt op alle aangesloten
   schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk

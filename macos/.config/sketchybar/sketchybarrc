@@ -37,8 +37,18 @@ sketchybar --default \
 sketchybar --add event aerospace_workspace_change
 
 for DISPLAY in 1 2 3; do
+  # Gebruik op het hoofdscherm de main-reeks en op andere schermen side-*.
+  # De zichtbare labels blijven op alle schermen simpelweg 1 t/m 6.
+  if aerospace list-monitors --format '%{monitor-appkit-nsscreen-screens-id} %{monitor-is-main}' \
+    | awk -v display="$DISPLAY" '$1 == display && $2 == "true" { found = 1 } END { exit !found }'; then
+    WORKSPACE_PREFIX="main"
+  else
+    WORKSPACE_PREFIX="side"
+  fi
+
   for WORKSPACE in 1 2 3 4 5 6; do
     ITEM="workspace.$DISPLAY.$WORKSPACE"
+    WORKSPACE_NAME="$WORKSPACE_PREFIX-$WORKSPACE"
 
     sketchybar --add item "$ITEM" left \
                --subscribe "$ITEM" aerospace_workspace_change \
@@ -55,8 +65,8 @@ for DISPLAY in 1 2 3; do
                  background.height=24 \
                  background.corner_radius=7 \
                  background.drawing=off \
-                 click_script="aerospace workspace $WORKSPACE" \
-                 script="$CONFIG_DIR/plugins/aerospace.sh $WORKSPACE $DISPLAY"
+                 click_script="aerospace workspace $WORKSPACE_NAME" \
+                 script="$CONFIG_DIR/plugins/aerospace.sh $WORKSPACE_NAME $DISPLAY"
   done
 done
 

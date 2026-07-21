@@ -7,8 +7,14 @@ start-at-login = true
 # Apply changes whenever this file is saved
 auto-reload-config = true
 
-# Keep a small and predictable set of workspaces available
-persistent-workspaces = ["1", "2", "3", "4", "5", "6"]
+# Elke monitor krijgt een eigen, unieke workspace-reeks. AeroSpace deelt één
+# pool tussen alle monitoren, dus dezelfde workspace-naam kan niet op twee
+# schermen tegelijk zichtbaar zijn. SketchyBar toont beide reeksen wel als
+# eenvoudig 1 t/m 6.
+persistent-workspaces = [
+  "main-1", "main-2", "main-3", "main-4", "main-5", "main-6",
+  "side-1", "side-2", "side-3", "side-4", "side-5", "side-6",
+]
 
 # New workspaces start with tiled windows.
 # On a wide screen, windows are initially arranged side by side.
@@ -27,24 +33,24 @@ accordion-padding = 100
 
 on-window-detected = [
   # Web and research
-  { if = "test %{app-bundle-id} = com.apple.Safari", run = "move-node-to-workspace 2" },
-  { if = "test %{app-bundle-id} = com.google.Chrome", run = "move-node-to-workspace 2" },
-  { if = "test %{app-bundle-id} = com.openai.codex", run = "move-node-to-workspace 2" },
+  { if = "test %{app-bundle-id} = com.apple.Safari", run = "move-node-to-workspace main-2" },
+  { if = "test %{app-bundle-id} = com.google.Chrome", run = "move-node-to-workspace main-2" },
+  { if = "test %{app-bundle-id} = com.openai.codex", run = "move-node-to-workspace main-2" },
 
   # Development
-  { if = "test %{app-bundle-id} = com.microsoft.VSCode", run = "move-node-to-workspace 3" },
+  { if = "test %{app-bundle-id} = com.microsoft.VSCode", run = "move-node-to-workspace main-3" },
 
   # Terminal
-  { if = "test %{app-bundle-id} = com.github.wez.wezterm", run = "move-node-to-workspace 4" },
+  { if = "test %{app-bundle-id} = com.github.wez.wezterm", run = "move-node-to-workspace main-4" },
 
   # File management
-  { if = "test %{app-bundle-id} = com.binarynights.ForkLift", run = "move-node-to-workspace 5" },
+  { if = "test %{app-bundle-id} = com.binarynights.ForkLift", run = "move-node-to-workspace main-5" },
 
   # Communication
-  { if = "test %{app-bundle-id} = net.whatsapp.WhatsApp", run = "move-node-to-workspace 6" },
-  { if = "test %{app-bundle-id} = com.apple.MobileSMS", run = "move-node-to-workspace 6" },
-  { if = "test %{app-bundle-id} = com.microsoft.Outlook", run = "move-node-to-workspace 6" },
-  { if = "test %{app-bundle-id} = com.microsoft.teams2", run = "move-node-to-workspace 6" },
+  { if = "test %{app-bundle-id} = net.whatsapp.WhatsApp", run = "move-node-to-workspace main-6" },
+  { if = "test %{app-bundle-id} = com.apple.MobileSMS", run = "move-node-to-workspace main-6" },
+  { if = "test %{app-bundle-id} = com.microsoft.Outlook", run = "move-node-to-workspace main-6" },
+  { if = "test %{app-bundle-id} = com.microsoft.teams2", run = "move-node-to-workspace main-6" },
 ]
 
 # Keep SketchyBar in sync with the active workspace
@@ -54,16 +60,21 @@ exec-on-workspace-change = [
   'sleep 0.1; sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
 ]
 
-# In een dual-monitor-opstelling houdt het hoofdscherm je hoofdwerk bij en
-# het tweede scherm de vaste neventaken. Bij één monitor valt alles terug op
-# `main`, zodat dezelfde workspaces zonder handmatig herschikken bruikbaar zijn.
+# Het hoofdscherm en het tweede scherm krijgen allebei 1 t/m 6. Bij één monitor
+# valt side-* terug op main, zodat dezelfde configuratie bruikbaar blijft.
 [workspace-to-monitor-force-assignment]
-1 = "main"                 # Algemeen
-2 = "main"                 # Browser en research
-3 = "main"                 # Development
-4 = ["secondary", "main"] # Terminal
-5 = ["secondary", "main"] # Bestandsbeheer
-6 = ["secondary", "main"] # Communicatie
+main-1 = "main"
+main-2 = "main"
+main-3 = "main"
+main-4 = "main"
+main-5 = "main"
+main-6 = "main"
+side-1 = ["secondary", "main"]
+side-2 = ["secondary", "main"]
+side-3 = ["secondary", "main"]
+side-4 = ["secondary", "main"]
+side-5 = ["secondary", "main"]
+side-6 = ["secondary", "main"]
 
 # Small gaps make separate windows easier to recognize
 [gaps]
@@ -131,20 +142,36 @@ alt-equal = "resize smart +50"
 # Switch to a workspace.
 # ------------------------------------------------------------
 
-alt-1 = "workspace 1"
-alt-2 = "workspace 2"
-alt-3 = "workspace 3"
-alt-4 = "workspace 4"
-alt-5 = "workspace 5"
-alt-6 = "workspace 6"
+alt-1 = "workspace main-1"
+alt-2 = "workspace main-2"
+alt-3 = "workspace main-3"
+alt-4 = "workspace main-4"
+alt-5 = "workspace main-5"
+alt-6 = "workspace main-6"
+
+# Dezelfde nummers op het tweede scherm
+ctrl-alt-1 = "workspace side-1"
+ctrl-alt-2 = "workspace side-2"
+ctrl-alt-3 = "workspace side-3"
+ctrl-alt-4 = "workspace side-4"
+ctrl-alt-5 = "workspace side-5"
+ctrl-alt-6 = "workspace side-6"
 
 # Move only the focused window to another workspace
-alt-shift-1 = "move-node-to-workspace 1"
-alt-shift-2 = "move-node-to-workspace 2"
-alt-shift-3 = "move-node-to-workspace 3"
-alt-shift-4 = "move-node-to-workspace 4"
-alt-shift-5 = "move-node-to-workspace 5"
-alt-shift-6 = "move-node-to-workspace 6"
+alt-shift-1 = "move-node-to-workspace main-1"
+alt-shift-2 = "move-node-to-workspace main-2"
+alt-shift-3 = "move-node-to-workspace main-3"
+alt-shift-4 = "move-node-to-workspace main-4"
+alt-shift-5 = "move-node-to-workspace main-5"
+alt-shift-6 = "move-node-to-workspace main-6"
+
+# Verplaats de gefocuste app direct naar workspace 1 t/m 6 op het tweede scherm
+ctrl-alt-shift-1 = "move-node-to-workspace side-1"
+ctrl-alt-shift-2 = "move-node-to-workspace side-2"
+ctrl-alt-shift-3 = "move-node-to-workspace side-3"
+ctrl-alt-shift-4 = "move-node-to-workspace side-4"
+ctrl-alt-shift-5 = "move-node-to-workspace side-5"
+ctrl-alt-shift-6 = "move-node-to-workspace side-6"
 
 # Cycle through all workspaces
 alt-tab = "workspace --wrap-around next"
