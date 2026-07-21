@@ -4,50 +4,118 @@ CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
 
 source "$CONFIG_DIR/plugins/icon_map.sh"
 
-WORKSPACE="$1"
-DISPLAY="$2"
+# Eén snapshot per event. Daardoor blijven focus- en workspacewisselingen ook
+# met meerdere schermen vloeiend: geen process-spawn per indicator.
+MONITORS="$(aerospace list-monitors \
+  --format '%{monitor-appkit-nsscreen-screens-id}|%{monitor-is-main}' 2>/dev/null)" || exit 0
+WORKSPACES="$(aerospace list-workspaces --all \
+  --format '%{workspace}|%{monitor-appkit-nsscreen-screens-id}|%{workspace-is-visible}|%{workspace-is-focused}' 2>/dev/null)" || exit 0
+WINDOWS="$(aerospace list-windows --all \
+  --format '%{workspace}|%{app-name}' 2>/dev/null)" || exit 0
 
-# SketchyBar gebruikt dezelfde AppKit-schermvolgorde als AeroSpace. Vertaal
-# daarom de scherm-ID naar AeroSpace's monitor-ID en vraag de zichtbare
-# workspace op voor dat specifieke scherm op.
-MONITOR_ID="$(aerospace list-monitors \
-  --format '%{monitor-appkit-nsscreen-screens-id} %{monitor-id}' \
-  | awk -v display="$DISPLAY" '$1 == display { print $2; exit }')"
+BACKGROUND=0xff011423
+FOREGROUND=0xffcbe0f0
+CYAN=0xff24eaf7
+MUTED_CYAN=0x9924eaf7
 
-ACTIVE_WORKSPACE=""
-if [[ -n "$MONITOR_ID" ]]; then
-  ACTIVE_WORKSPACE="$(aerospace list-workspaces --monitor "$MONITOR_ID" --visible)"
-fi
+display_prefix() {
+  local display="$1"
+  local current_display is_main
 
-ICONS=""
-
-while IFS= read -r APP; do
-  ICON="$(icon_for_app "$APP")"
-
-  # Show each application icon only once per workspace
-  if [[ " $ICONS " != *" $ICON "* ]]; then
-    if [[ -n "$ICONS" ]]; then
-      ICONS="$ICONS $ICON"
-    else
-      ICONS="$ICON"
+  while IFS='|' read -r current_display is_main; do
+    if [[ "$current_display" == "$display" ]]; then
+      if [[ "$is_main" == "true" ]]; then
+        printf 'main'
+      else
+        printf 'side'
+      fi
+      return
     fi
-  fi
-done < <(
-  aerospace list-windows \
-    --workspace "$WORKSPACE" \
-    --format '%{app-name}'
-)
+  done <<< "$MONITORS"
+}
 
-if [[ "$WORKSPACE" == "$ACTIVE_WORKSPACE" ]]; then
-  sketchybar --set "$NAME" \
-    label="$ICONS" \
-    icon.color=0xff011423 \
-    label.color=0xff011423 \
-    background.drawing=on
-else
-  sketchybar --set "$NAME" \
-    label="$ICONS" \
-    icon.color=0xffcbe0f0 \
-    label.color=0xffcbe0f0 \
-    background.drawing=off
+workspace_state() {
+  local target_workspace="$1"
+  local workspace _display visible focused
+
+  while IFS='|' read -r workspace _display visible focused; do
+    if [[ "$workspace" == "$target_workspace" ]]; then
+      printf '%s|%s' "$visible" "$focused"
+      return
+    fi
+  done <<< "$WORKSPACES"
+
+  printf 'false|false'
+}
+
+workspace_icons() {
+  local target_workspace="$1"
+  local workspace app icon icons=""
+
+  while IFS='|' read -r workspace app; do
+    [[ "$workspace" == "$target_workspace" ]] || continue
+
+    icon="$(icon_for_app "$app")"
+    if [[ " $icons " != *" $icon "* ]]; then
+      icons="${icons:+$icons }$icon"
+    fi
+  done <<< "$WINDOWS"
+
+  printf '%s' "$icons"
+}
+
+SKETCHYBAR_ARGS=()
+
+for display in 1 2 3; do
+  prefix="$(display_prefix "$display")"
+
+  for number in 1 2 3 4 5 6; do
+    item="workspace.$display.$number"
+
+    # Niet-aangesloten schermen krijgen geen indicatoren; dat voorkomt
+    # achtergebleven items na het loskoppelen van een monitor.
+    if [[ -z "$prefix" ]]; then
+      SKETCHYBAR_ARGS+=(--set "$item" drawing=off)
+      continue
+    fi
+
+    workspace="$prefix-$number"
+    state="$(workspace_state "$workspace")"
+    visible="${state%%|*}"
+    focused="${state##*|}"
+    icons="$(workspace_icons "$workspace")"
+
+    if [[ "$visible" == "true" ]]; then
+      if [[ "$focused" == "true" ]]; then
+        background_color="$CYAN"
+      else
+        # De zichtbare, maar niet-gefocuste workspace blijft nadrukkelijk
+        # herkenbaar, ook als er geen app-iconen in staan.
+        background_color="$MUTED_CYAN"
+      fi
+
+      SKETCHYBAR_ARGS+=(
+        --set "$item"
+        drawing=on
+        "label=$icons"
+        "icon.color=$BACKGROUND"
+        "label.color=$BACKGROUND"
+        "background.color=$background_color"
+        background.drawing=on
+      )
+    else
+      SKETCHYBAR_ARGS+=(
+        --set "$item"
+        drawing=on
+        "label=$icons"
+        "icon.color=$FOREGROUND"
+        "label.color=$FOREGROUND"
+        background.drawing=off
+      )
+    fi
+  done
+done
+
+if (( ${#SKETCHYBAR_ARGS[@]} > 0 )); then
+  sketchybar "${SKETCHYBAR_ARGS[@]}"
 fi

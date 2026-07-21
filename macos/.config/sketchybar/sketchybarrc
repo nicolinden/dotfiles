@@ -36,6 +36,14 @@ sketchybar --default \
 # schermen worden niet getekend; één config werkt dus voor één of meer schermen.
 sketchybar --add event aerospace_workspace_change
 
+# Eén updater verwerkt alle workspace-items tegelijk. Dit voorkomt dat elk van
+# de 18 indicatoren afzonderlijk AeroSpace-processen start bij focuswijziging.
+sketchybar --add item aerospace_workspace_updater left \
+           --subscribe aerospace_workspace_updater aerospace_workspace_change \
+           --set aerospace_workspace_updater \
+             drawing=off \
+             script="$CONFIG_DIR/plugins/aerospace.sh"
+
 for DISPLAY in 1 2 3; do
   # Gebruik op het hoofdscherm de main-reeks en op andere schermen side-*.
   # De zichtbare labels blijven op alle schermen simpelweg 1 t/m 6.
@@ -51,7 +59,6 @@ for DISPLAY in 1 2 3; do
     WORKSPACE_NAME="$WORKSPACE_PREFIX-$WORKSPACE"
 
     sketchybar --add item "$ITEM" left \
-               --subscribe "$ITEM" aerospace_workspace_change \
                --set "$ITEM" \
                  display=$DISPLAY \
                  icon="$WORKSPACE" \
@@ -65,8 +72,7 @@ for DISPLAY in 1 2 3; do
                  background.height=24 \
                  background.corner_radius=7 \
                  background.drawing=off \
-                 click_script="aerospace workspace $WORKSPACE_NAME" \
-                 script="$CONFIG_DIR/plugins/aerospace.sh $WORKSPACE_NAME $DISPLAY"
+                 click_script="aerospace workspace $WORKSPACE_NAME"
   done
 done
 
@@ -128,4 +134,5 @@ sketchybar --add item volume right \
              icon.padding_right=6 \
              script="$CONFIG_DIR/plugins/volume.sh"
 
+sketchybar --trigger aerospace_workspace_change
 sketchybar --update
