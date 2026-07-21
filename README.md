@@ -57,7 +57,7 @@ wordt geladen.
   | `⌥⇧1`–`⌥⇧6` | Verplaats app naar workspace 1–6 op het gefocuste scherm |
   | `⌥M` | Maximaliseer/herstel venster |
   | `⌥⇧Spatie` | Toggle floating/tiling |
-  | `⌥⇧M` | Toon/verberg SketchyBar en de native menubalk |
+  | `⌥⇧M` | Wissel tussen SketchyBar en de native macOS-menubalk |
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
   iedere volgende login automatisch terug en wordt op alle aangesloten
   schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk
