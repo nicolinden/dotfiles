@@ -1,5 +1,5 @@
 tap "FelixKratz/formulae", trusted: {
-  formula: "sketchybar",
+  formula: [ "sketchybar", "borders" ]
 }
 
 tap "nikitabobko/tap", trusted: {
@@ -20,6 +20,7 @@ brew "ripgrep"
 brew "tree"
 brew "sketchybar"
 brew "gh"
+brew "borders"
 
 # Fonts
 cask "font-sketchybar-app-font"

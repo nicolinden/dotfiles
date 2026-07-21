@@ -4,6 +4,12 @@ config-version = 2
 # Start automatically when logging into macOS
 start-at-login = true
 
+# Start JankyBorders together with AeroSpace.
+# Active windows get a clear blue border; inactive borders remain subtle.
+after-startup-command = [
+  'exec-and-forget /opt/homebrew/bin/borders style=round width=4.0 hidpi=on active_color=0xff7aa2f7 inactive_color=0x553b4261',
+]
+
 # Apply changes whenever this file is saved
 auto-reload-config = true
 
@@ -82,12 +88,12 @@ side-6 = ["secondary", "main"]
 
 # Small gaps make separate windows easier to recognize
 [gaps]
-inner.horizontal = 8
-inner.vertical = 8
-outer.left = 8
-outer.bottom = 8
-outer.top = 8
-outer.right = 8
+inner.horizontal = 10
+inner.vertical = 10
+outer.left = 10
+outer.bottom = 10
+outer.top = 10
+outer.right = 10
 
 [mode.main.binding]
 
