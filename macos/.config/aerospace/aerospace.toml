@@ -57,8 +57,12 @@ on-window-detected = [
 exec-on-workspace-change = [
   '/bin/bash',
   '-c',
-  'sleep 0.1; sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
+  'sleep 0.1; sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; sketchybar --trigger aerospace_focus_change',
 ]
+
+# Laat SketchyBar ook meteen weten wanneer de focus naar een ander venster of
+# een leeg scherm verhuist. Daardoor staat de actieve app maar op één scherm.
+on-focus-changed = ['exec-and-forget sketchybar --trigger aerospace_focus_change']
 
 # Het hoofdscherm en het tweede scherm krijgen allebei 1 t/m 6. Bij één monitor
 # valt side-* terug op main, zodat dezelfde configuratie bruikbaar blijft.
@@ -142,36 +146,20 @@ alt-equal = "resize smart +50"
 # Switch to a workspace.
 # ------------------------------------------------------------
 
-alt-1 = "workspace main-1"
-alt-2 = "workspace main-2"
-alt-3 = "workspace main-3"
-alt-4 = "workspace main-4"
-alt-5 = "workspace main-5"
-alt-6 = "workspace main-6"
-
-# Dezelfde nummers op het tweede scherm
-ctrl-alt-1 = "workspace side-1"
-ctrl-alt-2 = "workspace side-2"
-ctrl-alt-3 = "workspace side-3"
-ctrl-alt-4 = "workspace side-4"
-ctrl-alt-5 = "workspace side-5"
-ctrl-alt-6 = "workspace side-6"
+alt-1 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-workspace-on-focused-monitor 1'"
+alt-2 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-workspace-on-focused-monitor 2'"
+alt-3 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-workspace-on-focused-monitor 3'"
+alt-4 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-workspace-on-focused-monitor 4'"
+alt-5 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-workspace-on-focused-monitor 5'"
+alt-6 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-workspace-on-focused-monitor 6'"
 
 # Move only the focused window to another workspace
-alt-shift-1 = "move-node-to-workspace main-1"
-alt-shift-2 = "move-node-to-workspace main-2"
-alt-shift-3 = "move-node-to-workspace main-3"
-alt-shift-4 = "move-node-to-workspace main-4"
-alt-shift-5 = "move-node-to-workspace main-5"
-alt-shift-6 = "move-node-to-workspace main-6"
-
-# Verplaats de gefocuste app direct naar workspace 1 t/m 6 op het tweede scherm
-ctrl-alt-shift-1 = "move-node-to-workspace side-1"
-ctrl-alt-shift-2 = "move-node-to-workspace side-2"
-ctrl-alt-shift-3 = "move-node-to-workspace side-3"
-ctrl-alt-shift-4 = "move-node-to-workspace side-4"
-ctrl-alt-shift-5 = "move-node-to-workspace side-5"
-ctrl-alt-shift-6 = "move-node-to-workspace side-6"
+alt-shift-1 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-move-to-workspace-on-focused-monitor 1'"
+alt-shift-2 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-move-to-workspace-on-focused-monitor 2'"
+alt-shift-3 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-move-to-workspace-on-focused-monitor 3'"
+alt-shift-4 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-move-to-workspace-on-focused-monitor 4'"
+alt-shift-5 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-move-to-workspace-on-focused-monitor 5'"
+alt-shift-6 = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-move-to-workspace-on-focused-monitor 6'"
 
 # Cycle through all workspaces
 alt-tab = "workspace --wrap-around next"

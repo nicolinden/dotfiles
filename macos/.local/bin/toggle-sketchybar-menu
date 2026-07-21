@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+hidden_state="$(sketchybar --query bar | sed -n 's/.*"hidden": "\([^"]*\)".*/\1/p' | head -n 1)"
+
+if [[ "$hidden_state" == "on" ]]; then
+  sketchybar --bar hidden=off
+else
+  sketchybar --bar hidden=on
+fi

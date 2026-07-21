@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+workspace_number="${1:?Gebruik: aerospace-move-to-workspace-on-focused-monitor <1-6>}"
+
+case "$workspace_number" in
+  [1-6]) ;;
+  *)
+    echo "Workspace moet een nummer van 1 t/m 6 zijn." >&2
+    exit 1
+    ;;
+esac
+
+if aerospace list-monitors --focused --format '%{monitor-is-main}' | grep -qx 'true'; then
+  workspace_prefix="main"
+else
+  workspace_prefix="side"
+fi
+
+exec aerospace move-node-to-workspace "$workspace_prefix-$workspace_number"

@@ -70,31 +70,37 @@ for DISPLAY in 1 2 3; do
   done
 done
 
-# Separator between workspaces and current application
-sketchybar --add item app_separator left \
-           --set app_separator \
-             icon="❯" \
-             icon.color=$CYAN \
-             icon.padding_left=8 \
-             icon.padding_right=4 \
-             label.drawing=off
+# Huidige app uitsluitend op het scherm waarop de focus staat.
+sketchybar --add event aerospace_focus_change
 
-# Currently focused application
-sketchybar --add item front_app left \
-           --subscribe front_app front_app_switched \
-           --set front_app \
-             icon.font="sketchybar-app-font:Regular:16.0" \
-             icon.color=$BACKGROUND \
-             icon.padding_left=8 \
-             icon.padding_right=6 \
-             label.color=$BACKGROUND \
-             label.padding_right=10 \
-             label.max_chars=24 \
-             background.color=$CYAN \
-             background.height=24 \
-             background.corner_radius=7 \
-             background.drawing=on \
-             script="$CONFIG_DIR/plugins/front_app.sh"
+for DISPLAY in 1 2 3; do
+  sketchybar --add item "app_separator.$DISPLAY" left \
+             --set "app_separator.$DISPLAY" \
+               display=$DISPLAY \
+               icon="❯" \
+               icon.color=$CYAN \
+               icon.padding_left=8 \
+               icon.padding_right=4 \
+               label.drawing=off \
+               drawing=off
+
+  sketchybar --add item "front_app.$DISPLAY" left \
+             --subscribe "front_app.$DISPLAY" front_app_switched aerospace_focus_change \
+             --set "front_app.$DISPLAY" \
+               display=$DISPLAY \
+               icon.font="sketchybar-app-font:Regular:16.0" \
+               icon.color=$BACKGROUND \
+               icon.padding_left=8 \
+               icon.padding_right=6 \
+               label.color=$BACKGROUND \
+               label.padding_right=10 \
+               label.max_chars=24 \
+               background.color=$CYAN \
+               background.height=24 \
+               background.corner_radius=7 \
+               drawing=off \
+               script="$CONFIG_DIR/plugins/front_app.sh $DISPLAY"
+done
 
 # Date and time
 sketchybar --add item clock right \

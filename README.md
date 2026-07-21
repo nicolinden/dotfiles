@@ -41,10 +41,23 @@ wordt geladen.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
 - Bij twee schermen heeft elk scherm zijn eigen workspace-reeks `1` t/m `6`.
-  `⌥1`–`⌥6` opent de reeks op het hoofdscherm; `⌃⌥1`–`⌃⌥6` opent dezelfde
-  nummers op het tweede scherm. Verplaats een app met `⌥⇧1`–`⌥⇧6` naar het
-  hoofdscherm of met `⌃⌥⇧1`–`⌃⌥⇧6` naar het tweede scherm. De standaard
-  appindeling komt op het hoofdscherm terecht.
+  Focus eerst het gewenste scherm met `⌥.` en kies daarna `⌥1`–`⌥6`. Verplaats
+  de gefocuste app naar het gekozen nummer op het actieve scherm met
+  `⌥⇧1`–`⌥⇧6`; `⌥⇧.` verplaatst een app naar het andere scherm en volgt hem.
+  De standaard appindeling komt op het hoofdscherm terecht. SketchyBar toont
+  de actieve app uitsluitend op het scherm dat op dat moment focus heeft.
+
+  | Toets | Actie |
+  | --- | --- |
+  | `⌥H/J/K/L` | Focus venster links/onder/boven/rechts |
+  | `⌥⇧H/J/K/L` | Verplaats venster links/onder/boven/rechts |
+  | `⌥.` | Focus volgend scherm |
+  | `⌥⇧.` | Verplaats app naar volgend scherm en volg hem |
+  | `⌥1`–`⌥6` | Open workspace 1–6 op het gefocuste scherm |
+  | `⌥⇧1`–`⌥⇧6` | Verplaats app naar workspace 1–6 op het gefocuste scherm |
+  | `⌥M` | Maximaliseer/herstel venster |
+  | `⌥⇧Spatie` | Toggle floating/tiling |
+  | `⌥⇧M` | Toon/verberg SketchyBar en de native menubalk |
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
   iedere volgende login automatisch terug en wordt op alle aangesloten
   schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk

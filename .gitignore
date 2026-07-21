@@ -1,4 +1,7 @@
 .DS_Store
 *.local
+!macos/.local/
+!macos/.local/bin/
+!macos/.local/bin/*
 .env
 .env.*
