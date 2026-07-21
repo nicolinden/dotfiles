@@ -131,7 +131,7 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   # SketchyBar vervangt de native menubalk. Verberg die daarom consequent op
   # alle schermen; SystemUIServer leest deze voorkeur direct opnieuw in.
   defaults write -g _HIHideMenuBar -bool true
-  defaults write -g AppleMenuBarVisibleInFullscreen -bool false
+  defaults write -g AppleMenuBarVisibleInFullscreen -bool true
   killall SystemUIServer 2>/dev/null || true
 
   # AeroSpace registreert `start-at-login` pas nadat de app minstens één keer
