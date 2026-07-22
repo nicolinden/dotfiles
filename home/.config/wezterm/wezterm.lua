@@ -13,6 +13,19 @@ config.enable_tab_bar = true
 config.hide_tab_bar_if_only_one_tab = true
 config.use_fancy_tab_bar = false
 
+config.keys = {
+	{
+		key = "LeftArrow",
+		mods = "OPT",
+		action = wezterm.action.SendString("\x1bb"),
+	},
+	{
+		key = "RightArrow",
+		mods = "OPT",
+		action = wezterm.action.SendString("\x1bf"),
+	},
+}
+
 -- my coolnight colorscheme:
 config.colors = {
 	foreground = "#CBE0F0",
