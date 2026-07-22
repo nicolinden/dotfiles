@@ -21,6 +21,7 @@ brew "tree"
 brew "sketchybar"
 brew "gh"
 brew "borders"
+brew "lazydocker"
 
 # Fonts
 cask "font-sketchybar-app-font"
@@ -29,6 +30,7 @@ cask "font-sketchybar-app-font"
 cask "wezterm"
 cask "visual-studio-code"
 cask "bruno"
+cask "android-platform-tools"
 
 # macOS productivity
 cask "nikitabobko/tap/aerospace"
