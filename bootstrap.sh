@@ -148,6 +148,12 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     brew services restart felixkratz/formulae/sketchybar
   fi
 
+  # Borders is a separate user service so it remains active after AeroSpace
+  # restarts and is automatically restored at the next login.
+  if command -v brew >/dev/null 2>&1 && brew list borders >/dev/null 2>&1; then
+    brew services restart borders
+  fi
+
   echo
   read -r -p "Mac App Store-apps nu installeren? [y/N] " install_mac_apps
   case "${install_mac_apps:-}" in

@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+
+# Only the focused window receives a visible focus indicator.
+borders style=round width=5.0 hidpi=on ax_focus=on \
+  active_color=0xffffc857 inactive_color=0x00000000

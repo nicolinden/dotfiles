@@ -102,6 +102,18 @@ en de algemene dotfiles. De macOS-configuratie wordt daar niet gekoppeld.
 
 ## Dagelijks onderhoud
 
+Na een `git pull` hoef je bootstrap niet opnieuw te draaien. Pas de nieuwe
+configuratie direct toe met:
+
+```bash
+./reload.sh
+```
+
+Dit koppelt de Stow-pakketten opnieuw, herlaadt AeroSpace, SketchyBar en de
+vensterborder, en leest de tmux-configuratie opnieuw in. Open alleen een nieuw
+terminalvenster wanneer `.zshrc` is gewijzigd. Draai `bootstrap.sh` uitsluitend
+op een nieuwe Mac of nadat je de `Brewfile` hebt aangepast.
+
 Werk alle macOS Homebrew-pakketten en casks bij met:
 
 ```bash
@@ -121,6 +133,7 @@ Brewfile       Homebrew-formules, taps en macOS-apps
 Brewfile.mas   Persoonlijke Mac App Store-apps
 Brewfile.office.mas  Apple iWork- en Microsoft Office-apps
 bootstrap.sh   Installatie voor macOS en Ubuntu
+reload.sh      Pas configuratiewijzigingen toe na git pull
 update.sh      Homebrew-updates voor macOS
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
