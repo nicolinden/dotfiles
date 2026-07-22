@@ -80,6 +80,13 @@ for display in 1 2 3; do
     fi
 
     workspace="$prefix-$number"
+
+    # Het hoofdscherm heeft zes workspaces; een secundair scherm heeft er drie.
+    if [[ "$prefix" == "side" && "$number" -gt 3 ]]; then
+      SKETCHYBAR_ARGS+=(--set "$item" drawing=off)
+      continue
+    fi
+
     state="$(workspace_state "$workspace")"
     visible="${state%%|*}"
     focused="${state##*|}"

@@ -18,4 +18,8 @@ else
   workspace_prefix="side"
 fi
 
+if [[ "$workspace_prefix" == "side" && "$workspace_number" -gt 3 ]]; then
+  exit 0
+fi
+
 exec aerospace move-node-to-workspace "$workspace_prefix-$workspace_number"
