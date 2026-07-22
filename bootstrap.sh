@@ -128,12 +128,6 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   echo "macOS-dotfiles koppelen..."
   stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose macos
 
-  # SketchyBar vervangt de native menubalk. Verberg die daarom consequent op
-  # alle schermen; SystemUIServer leest deze voorkeur direct opnieuw in.
-  defaults write -g _HIHideMenuBar -bool true
-  defaults write -g AppleMenuBarVisibleInFullscreen -bool true
-  killall SystemUIServer 2>/dev/null || true
-
   # AeroSpace registreert `start-at-login` pas nadat de app minstens één keer
   # heeft gedraaid. Start hem daarom na het koppelen van de configuratie.
   if [[ -d "$HOME/Applications/AeroSpace.app" ]]; then
