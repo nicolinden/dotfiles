@@ -5,9 +5,9 @@ config-version = 2
 start-at-login = true
 
 # Start JankyBorders together with AeroSpace.
-# Active windows get a clear blue border; inactive borders remain subtle.
+# Only the active window gets a clear cyan border.
 after-startup-command = [
-  'exec-and-forget /opt/homebrew/bin/borders style=round width=4.0 hidpi=on active_color=0xff7aa2f7 inactive_color=0x553b4261',
+  'exec-and-forget /opt/homebrew/bin/borders style=round width=5.0 hidpi=on ax_focus=on active_color=0xffffc857 inactive_color=0x00000000',
 ]
 
 # Apply changes whenever this file is saved
