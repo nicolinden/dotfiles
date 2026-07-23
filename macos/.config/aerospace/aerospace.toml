@@ -125,8 +125,8 @@ alt-rightSquareBracket = "focus dfs-next"
 # Temporarily maximize the focused window; press again to restore
 alt-m = "fullscreen --no-outer-gaps"
 
-# Toggle SketchyBar to access the native macOS menu bar when needed
-alt-shift-m = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/toggle-sketchybar-menu'"
+# Toggle SketchyBar to access the native macOS menu bar when needed.
+ctrl-alt-space = "exec-and-forget /bin/bash -lc '$HOME/.local/bin/toggle-sketchybar-menu'"
 
 # Let an exceptional window float, or return it to tiling
 alt-shift-space = "layout floating tiling"
