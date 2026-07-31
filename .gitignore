@@ -1,5 +1,8 @@
 .DS_Store
 *.local
+!home/.local/
+!home/.local/bin/
+!home/.local/bin/*
 !macos/.local/
 !macos/.local/bin/
 !macos/.local/bin/*

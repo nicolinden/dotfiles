@@ -126,6 +126,12 @@ Open het centrale menu voor installeren, verwijderen, updaten of herladen met:
 ./setup.sh
 ```
 
+Op Ubuntu kun je dit na de installatie ook vanuit elke map openen met:
+
+```bash
+dotfiles
+```
+
 De update-optie werkt alle geïnstalleerde Homebrew-apps en -tools bij, probeert
 updates uit de Mac App Store en voert daarna altijd een configuratie-reload uit.
 
