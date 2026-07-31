@@ -3,6 +3,9 @@
 # Small Docker container manager for machines where Docker is already installed.
 set -euo pipefail
 
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DOTFILES_DIR/menu-ui.sh"
+
 if ! command -v docker >/dev/null 2>&1; then
   echo "Docker is not installed."
   exit 1
@@ -16,9 +19,7 @@ fi
 while true; do
   mapfile -t containers < <(docker ps --all --format '{{.ID}}|{{.Names}}|{{.Status}}|{{.Image}}')
 
-  echo
-  echo "Docker container manager"
-  echo
+  print_menu_header "Docker container manager"
 
   if [[ ${#containers[@]} -eq 0 ]]; then
     echo "No containers found."
@@ -40,6 +41,7 @@ while true; do
     i|I)
       echo
       docker image ls
+      wait_for_menu_return
       continue
       ;;
   esac
@@ -59,6 +61,9 @@ while true; do
     echo "  3) Restart"
     echo "  4) Show last 200 log lines"
     echo "  5) Follow logs (press Ctrl-C to return)"
+    if command -v lazydocker >/dev/null 2>&1; then
+      echo "  6) Open LazyDocker"
+    fi
     echo "  b) Back"
     echo
     read -r -p "Choose an action: " action
@@ -68,9 +73,23 @@ while true; do
       2) docker stop "$id" ;;
       3) docker restart "$id" ;;
       4) docker logs --tail 200 "$id" ;;
-      5) docker logs --tail 200 --follow "$id" ;;
+      5)
+        # Ctrl-C deliberately stops only `docker logs`; return to this menu.
+        docker logs --tail 200 --follow "$id" || true
+        ;;
+      6)
+        if command -v lazydocker >/dev/null 2>&1; then
+          lazydocker
+        else
+          echo "LazyDocker is not installed. Choose core tooling reinstall to install it."
+        fi
+        ;;
       b|B|"") break ;;
       *) echo "Invalid choice." ;;
     esac
+
+    if [[ "$action" != "b" && "$action" != "B" && -n "$action" ]]; then
+      wait_for_menu_return
+    fi
   done
 done

@@ -107,6 +107,11 @@ de optie **Manage Docker containers**. Daarmee kun je containers starten,
 stoppen, herstarten en logs bekijken; lokale images zijn vanuit hetzelfde menu
 op te vragen.
 
+Kies **Install optional Ubuntu tools** in hetzelfde menu om aanvullende tools
+te kiezen: GitHub CLI, `jq`, `tree`, `btop`, `htop`, `ncdu` en de actuele
+stabiele Neovim-release. Dit zijn bewuste optionele keuzes; Docker zelf wordt
+niet automatisch op een server geïnstalleerd.
+
 ## Dagelijks onderhoud
 
 Na een `git pull` hoef je bootstrap niet opnieuw te draaien. Pas alleen de
@@ -132,8 +137,20 @@ Op Ubuntu kun je dit na de installatie ook vanuit elke map openen met:
 dotfiles
 ```
 
+Het hoofdmenu blijft bewust klein: **(Re)install and apply configuration**
+herstelt de basissoftware en past Stow opnieuw toe; **Manage apps** of
+**Manage optional tools** bevat de installaties; **Update** werkt software bij;
+en **Diagnostics** bevat de health check en logweergave.
+Elke actie die software installeert, bijwerkt, Stow opnieuw toepast of het
+systeem herstart, toont eerst een korte beschrijving en vraagt om bevestiging.
+
 De update-optie werkt alle geïnstalleerde Homebrew-apps en -tools bij, probeert
 updates uit de Mac App Store en voert daarna altijd een configuratie-reload uit.
+Gebruik op macOS **Update managed Homebrew packages only** als je uitsluitend
+de al geïnstalleerde pakketten uit jouw drie Brewfiles wilt bijwerken.
+
+Kies **Run health check** in het centrale menu om zonder wijzigingen te zien of
+de kernonderdelen, services en Stow-configuratie beschikbaar zijn.
 
 Controleer de basisinstallatie eventueel handmatig met:
 
@@ -154,12 +171,19 @@ Brewfile.mas   Persoonlijke Mac App Store-apps
 Brewfile.office.mas  Apple iWork- en Microsoft Office-apps
 bootstrap.sh   Installatie voor macOS en Ubuntu
 setup.sh       Centrale manager voor installatie, verwijderen en updates
+menu-ui.sh     Gedeelde ASCII-header en schermnavigatie voor menu's
 docker-manager.sh  Interactief beheer van Docker-containers op Ubuntu
 reload.sh      Pas configuratiewijzigingen toe na git pull
 update.sh      Homebrew-updates voor macOS
+update-managed-brew.sh  Update alleen geïnstalleerde Brewfile-pakketten
+update-menu.sh  Keuze tussen volledige en beheerde macOS-updates
+health-check.sh  Leesbare controle van de installatie zonder wijzigingen
+diagnostics.sh  Health check, service-status en logweergave
 install-apps.sh  Interactief keuzemenu voor app-profielen
+install-linux-apps.sh  Interactief keuzemenu voor optionele Ubuntu-tools
 uninstall-apps.sh  Interactief menu voor het verwijderen van optionele apps
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
+system-apps.conf  Gedeelde lijst van macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
 office-installer.sh  Losse installatie van Office-apps uit de App Store
 home/          Gedeelde shell-, terminal- en editorconfiguratie

@@ -4,12 +4,6 @@ config-version = 2
 # Start automatically when logging into macOS
 start-at-login = true
 
-# Start JankyBorders together with AeroSpace.
-# Only the active window gets a clear cyan border.
-after-startup-command = [
-  'exec-and-forget /opt/homebrew/bin/borders',
-]
-
 # Apply changes whenever this file is saved
 auto-reload-config = true
 

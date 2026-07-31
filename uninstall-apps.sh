@@ -4,6 +4,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DOTFILES_DIR/menu-ui.sh"
 
 configure_homebrew_for_current_shell() {
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
@@ -67,8 +68,7 @@ if (( ${#entries[@]} == 0 )); then
   exit 0
 fi
 
-echo "Installed optional apps"
-echo
+print_menu_header "Remove optional macOS apps"
 for index in "${!entries[@]}"; do
   IFS='|' read -r kind _id label <<< "${entries[$index]}"
   printf '  %d) %-8s %s\n' "$((index + 1))" "$kind" "$label"

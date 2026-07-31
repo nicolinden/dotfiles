@@ -2,16 +2,12 @@
 
 set -euo pipefail
 
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DOTFILES_DIR/menu-ui.sh"
+source "$DOTFILES_DIR/system-apps.conf"
+
 # Voeg hier apps toe die systeemcomponenten installeren of sudo nodig hebben.
 # Houd de volgorde van SYSTEM_CASKS en SYSTEM_LABELS gelijk.
-SYSTEM_CASKS=(
-  "docker-desktop"
-)
-
-SYSTEM_LABELS=(
-  "Docker Desktop — containerplatform met privileged helpers"
-)
-
 configure_homebrew_for_current_shell() {
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -44,8 +40,7 @@ if ! command -v brew >/dev/null 2>&1; then
   configure_homebrew_for_current_shell
 fi
 
-echo "Optionele systeemapps"
-echo
+print_menu_header "Optional macOS system apps"
 
 for index in "${!SYSTEM_CASKS[@]}"; do
   printf '  %d) %s\n' "$((index + 1))" "${SYSTEM_LABELS[$index]}"
@@ -79,6 +74,18 @@ for choice in "${selected[@]}"; do
     exit 1
   fi
 done
+
+echo
+echo "This will install or update:"
+for choice in "${selected[@]}"; do
+  index=$((choice - 1))
+  printf '  - %s\n' "${SYSTEM_LABELS[$index]}"
+done
+
+if ! confirm_action "Continue with system app installation?"; then
+  echo "Cancelled."
+  exit 0
+fi
 
 start_sudo_keepalive
 

@@ -3,6 +3,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DOTFILES_DIR/menu-ui.sh"
 
 configure_homebrew_for_current_shell() {
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
@@ -38,6 +39,15 @@ if ! command -v mas >/dev/null 2>&1; then
   exit 1
 fi
 
+print_menu_header "Mac App Store apps"
+echo "This will install or update:"
+show_mas_plan "$DOTFILES_DIR/Brewfile.mas"
+if ! confirm_action "Install these Mac App Store apps?"; then
+  echo "Cancelled."
+  exit 0
+fi
+
+echo
 echo "Mac App Store-apps installeren..."
 echo "Zorg dat je in de Mac App Store bent ingelogd."
 start_sudo_keepalive

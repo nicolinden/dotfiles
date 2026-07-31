@@ -3,6 +3,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DOTFILES_DIR/menu-ui.sh"
 
 configure_homebrew_for_current_shell() {
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
@@ -38,6 +39,15 @@ if ! command -v mas >/dev/null 2>&1; then
   exit 1
 fi
 
+print_menu_header "Office and iWork"
+echo "This will install or update:"
+show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
+if ! confirm_action "Install Office and iWork apps?"; then
+  echo "Cancelled."
+  exit 0
+fi
+
+echo
 echo "Office-apps uit de Mac App Store installeren..."
 start_sudo_keepalive
 if ! caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.office.mas"; then
