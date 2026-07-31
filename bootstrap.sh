@@ -39,6 +39,35 @@ configure_homebrew_for_current_shell() {
   fi
 }
 
+install_lazygit() {
+  local architecture lazygit_version temp_dir archive
+
+  case "$(uname -m)" in
+    x86_64) architecture="x86_64" ;;
+    aarch64|arm64) architecture="arm64" ;;
+    *)
+      echo "LazyGit architecture is not supported: $(uname -m)"
+      return 1
+      ;;
+  esac
+
+  lazygit_version="$(curl -fsSL https://api.github.com/repos/jesseduffield/lazygit/releases/latest | sed -nE 's/.*"tag_name": "v?([^"]+)".*/\1/p' | head -n 1)"
+  if [[ -z "$lazygit_version" ]]; then
+    echo "Could not determine the latest LazyGit version."
+    return 1
+  fi
+
+  temp_dir="$(mktemp -d)"
+  archive="lazygit_${lazygit_version}_Linux_${architecture}.tar.gz"
+
+  echo "LazyGit installeren..."
+  curl -fL "https://github.com/jesseduffield/lazygit/releases/download/v${lazygit_version}/${archive}" \
+    -o "$temp_dir/$archive"
+  tar -xzf "$temp_dir/$archive" -C "$temp_dir" lazygit
+  install -m 0755 "$temp_dir/lazygit" "$HOME/.local/bin/lazygit"
+  rm -rf "$temp_dir"
+}
+
 case "$(uname -s)" in
   Darwin)
     # Een bestaande Homebrew-installatie kan na een verse login nog ontbreken
@@ -91,7 +120,6 @@ case "$(uname -s)" in
       curl \
       fzf \
       git \
-      lazygit \
       ripgrep \
       stow \
       tmux \
@@ -100,6 +128,13 @@ case "$(uname -s)" in
       zsh-syntax-highlighting
 
     mkdir -p "$HOME/.local/bin"
+
+    if ! command -v lazygit >/dev/null 2>&1 &&
+       [[ ! -x "$HOME/.local/bin/lazygit" ]]; then
+      install_lazygit
+    else
+      echo "LazyGit is al geïnstalleerd."
+    fi
 
     if ! command -v starship >/dev/null 2>&1 &&
        [[ ! -x "$HOME/.local/bin/starship" ]]; then
