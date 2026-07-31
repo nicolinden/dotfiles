@@ -28,6 +28,10 @@ confirm_action() {
   local prompt="${1:-Continue?}"
   local answer
 
+  if [[ "${DOTFILES_ASSUME_YES:-}" == "1" ]]; then
+    return 0
+  fi
+
   echo
   read -r -p "$prompt [y/N] " answer
   [[ "$answer" =~ ^([yY]|[yY][eE][sS])$ ]]

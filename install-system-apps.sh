@@ -42,30 +42,37 @@ fi
 
 print_menu_header "Optional macOS system apps"
 
-for index in "${!SYSTEM_CASKS[@]}"; do
-  printf '  %d) %s\n' "$((index + 1))" "${SYSTEM_LABELS[$index]}"
-done
+if [[ "${DOTFILES_INSTALL_ALL:-}" == "1" ]]; then
+  selected=()
+  for index in "${!SYSTEM_CASKS[@]}"; do
+    selected+=("$((index + 1))")
+  done
+else
+  for index in "${!SYSTEM_CASKS[@]}"; do
+    printf '  %d) %s\n' "$((index + 1))" "${SYSTEM_LABELS[$index]}"
+  done
 
-echo "  a) Alles installeren"
-echo "  q) Stoppen"
-echo
-read -r -p "Kies nummers (bijvoorbeeld 1 2), a of q: " selection
+  echo "  a) Alles installeren"
+  echo "  q) Stoppen"
+  echo
+  read -r -p "Kies nummers (bijvoorbeeld 1 2), a of q: " selection
 
-case "$selection" in
-  q|Q|"")
-    echo "Geen systeemapps geïnstalleerd."
-    exit 0
-    ;;
-  a|A)
-    selected=()
-    for index in "${!SYSTEM_CASKS[@]}"; do
-      selected+=("$((index + 1))")
-    done
-    ;;
-  *)
-    IFS=', ' read -r -a selected <<< "$selection"
-    ;;
-esac
+  case "$selection" in
+    q|Q|"")
+      echo "Geen systeemapps geïnstalleerd."
+      exit 0
+      ;;
+    a|A)
+      selected=()
+      for index in "${!SYSTEM_CASKS[@]}"; do
+        selected+=("$((index + 1))")
+      done
+      ;;
+    *)
+      IFS=', ' read -r -a selected <<< "$selection"
+      ;;
+  esac
+fi
 
 for choice in "${selected[@]}"; do
   if ! [[ "$choice" =~ ^[0-9]+$ ]] ||

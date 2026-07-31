@@ -34,6 +34,38 @@ install_brewfile() {
     caffeinate -i brew bundle install --file="$DOTFILES_DIR/$file"
 }
 
+install_all_optional_apps() {
+  print_menu_header "Confirm all optional macOS apps"
+  echo "This will install or update every optional app profile:"
+  echo
+  echo "Development:"
+  show_brewfile_plan "$DOTFILES_DIR/Brewfile.dev"
+  echo "Personal:"
+  show_brewfile_plan "$DOTFILES_DIR/Brewfile.personal"
+  echo "Personal Mac App Store apps:"
+  show_mas_plan "$DOTFILES_DIR/Brewfile.mas"
+  echo "Office and iWork:"
+  show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
+  echo "System apps:"
+  for label in "${SYSTEM_LABELS[@]}"; do
+    printf '  - %s\n' "$label"
+  done
+
+  if ! confirm_action "Install all optional apps?"; then
+    echo "Cancelled."
+    return "$MENU_CANCELLED"
+  fi
+
+  export DOTFILES_ASSUME_YES=1
+  export DOTFILES_INSTALL_ALL=1
+
+  install_brewfile "Brewfile.dev" "development apps"
+  install_brewfile "Brewfile.personal" "personal apps"
+  "$DOTFILES_DIR/install-mac-apps.sh"
+  "$DOTFILES_DIR/office-installer.sh"
+  "$DOTFILES_DIR/install-system-apps.sh"
+}
+
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "This script is for macOS only."
   exit 1
@@ -50,36 +82,86 @@ fi
 
 mkdir -p "$HOME/Applications"
 
-print_menu_header "Optional macOS app profiles"
-echo "  1) Development apps"
-echo "  2) Personal apps"
-echo "  3) Personal Mac App Store apps"
-echo "  4) Office and iWork"
-echo "  5) System apps"
-echo "  6) Remove optional apps"
-echo "  b) Back"
-echo
-read -r -p "Choose an option: " selection
+while true; do
+  print_menu_header "Optional macOS app profiles"
+  echo "  1) Development apps"
+  echo "  2) Personal apps"
+  echo "  3) Personal Mac App Store apps"
+  echo "  4) Office and iWork"
+  echo "  5) System apps"
+  echo "  6) Remove optional apps"
+  echo "  a) Install all optional apps"
+  echo "  b) Back"
+  echo
+  read -r -p "Choose an option: " selection
 
-case "$selection" in
-  1)
-    if install_brewfile "Brewfile.dev" "development apps"; then :; else exit "$?"; fi
-    ;;
-  2)
-    if install_brewfile "Brewfile.personal" "personal apps"; then :; else exit "$?"; fi
-    ;;
-  3)
-    if "$DOTFILES_DIR/install-mac-apps.sh"; then :; else exit "$?"; fi
-    ;;
-  4)
-    if "$DOTFILES_DIR/office-installer.sh"; then :; else exit "$?"; fi
-    ;;
-  5)
-    if "$DOTFILES_DIR/install-system-apps.sh"; then :; else exit "$?"; fi
-    ;;
-  6) "$DOTFILES_DIR/uninstall-apps.sh" ;;
-  b|B|"") exit 0 ;;
-  *) echo "Invalid choice." ;;
-esac
-
-wait_for_menu_return
+  case "$selection" in
+    1)
+      if install_brewfile "Brewfile.dev" "development apps"; then
+        wait_for_menu_return
+        exit 0
+      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
+        continue
+      else
+        exit "$?"
+      fi
+      ;;
+    2)
+      if install_brewfile "Brewfile.personal" "personal apps"; then
+        wait_for_menu_return
+        exit 0
+      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
+        continue
+      else
+        exit "$?"
+      fi
+      ;;
+    3)
+      if "$DOTFILES_DIR/install-mac-apps.sh"; then
+        wait_for_menu_return
+        exit 0
+      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
+        continue
+      else
+        exit "$?"
+      fi
+      ;;
+    4)
+      if "$DOTFILES_DIR/office-installer.sh"; then
+        wait_for_menu_return
+        exit 0
+      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
+        continue
+      else
+        exit "$?"
+      fi
+      ;;
+    5)
+      if "$DOTFILES_DIR/install-system-apps.sh"; then
+        wait_for_menu_return
+        exit 0
+      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
+        continue
+      else
+        exit "$?"
+      fi
+      ;;
+    6)
+      "$DOTFILES_DIR/uninstall-apps.sh"
+      wait_for_menu_return
+      exit 0
+      ;;
+    a|A)
+      if install_all_optional_apps; then
+        wait_for_menu_return
+        exit 0
+      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
+        continue
+      else
+        exit "$?"
+      fi
+      ;;
+    b|B|"") exit 0 ;;
+    *) echo "Invalid choice."; wait_for_menu_return ;;
+  esac
+done
