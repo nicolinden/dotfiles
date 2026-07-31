@@ -99,6 +99,9 @@ case "$(uname -s)" in
       echo "  2) Update and upgrade Ubuntu packages, then reapply dotfiles"
       echo "  3) Reapply dotfiles only"
       echo "  4) Restart Ubuntu"
+      if command -v docker >/dev/null 2>&1; then
+        echo "  5) Manage Docker containers"
+      fi
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -108,6 +111,13 @@ case "$(uname -s)" in
         2) run_linux_update ;;
         3) stow --restow --dir="$DOTFILES_DIR" --target="$HOME" home ;;
         4) restart_linux_system ;;
+        5)
+          if command -v docker >/dev/null 2>&1; then
+            "$DOTFILES_DIR/docker-manager.sh"
+          else
+            echo "Docker is not installed."
+          fi
+          ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;
       esac

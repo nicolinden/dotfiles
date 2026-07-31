@@ -100,6 +100,12 @@ bewust handmatige systeemapps kunnen nog wel een systeemdialoog tonen.
 
 Op Ubuntu installeert hetzelfde script de basispakketten, Starship, Oh My Zsh
 en de algemene dotfiles. De macOS-configuratie wordt daar niet gekoppeld.
+LazyGit en LazyDocker worden daarbij ook geïnstalleerd.
+
+Wanneer Docker al op de Ubuntu-machine aanwezig is, verschijnt in `./setup.sh`
+de optie **Manage Docker containers**. Daarmee kun je containers starten,
+stoppen, herstarten en logs bekijken; lokale images zijn vanuit hetzelfde menu
+op te vragen.
 
 ## Dagelijks onderhoud
 
@@ -142,6 +148,7 @@ Brewfile.mas   Persoonlijke Mac App Store-apps
 Brewfile.office.mas  Apple iWork- en Microsoft Office-apps
 bootstrap.sh   Installatie voor macOS en Ubuntu
 setup.sh       Centrale manager voor installatie, verwijderen en updates
+docker-manager.sh  Interactief beheer van Docker-containers op Ubuntu
 reload.sh      Pas configuratiewijzigingen toe na git pull
 update.sh      Homebrew-updates voor macOS
 install-apps.sh  Interactief keuzemenu voor app-profielen

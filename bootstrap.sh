@@ -91,6 +91,7 @@ case "$(uname -s)" in
       curl \
       fzf \
       git \
+      lazygit \
       ripgrep \
       stow \
       tmux \
@@ -107,6 +108,15 @@ case "$(uname -s)" in
         sh -s -- --yes --bin-dir "$HOME/.local/bin"
     else
       echo "Starship is al geïnstalleerd."
+    fi
+
+    if ! command -v lazydocker >/dev/null 2>&1 &&
+       [[ ! -x "$HOME/.local/bin/lazydocker" ]]; then
+      echo "LazyDocker installeren..."
+      curl -fsSL https://raw.githubusercontent.com/jesseduffield/lazydocker/master/scripts/install_update_linux.sh |
+        bash
+    else
+      echo "LazyDocker is al geïnstalleerd."
     fi
 
     if ! command -v nvim >/dev/null 2>&1; then
