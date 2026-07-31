@@ -26,11 +26,26 @@ linux_core_ready() {
 }
 
 run_linux_update() {
-  echo "Updating Ubuntu packages..."
+  echo "Updating and upgrading Ubuntu packages..."
   sudo apt-get update
   sudo apt-get upgrade -y
   stow --restow --dir="$DOTFILES_DIR" --target="$HOME" home
   echo "Ubuntu packages and dotfiles are up to date."
+}
+
+restart_linux_system() {
+  echo
+  echo "This will immediately restart Ubuntu and close all open applications."
+  read -r -p "Restart now? [y/N] " confirm
+
+  case "$confirm" in
+    y|Y|yes|YES)
+      sudo systemctl reboot
+      ;;
+    *)
+      echo "Restart cancelled."
+      ;;
+  esac
 }
 
 case "$(uname -s)" in
@@ -76,10 +91,14 @@ case "$(uname -s)" in
     while true; do
       echo
       echo "Ubuntu dotfiles manager"
+      if [[ -f /var/run/reboot-required ]]; then
+        echo "System restart required after installed updates."
+      fi
       echo
       echo "  1) Install or reinstall core tooling"
-      echo "  2) Update installed packages and reapply dotfiles"
+      echo "  2) Update and upgrade Ubuntu packages, then reapply dotfiles"
       echo "  3) Reapply dotfiles only"
+      echo "  4) Restart Ubuntu"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -88,6 +107,7 @@ case "$(uname -s)" in
         1) "$DOTFILES_DIR/bootstrap.sh" --core-only ;;
         2) run_linux_update ;;
         3) stow --restow --dir="$DOTFILES_DIR" --target="$HOME" home ;;
+        4) restart_linux_system ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;
       esac
