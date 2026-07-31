@@ -5,6 +5,18 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+configure_homebrew_for_current_shell() {
+  if [[ -x "/opt/homebrew/bin/brew" ]]; then
+    eval "$(/opt/homebrew/bin/brew shellenv)"
+  elif [[ -x "/usr/local/bin/brew" ]]; then
+    eval "$(/usr/local/bin/brew shellenv)"
+  fi
+}
+
+if [[ "$(uname -s)" == "Darwin" ]]; then
+  configure_homebrew_for_current_shell
+fi
+
 echo "Dotfiles opnieuw koppelen..."
 stow --restow --dir="$DOTFILES_DIR" --target="$HOME" home
 

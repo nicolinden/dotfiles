@@ -1,0 +1,10 @@
+# Development tools and apps
+
+brew "lazydocker"
+brew "lazygit"
+
+cask "android-platform-tools"
+cask "bruno"
+cask "fork"
+cask "visual-studio-code"
+cask "wezterm"

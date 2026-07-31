@@ -3,6 +3,16 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+CORE_ONLY=false
+
+case "${1:-}" in
+  "") ;;
+  --core-only) CORE_ONLY=true ;;
+  *)
+    echo "Usage: ./bootstrap.sh [--core-only]"
+    exit 1
+    ;;
+esac
 
 start_sudo_keepalive() {
   # Vraag eenmaal om het beheerderswachtwoord. De keepalive voorkomt verdere
@@ -148,18 +158,20 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     brew services restart borders
   fi
 
-  echo
-  read -r -p "Mac App Store-apps nu installeren? [y/N] " install_mac_apps
-  case "${install_mac_apps:-}" in
-    y|Y|yes|YES|Yes)
-      if ! "$DOTFILES_DIR/install-mac-apps.sh"; then
-        echo "Mac App Store-apps zijn niet volledig geïnstalleerd; start ./install-mac-apps.sh later opnieuw."
-      fi
-      ;;
-    *)
-      echo "Mac App Store-apps overgeslagen. Start later ./install-mac-apps.sh."
-      ;;
-  esac
+  if [[ "$CORE_ONLY" != true ]]; then
+    echo
+    read -r -p "Optionele app-profielen nu kiezen? [y/N] " install_optional_apps
+    case "${install_optional_apps:-}" in
+      y|Y|yes|YES|Yes)
+        if ! "$DOTFILES_DIR/install-apps.sh"; then
+          echo "Niet alle gekozen app-profielen konden worden geïnstalleerd; start ./install-apps.sh later opnieuw."
+        fi
+        ;;
+      *)
+        echo "Optionele apps overgeslagen. Start later ./install-apps.sh."
+        ;;
+    esac
+  fi
 fi
 
 echo "Setup voltooid."

@@ -1,0 +1,14 @@
+# Personal workflow, communication and design apps
+
+cask "1password"
+cask "chatgpt"
+cask "daisydisk"
+cask "figma"
+cask "forklift"
+cask "google-chrome"
+cask "hazel"
+cask "homerow"
+cask "keka"
+cask "raindropio"
+cask "sketch"
+cask "whatsapp"

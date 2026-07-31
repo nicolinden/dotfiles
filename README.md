@@ -12,20 +12,19 @@ macOS-configuratie voor AeroSpace en SketchyBar.
    xcode-select --install
    ```
 
-2. Clone deze repository en start de bootstrap:
+2. Clone deze repository en start de manager:
 
    ```bash
    git clone https://github.com/nicolinden/dotfiles.git ~/dotfiles
    cd ~/dotfiles
-   ./bootstrap.sh
+   ./setup.sh
    ```
 
-Het script vraagt op macOS eenmaal om het beheerderswachtwoord. Als Homebrew
-nog niet aanwezig is, installeert het script dit met de officiële,
-non-interactive installer. Daarna worden alle formules, casks, Oh My Zsh en de
-symlinks geïnstalleerd. Aan het einde vraagt bootstrap of de Mac App
-Store-apps ook mogen worden geïnstalleerd. Tijdens lange downloads blijft de
-Mac wakker.
+Het script detecteert macOS of Ubuntu en kiest automatisch de juiste route.
+Ontbrekende basissoftware wordt geïnstalleerd: op macOS Homebrew, de core
+tools, window-management en Stow; op Ubuntu de equivalente apt-pakketten,
+Starship, Oh My Zsh en de gedeelde dotfiles. Daarna opent het een interactief
+menu. Tijdens lange downloads blijft de Mac wakker.
 
 Na afloop open je een nieuw terminalvenster zodat de nieuwe shellconfiguratie
 wordt geladen.
@@ -33,11 +32,13 @@ wordt geladen.
 ### Handmatige stappen na de installatie
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
-- Log vóór bootstrap in bij de Mac App Store. Kies aan het einde van bootstrap
-  `y` om PastePal, Goodnotes, Tailscale, Caffeinated, The Unarchiver en
-  Pixelmator Pro te installeren. Je kunt die stap ook los uitvoeren met
-  `./install-mac-apps.sh`. Voor betaalde apps, zoals Caffeinated en Pixelmator
-  Pro, moet de app eerst aan hetzelfde Apple-account zijn gekoppeld.
+- Kies in de manager voor optionele app-profielen. Het menu toont per profiel
+  hoeveel apps al zijn geïnstalleerd en biedt keuzes voor development,
+  persoonlijke apps, Mac App Store, Office/iWork en Docker. Hetzelfde menu
+  biedt ook een veilige verwijderlijst met alleen optionele apps en profielen.
+  Log vóór een App Store-keuze in bij de Mac App Store. Voor betaalde apps,
+  zoals Caffeinated en Pixelmator Pro, moet de app eerst aan hetzelfde
+  Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
 - Bij twee schermen heeft het hoofdscherm workspaces `1` t/m `6`; het tweede
@@ -67,7 +68,7 @@ wordt geladen.
   dubbele of versprongen balken ontstaan wanneer macOS die tijdelijk toont.
   Elke aangesloten monitor markeert daarbij zijn eigen zichtbare
   AeroSpace-workspace.
-  Druk `⌥⇧M` om SketchyBar tijdelijk te verbergen en de native menubalk te
+  Druk `⌃⌥Spatie` om SketchyBar tijdelijk te verbergen en de native menubalk te
   gebruiken; druk opnieuw om SketchyBar terug te zetten.
 - Installeer Docker Desktop desgewenst apart met:
 
@@ -90,7 +91,7 @@ wordt geladen.
   Een Microsoft 365-licentie of -account kan daarna nog nodig zijn om de
   Microsoft-apps te gebruiken.
 
-Apps uit de Brewfile komen in `~/Applications`, niet in de systeemmap
+Apps uit de Brewfiles komen in `~/Applications`, niet in de systeemmap
 `/Applications`. Daardoor hoeft Homebrew voor gewone GUI-apps niet om
 beheerdersrechten te vragen. Command Line Tools, macOS-permissies en de twee
 bewust handmatige systeemapps kunnen nog wel een systeemdialoog tonen.
@@ -102,8 +103,8 @@ en de algemene dotfiles. De macOS-configuratie wordt daar niet gekoppeld.
 
 ## Dagelijks onderhoud
 
-Na een `git pull` hoef je bootstrap niet opnieuw te draaien. Pas de nieuwe
-configuratie direct toe met:
+Na een `git pull` hoef je bootstrap niet opnieuw te draaien. Pas alleen de
+nieuwe configuratie direct toe met:
 
 ```bash
 ./reload.sh
@@ -111,30 +112,40 @@ configuratie direct toe met:
 
 Dit koppelt de Stow-pakketten opnieuw, herlaadt AeroSpace, SketchyBar en de
 vensterborder, en leest de tmux-configuratie opnieuw in. Open alleen een nieuw
-terminalvenster wanneer `.zshrc` is gewijzigd. Draai `bootstrap.sh` uitsluitend
-op een nieuwe Mac of nadat je de `Brewfile` hebt aangepast.
+terminalvenster wanneer `.zshrc` is gewijzigd.
 
-Werk alle macOS Homebrew-pakketten en casks bij met:
+Open het centrale menu voor installeren, verwijderen, updaten of herladen met:
 
 ```bash
-./update.sh
+./setup.sh
 ```
 
-Controleer of alles uit de Brewfile geïnstalleerd is met:
+De update-optie werkt alle geïnstalleerde Homebrew-apps en -tools bij, probeert
+updates uit de Mac App Store en voert daarna altijd een configuratie-reload uit.
+
+Controleer de basisinstallatie eventueel handmatig met:
 
 ```bash
 brew bundle check --file=Brewfile
 ```
 
+Start `./install-apps.sh` om aanvullende development-, persoonlijke, App Store-
+of Office-apps te kiezen.
+
 ## Structuur
 
 ```text
-Brewfile       Homebrew-formules, taps en macOS-apps
+Brewfile       Basisformules, taps en macOS-workflow
+Brewfile.dev   Optionele development-tools en -apps
+Brewfile.personal  Optionele persoonlijke apps
 Brewfile.mas   Persoonlijke Mac App Store-apps
 Brewfile.office.mas  Apple iWork- en Microsoft Office-apps
 bootstrap.sh   Installatie voor macOS en Ubuntu
+setup.sh       Centrale manager voor installatie, verwijderen en updates
 reload.sh      Pas configuratiewijzigingen toe na git pull
 update.sh      Homebrew-updates voor macOS
+install-apps.sh  Interactief keuzemenu voor app-profielen
+uninstall-apps.sh  Interactief menu voor het verwijderen van optionele apps
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
 office-installer.sh  Losse installatie van Office-apps uit de App Store
