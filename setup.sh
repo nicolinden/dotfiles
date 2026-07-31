@@ -99,9 +99,7 @@ case "$(uname -s)" in
       echo "  2) Update and upgrade Ubuntu packages, then reapply dotfiles"
       echo "  3) Reapply dotfiles only"
       echo "  4) Restart Ubuntu"
-      if command -v docker >/dev/null 2>&1; then
-        echo "  5) Manage Docker containers"
-      fi
+      echo "  5) Manage Docker containers"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
