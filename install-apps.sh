@@ -25,7 +25,7 @@ install_brewfile() {
 
   if ! confirm_action "Install $label?"; then
     echo "Cancelled."
-    return
+    return "$MENU_CANCELLED"
   fi
 
   echo
@@ -52,26 +52,31 @@ mkdir -p "$HOME/Applications"
 
 print_menu_header "Optional macOS app profiles"
 echo "  1) Development apps"
-printf '     %s\n' "$(brewfile_summary "$DOTFILES_DIR/Brewfile.dev")"
 echo "  2) Personal apps"
-printf '     %s\n' "$(brewfile_summary "$DOTFILES_DIR/Brewfile.personal")"
 echo "  3) Personal Mac App Store apps"
-printf '     %s\n' "$(mas_brewfile_summary "$DOTFILES_DIR/Brewfile.mas")"
 echo "  4) Office and iWork"
-printf '     %s\n' "$(mas_brewfile_summary "$DOTFILES_DIR/Brewfile.office.mas")"
 echo "  5) System apps"
-printf '     %s\n' "$(system_apps_summary)"
 echo "  6) Remove optional apps"
 echo "  b) Back"
 echo
 read -r -p "Choose an option: " selection
 
 case "$selection" in
-  1) install_brewfile "Brewfile.dev" "development apps" ;;
-  2) install_brewfile "Brewfile.personal" "personal apps" ;;
-  3) "$DOTFILES_DIR/install-mac-apps.sh" ;;
-  4) "$DOTFILES_DIR/office-installer.sh" ;;
-  5) "$DOTFILES_DIR/install-system-apps.sh" ;;
+  1)
+    if install_brewfile "Brewfile.dev" "development apps"; then :; else exit "$?"; fi
+    ;;
+  2)
+    if install_brewfile "Brewfile.personal" "personal apps"; then :; else exit "$?"; fi
+    ;;
+  3)
+    if "$DOTFILES_DIR/install-mac-apps.sh"; then :; else exit "$?"; fi
+    ;;
+  4)
+    if "$DOTFILES_DIR/office-installer.sh"; then :; else exit "$?"; fi
+    ;;
+  5)
+    if "$DOTFILES_DIR/install-system-apps.sh"; then :; else exit "$?"; fi
+    ;;
   6) "$DOTFILES_DIR/uninstall-apps.sh" ;;
   b|B|"") exit 0 ;;
   *) echo "Invalid choice." ;;

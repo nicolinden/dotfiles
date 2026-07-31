@@ -44,7 +44,7 @@ echo "This will install or update:"
 show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
 if ! confirm_action "Install Office and iWork apps?"; then
   echo "Cancelled."
-  exit 0
+  exit "$MENU_CANCELLED"
 fi
 
 echo

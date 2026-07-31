@@ -44,7 +44,7 @@ echo "This will install or update:"
 show_mas_plan "$DOTFILES_DIR/Brewfile.mas"
 if ! confirm_action "Install these Mac App Store apps?"; then
   echo "Cancelled."
-  exit 0
+  exit "$MENU_CANCELLED"
 fi
 
 echo

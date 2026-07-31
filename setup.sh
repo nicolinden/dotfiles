@@ -6,6 +6,21 @@ set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$DOTFILES_DIR/menu-ui.sh"
 
+run_submenu() {
+  local status
+
+  if "$@"; then
+    return 0
+  else
+    status=$?
+  fi
+  if (( status == MENU_CANCELLED )); then
+    return 0
+  fi
+
+  return "$status"
+}
+
 configure_homebrew_for_current_shell() {
   if [[ -x "/opt/homebrew/bin/brew" ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -78,14 +93,14 @@ case "$(uname -s)" in
           echo "start AeroSpace and restart SketchyBar and Borders. Optional apps are unchanged."
           if confirm_action "(Re)install and apply configuration?"; then
             "$DOTFILES_DIR/bootstrap.sh" --core-only
+            wait_for_menu_return
           else
             echo "Cancelled."
           fi
-          wait_for_menu_return
           ;;
-        2) "$DOTFILES_DIR/install-apps.sh" ;;
-        3) "$DOTFILES_DIR/update-menu.sh" ;;
-        4) "$DOTFILES_DIR/diagnostics.sh" ;;
+        2) run_submenu "$DOTFILES_DIR/install-apps.sh" ;;
+        3) run_submenu "$DOTFILES_DIR/update-menu.sh" ;;
+        4) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;
       esac
@@ -121,28 +136,28 @@ case "$(uname -s)" in
           echo "and install or refresh Starship, LazyGit and LazyDocker."
           if confirm_action "(Re)install and apply configuration?"; then
             "$DOTFILES_DIR/bootstrap.sh" --core-only
+            wait_for_menu_return
           else
             echo "Cancelled."
           fi
-          wait_for_menu_return
           ;;
-        2) "$DOTFILES_DIR/install-linux-apps.sh" ;;
+        2) run_submenu "$DOTFILES_DIR/install-linux-apps.sh" ;;
         3)
           echo
           echo "This will refresh Ubuntu package lists, upgrade installed packages"
           echo "and reapply your shared Stow configuration."
           if confirm_action "Update Ubuntu packages?"; then
             run_linux_update
+            wait_for_menu_return
           else
             echo "Cancelled."
           fi
-          wait_for_menu_return
           ;;
-        4) "$DOTFILES_DIR/diagnostics.sh" ;;
+        4) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
         5) restart_linux_system ;;
         6)
           if command -v docker >/dev/null 2>&1; then
-            "$DOTFILES_DIR/docker-manager.sh"
+            run_submenu "$DOTFILES_DIR/docker-manager.sh"
           else
             echo "Docker is not installed."
             wait_for_menu_return

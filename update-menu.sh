@@ -8,9 +8,6 @@ source "$DOTFILES_DIR/menu-ui.sh"
 print_menu_header "Update installed apps"
 echo "  1) Update everything (Homebrew and Mac App Store)"
 echo "  2) Update managed Homebrew apps only"
-printf '     Base: %s\n' "$(brewfile_summary "$DOTFILES_DIR/Brewfile")"
-printf '     Development: %s\n' "$(brewfile_summary "$DOTFILES_DIR/Brewfile.dev")"
-printf '     Personal: %s\n' "$(brewfile_summary "$DOTFILES_DIR/Brewfile.personal")"
 echo "  b) Back"
 echo
 read -r -p "Choose an option: " selection
@@ -24,6 +21,7 @@ case "$selection" in
       "$DOTFILES_DIR/update.sh"
     else
       echo "Cancelled."
+      exit "$MENU_CANCELLED"
     fi
     ;;
   2)
@@ -39,6 +37,7 @@ case "$selection" in
       "$DOTFILES_DIR/update-managed-brew.sh"
     else
       echo "Cancelled."
+      exit "$MENU_CANCELLED"
     fi
     ;;
   b|B|"") exit 0 ;;

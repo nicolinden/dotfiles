@@ -57,11 +57,8 @@ install_neovim() {
 
 print_menu_header "Optional Ubuntu tools"
 echo "  1) Developer CLI"
-printf '     %s\n' "$(join_items "${DEVELOPER_PACKAGES[@]}")"
 echo "  2) Monitoring and disk usage"
-printf '     %s\n' "$(join_items "${MONITORING_PACKAGES[@]}")"
 echo "  3) Neovim"
-printf '     %s\n' "$NEOVIM_LABEL"
 echo "  a) Install everything"
 echo "  q) Quit"
 echo
@@ -92,7 +89,7 @@ done
 
 if ! confirm_action "Install selected Ubuntu tools?"; then
   echo "Cancelled."
-  exit 0
+  exit "$MENU_CANCELLED"
 fi
 
 for choice in "${selected[@]}"; do

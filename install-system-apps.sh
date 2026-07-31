@@ -84,7 +84,7 @@ done
 
 if ! confirm_action "Continue with system app installation?"; then
   echo "Cancelled."
-  exit 0
+  exit "$MENU_CANCELLED"
 fi
 
 start_sudo_keepalive

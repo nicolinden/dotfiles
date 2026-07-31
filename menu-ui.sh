@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # Shared terminal presentation for the interactive dotfiles menus.
+MENU_CANCELLED=20
 
 print_menu_header() {
   local title="$1"
@@ -45,30 +46,4 @@ show_mas_plan() {
   local brewfile="$1"
 
   sed -nE 's/^mas "([^"]+)", id: [0-9]+.*/  - \1/p' "$brewfile"
-}
-
-brewfile_summary() {
-  local brewfile="$1"
-
-  awk -F'"' '
-    /^(brew|cask) "/ {
-      item = $2
-      sub(".*/", "", item)
-      printf "%s%s", separator, item
-      separator = ", "
-    }
-    END { print "" }
-  ' "$brewfile"
-}
-
-mas_brewfile_summary() {
-  local brewfile="$1"
-
-  awk -F'"' '
-    /^mas "/ {
-      printf "%s%s", separator, $2
-      separator = ", "
-    }
-    END { print "" }
-  ' "$brewfile"
 }
