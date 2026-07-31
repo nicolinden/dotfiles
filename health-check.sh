@@ -39,6 +39,16 @@ case "$(uname -s)" in
     check_file "$HOME/.config/aerospace/aerospace.toml" "AeroSpace configuration"
     check_file "$HOME/.config/sketchybar/sketchybarrc" "SketchyBar configuration"
 
+    if command -v docker >/dev/null 2>&1; then
+      if docker info >/dev/null 2>&1; then
+        ok "Docker is reachable"
+      else
+        warn "Docker is installed but unavailable"
+      fi
+    else
+      warn "Docker Desktop is not installed"
+    fi
+
     if command -v brew >/dev/null 2>&1; then
       if brew services list 2>/dev/null | awk '$1 == "sketchybar" && $2 == "started" { found = 1 } END { exit !found }'; then
         ok "SketchyBar service is running"

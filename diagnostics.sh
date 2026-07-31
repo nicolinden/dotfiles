@@ -23,6 +23,7 @@ case "$(uname -s)" in
     echo "  2) Show SketchyBar log"
     echo "  3) Show Borders log"
     echo "  4) Show AeroSpace monitor and workspace status"
+    echo "  5) Manage Docker containers"
     echo "  b) Back"
     echo
     read -r -p "Choose an option: " selection
@@ -35,6 +36,13 @@ case "$(uname -s)" in
         aerospace list-monitors
         echo
         aerospace list-workspaces --all
+        ;;
+      5)
+        if command -v docker >/dev/null 2>&1; then
+          "$DOTFILES_DIR/docker-manager.sh"
+        else
+          echo "Docker Desktop is not installed."
+        fi
         ;;
       b|B|"") exit 0 ;;
       *) echo "Invalid choice." ;;

@@ -17,7 +17,11 @@ if ! docker info >/dev/null 2>&1; then
 fi
 
 while true; do
-  mapfile -t containers < <(docker ps --all --format '{{.ID}}|{{.Names}}|{{.Status}}|{{.Image}}')
+  # macOS ships Bash 3.2, which does not support `mapfile`.
+  containers=()
+  while IFS= read -r container; do
+    containers+=("$container")
+  done < <(docker ps --all --format '{{.ID}}|{{.Names}}|{{.Status}}|{{.Image}}')
 
   print_menu_header "Docker container manager"
 
