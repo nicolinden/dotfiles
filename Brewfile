@@ -1,50 +1,86 @@
+# ---------------------------------------------------------------------
+# Homebrew taps
+# ---------------------------------------------------------------------
+
 tap "FelixKratz/formulae", trusted: {
-  formula: [ "sketchybar", "borders" ]
+  formula: ["sketchybar", "borders"]
 }
 
 tap "nikitabobko/tap", trusted: {
-  cask: "aerospace",
+  cask: "aerospace"
 }
 
+# ---------------------------------------------------------------------
 # Command-line tools
-brew "git"
-brew "mas"
-brew "stow"
-brew "starship"
-brew "neovim"
-brew "zsh-autosuggestions"
-brew "fzf"
-brew "tmux"
-brew "zsh-syntax-highlighting"
-brew "ripgrep"
-brew "tree"
-brew "sketchybar"
-brew "gh"
-brew "borders"
-brew "lazydocker"
+# ---------------------------------------------------------------------
 
+brew "fzf"
+brew "gh"
+brew "git"
+brew "lazydocker"
+brew "mas"
+brew "neovim"
+brew "ripgrep"
+brew "starship"
+brew "stow"
+brew "tmux"
+brew "tree"
+brew "zsh-autosuggestions"
+brew "zsh-syntax-highlighting"
+
+# ---------------------------------------------------------------------
+# macOS window management and status bar
+# ---------------------------------------------------------------------
+
+brew "borders"
+brew "sketchybar"
+
+# ---------------------------------------------------------------------
 # Fonts
+# ---------------------------------------------------------------------
+
 cask "font-sketchybar-app-font"
 
-# Terminal and development
-cask "wezterm"
-cask "visual-studio-code"
-cask "bruno"
-cask "android-platform-tools"
+# ---------------------------------------------------------------------
+# Development apps
+# ---------------------------------------------------------------------
 
-# macOS productivity
+cask "android-platform-tools"
+cask "bruno"
+cask "visual-studio-code"
+cask "wezterm"
+
+# ---------------------------------------------------------------------
+# macOS workflow
+# ---------------------------------------------------------------------
+
 cask "nikitabobko/tap/aerospace"
 cask "homerow"
 cask "raycast"
+
+# ---------------------------------------------------------------------
+# Browsing and communication
+# ---------------------------------------------------------------------
+
+cask "chatgpt"
+cask "google-chrome"
+cask "whatsapp"
+
+# ---------------------------------------------------------------------
+# Design
+# ---------------------------------------------------------------------
+
+cask "figma"
+cask "sketch"
+
+# ---------------------------------------------------------------------
+# Files, security and productivity
+# ---------------------------------------------------------------------
+
 cask "1password"
 cask "daisydisk"
 cask "fork"
 cask "forklift"
 cask "hazel"
+cask "keka"
 cask "raindropio"
-
-# Communication and design
-cask "chatgpt"
-cask "figma"
-cask "google-chrome"
-cask "whatsapp"
