@@ -99,8 +99,8 @@ start_sudo_keepalive
 for choice in "${selected[@]}"; do
   index=$((choice - 1))
   echo
-  echo "Installeren: ${SYSTEM_LABELS[$index]}"
-  brew install --cask "${SYSTEM_CASKS[$index]}"
+  run_with_progress "${SYSTEM_LABELS[$index]} installeren" \
+    brew install --cask "${SYSTEM_CASKS[$index]}"
 done
 
 echo

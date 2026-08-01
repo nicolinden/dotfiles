@@ -50,7 +50,8 @@ fi
 echo
 echo "Office-apps uit de Mac App Store installeren..."
 start_sudo_keepalive
-if ! caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.office.mas"; then
+if ! run_with_progress "Office-apps installeren" \
+  caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.office.mas"; then
   echo
   echo "Een of meer Office-apps konden niet worden geïnstalleerd."
   echo "Controleer in de Mac App Store of ze aan je Apple-account zijn gekoppeld."

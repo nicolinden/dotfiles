@@ -3,6 +3,53 @@
 # Shared terminal presentation for the interactive dotfiles menus.
 MENU_CANCELLED=20
 
+run_with_progress() {
+  local label="$1"
+  shift
+
+  # Houd normale uitvoer intact wanneer dit script niet interactief draait.
+  if [[ ! -t 1 ]]; then
+    "$@"
+    return
+  fi
+
+  local log_file command_pid status position=0 direction=1 width=24 bar done_bar
+  log_file="$(mktemp)"
+
+  "$@" >"$log_file" 2>&1 &
+  command_pid=$!
+
+  while kill -0 "$command_pid" 2>/dev/null; do
+    printf -v bar '%*s' "$width" ''
+    bar="${bar// /─}"
+    bar="${bar:0:position}●${bar:position+1}"
+    printf '\r  %-34s [%s]' "$label" "$bar"
+
+    if (( position == width - 1 )); then
+      direction=-1
+    elif (( position == 0 )); then
+      direction=1
+    fi
+    position=$((position + direction))
+    sleep 0.12
+  done
+
+  if wait "$command_pid"; then
+    status=0
+    printf -v done_bar '%*s' "$width" ''
+    done_bar="${done_bar// /=}"
+    printf '\r  %-34s [%s] klaar\n' "$label" "$done_bar"
+  else
+    status=$?
+    printf '\r  %-34s [mislukt]\n' "$label"
+    echo
+    cat "$log_file"
+  fi
+
+  rm -f "$log_file"
+  return "$status"
+}
+
 print_menu_header() {
   local title="$1"
 

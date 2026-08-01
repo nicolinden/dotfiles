@@ -4,6 +4,7 @@ set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CORE_ONLY=false
+source "$DOTFILES_DIR/menu-ui.sh"
 
 case "${1:-}" in
   "") ;;
@@ -88,7 +89,8 @@ case "$(uname -s)" in
     # Installeer GUI-apps per gebruiker. Daardoor zijn ze zonder sudo te
     # installeren en blijven ze gescheiden van door macOS beheerde systeemapps.
     mkdir -p "$HOME/Applications"
-    HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
+    run_with_progress "Homebrew-pakketten installeren" \
+      env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
       caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
 
     ;;

@@ -52,7 +52,8 @@ echo "Mac App Store-apps installeren..."
 echo "Zorg dat je in de Mac App Store bent ingelogd."
 start_sudo_keepalive
 
-if ! caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.mas"; then
+if ! run_with_progress "Mac App Store-apps installeren" \
+  caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.mas"; then
   echo
   echo "Een of meer apps konden niet worden geïnstalleerd."
   echo "Controleer je App Store-aanmelding en of betaalde apps zijn gekocht of geclaimd."
