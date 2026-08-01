@@ -96,11 +96,18 @@ fi
 
 start_sudo_keepalive
 
+total_selected=${#selected[@]}
+current=0
+
 for choice in "${selected[@]}"; do
   index=$((choice - 1))
+  current=$((current + 1))
   echo
-  run_with_progress "${SYSTEM_LABELS[$index]} installeren" \
-    brew install --cask "${SYSTEM_CASKS[$index]}"
+  printf '[%d/%d] Installeren: %s\n' \
+    "$current" "$total_selected" "${SYSTEM_LABELS[$index]}"
+  # Systeemapps kunnen om een beheerderswachtwoord of andere invoer vragen.
+  # Laat hun uitvoer daarom rechtstreeks in de terminal zien.
+  brew install --cask "${SYSTEM_CASKS[$index]}"
 done
 
 echo
