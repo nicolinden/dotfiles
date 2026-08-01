@@ -32,6 +32,10 @@ accordion-padding = 100
 # -------------------------------------------------------------------
 
 on-window-detected = [
+  # Werk de workspace-iconen bij nadat AeroSpace het nieuwe venster heeft
+  # geregistreerd en eventuele plaatsingsregels hieronder zijn uitgevoerd.
+  { check-further-callbacks = true, run = 'exec-and-forget /bin/bash -c "sleep 0.1; sketchybar --trigger aerospace_workspace_change"' },
+
   # Web and research
   { if = "test %{app-bundle-id} = com.apple.Safari", run = "move-node-to-workspace main-2" },
   { if = "test %{app-bundle-id} = com.google.Chrome", run = "move-node-to-workspace main-2" },
@@ -60,9 +64,11 @@ exec-on-workspace-change = [
   'sleep 0.1; sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; sketchybar --trigger aerospace_focus_change',
 ]
 
-# Laat SketchyBar ook meteen weten wanneer de focus naar een ander venster of
-# een leeg scherm verhuist. Daardoor staat de actieve app maar op één scherm.
-on-focus-changed = ['exec-and-forget sketchybar --trigger aerospace_focus_change']
+# Laat de korte vertraging eerst verlopen, zodat een geopend of gesloten
+# venster al in de AeroSpace-snapshot is verwerkt voordat SketchyBar ververst.
+on-focus-changed = [
+  'exec-and-forget /bin/bash -c "sleep 0.1; sketchybar --trigger aerospace_workspace_change; sketchybar --trigger aerospace_focus_change"',
+]
 
 # Het hoofdscherm en het tweede scherm krijgen allebei 1 t/m 6. Bij één monitor
 # valt side-* terug op main, zodat dezelfde configuratie bruikbaar blijft.
