@@ -50,6 +50,68 @@ run_with_progress() {
   return "$status"
 }
 
+install_brewfile_items() {
+  local brewfile="$1"
+  local app_dir="$2"
+  local kinds=() names=() kind name total index current=0
+
+  while IFS=$'\t' read -r kind name; do
+    [[ -n "$kind" && -n "$name" ]] || continue
+    kinds+=("$kind")
+    names+=("$name")
+  done < <(sed -nE \
+    -e 's/^brew "([^"]+)".*/brew\t\1/p' \
+    -e 's/^cask "([^"]+)".*/cask\t\1/p' \
+    "$brewfile")
+
+  total=${#names[@]}
+  for index in "${!names[@]}"; do
+    kind=${kinds[$index]}
+    name=${names[$index]}
+    current=$((current + 1))
+    printf '\n[%d/%d] ● bezig: %s\n' "$current" "$total" "$name"
+
+    if [[ "$kind" == "cask" ]]; then
+      if ! HOMEBREW_CASK_OPTS="--appdir=$app_dir" \
+        caffeinate -i brew install --cask "$name"; then
+        printf '[%d/%d] ✗ mislukt: %s\n' "$current" "$total" "$name"
+        return 1
+      fi
+    else
+      if ! caffeinate -i brew install "$name"; then
+        printf '[%d/%d] ✗ mislukt: %s\n' "$current" "$total" "$name"
+        return 1
+      fi
+    fi
+
+    printf '[%d/%d] ✓ klaar: %s\n' "$current" "$total" "$name"
+  done
+}
+
+install_mas_items() {
+  local brewfile="$1"
+  local names=() ids=() name app_id total index current=0
+
+  while IFS=$'\t' read -r name app_id; do
+    [[ -n "$name" && -n "$app_id" ]] || continue
+    names+=("$name")
+    ids+=("$app_id")
+  done < <(sed -nE 's/^mas "([^"]+)", id: ([0-9]+).*/\1\t\2/p' "$brewfile")
+
+  total=${#names[@]}
+  for index in "${!names[@]}"; do
+    name=${names[$index]}
+    app_id=${ids[$index]}
+    current=$((current + 1))
+    printf '\n[%d/%d] ● bezig: %s\n' "$current" "$total" "$name"
+    if ! caffeinate -i mas install "$app_id"; then
+      printf '[%d/%d] ✗ mislukt: %s\n' "$current" "$total" "$name"
+      return 1
+    fi
+    printf '[%d/%d] ✓ klaar: %s\n' "$current" "$total" "$name"
+  done
+}
+
 print_menu_header() {
   local title="$1"
 

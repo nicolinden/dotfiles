@@ -13,18 +13,6 @@ configure_homebrew_for_current_shell() {
   fi
 }
 
-start_sudo_keepalive() {
-  echo "Beheerdersrechten voorbereiden (eenmalig)..."
-  sudo -v
-
-  while sudo -n true; do
-    sleep 60
-  done 2>/dev/null &
-  SUDO_KEEPALIVE_PID=$!
-
-  trap 'kill "$SUDO_KEEPALIVE_PID" 2>/dev/null || true' EXIT INT TERM
-}
-
 if [[ "$(uname -s)" != "Darwin" ]]; then
   echo "Dit script is uitsluitend bedoeld voor macOS."
   exit 1
@@ -49,9 +37,7 @@ fi
 
 echo
 echo "Office-apps uit de Mac App Store installeren..."
-start_sudo_keepalive
-if ! run_with_progress "Office-apps installeren" \
-  caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.office.mas"; then
+if ! install_mas_items "$DOTFILES_DIR/Brewfile.office.mas"; then
   echo
   echo "Een of meer Office-apps konden niet worden geïnstalleerd."
   echo "Controleer in de Mac App Store of ze aan je Apple-account zijn gekoppeld."

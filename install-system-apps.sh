@@ -103,11 +103,13 @@ for choice in "${selected[@]}"; do
   index=$((choice - 1))
   current=$((current + 1))
   echo
-  printf '[%d/%d] Installeren: %s\n' \
+  printf '[%d/%d] ● bezig: %s\n' \
     "$current" "$total_selected" "${SYSTEM_LABELS[$index]}"
   # Systeemapps kunnen om een beheerderswachtwoord of andere invoer vragen.
   # Laat hun uitvoer daarom rechtstreeks in de terminal zien.
   brew install --cask "${SYSTEM_CASKS[$index]}"
+  printf '[%d/%d] ✓ klaar: %s\n' \
+    "$current" "$total_selected" "${SYSTEM_LABELS[$index]}"
 done
 
 echo

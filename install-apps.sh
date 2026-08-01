@@ -30,9 +30,7 @@ install_brewfile() {
 
   echo
   echo "Installing: $label"
-  run_with_progress "$label installeren" \
-    env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
-    caffeinate -i brew bundle install --file="$DOTFILES_DIR/$file"
+  install_brewfile_items "$DOTFILES_DIR/$file" "$HOME/Applications"
 }
 
 install_all_optional_apps() {
