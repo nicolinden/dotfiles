@@ -69,6 +69,23 @@ install_lazygit() {
   rm -rf "$temp_dir"
 }
 
+configure_zsh_as_login_shell() {
+  local zsh_path current_shell current_user
+
+  zsh_path="$(command -v zsh)"
+  current_user="$(id -un)"
+  current_shell="$(getent passwd "$current_user" | cut -d: -f7)"
+
+  if [[ "$current_shell" == "$zsh_path" ]]; then
+    echo "Zsh is al de standaard shell."
+    return
+  fi
+
+  echo "Zsh instellen als standaard shell voor $current_user..."
+  sudo chsh -s "$zsh_path" "$current_user"
+  echo "De nieuwe shell wordt actief nadat je opnieuw hebt ingelogd."
+}
+
 case "$(uname -s)" in
   Darwin)
     # Een bestaande Homebrew-installatie kan na een verse login nog ontbreken
@@ -128,6 +145,8 @@ case "$(uname -s)" in
       zsh \
       zsh-autosuggestions \
       zsh-syntax-highlighting
+
+    configure_zsh_as_login_shell
 
     mkdir -p "$HOME/.local/bin"
 
