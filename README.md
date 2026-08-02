@@ -41,7 +41,7 @@ wordt geladen.
   andere Mac werkt. Elke upload maakt op de server eerst een timestamp-back-up
   van de bestaande bibliotheek; alleen de nieuwste drie blijven bewaard.
   Kies eenmalig **SSH key backup and recovery** in de centrale manager om de
-  Calibre-sleutel te installeren. Dat menu maakt ook versleutelde `.ssh`
+  Calibre-sleutel aan te maken en te installeren. Dat menu maakt ook versleutelde `.ssh`
   back-ups op de server en herstelt die altijd eerst naar een nieuwe map.
   Git bevat bewust geen boeken of `metadata.db`.
 - Kies in de manager voor optionele app-profielen. Het menu toont per profiel

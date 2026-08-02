@@ -46,9 +46,15 @@ choose_server() {
 }
 
 install_calibre_key() {
-  local target
+  local target key_comment
   load_server
-  [[ -f "$CALIBRE_SSH_KEY.pub" ]] || die "The Calibre SSH key is missing: $CALIBRE_SSH_KEY.pub"
+  if [[ ! -f "$CALIBRE_SSH_KEY.pub" ]]; then
+    command -v ssh-keygen >/dev/null 2>&1 || die "ssh-keygen is not available."
+    mkdir -p "$HOME/.ssh"
+    key_comment="calibre-sync-$(hostname -s 2>/dev/null || hostname)"
+    echo "Creating a separate Calibre SSH key for this Mac."
+    ssh-keygen -t ed25519 -N '' -f "$CALIBRE_SSH_KEY" -C "$key_comment"
+  fi
   target="$CALIBRE_SYNC_SERVER"
   if ! ssh -o BatchMode=yes -o ConnectTimeout=5 "$target" true >/dev/null 2>&1 && \
      [[ "$CALIBRE_SYNC_SERVER" == "$DEFAULT_SERVER" ]]; then
@@ -56,7 +62,7 @@ install_calibre_key() {
   fi
   echo "Enter the server password once to authorize this Mac's Calibre key."
   ssh-copy-id -i "$CALIBRE_SSH_KEY.pub" -o IdentitiesOnly=yes "$target"
-  echo "Calibre SSH key installed."
+  echo "Calibre SSH key installed. Future Calibre uploads and downloads need no password."
 }
 
 valid_name() {
@@ -134,7 +140,7 @@ restore_ssh_folder() {
 while true; do
   echo
   echo "SSH key backup and recovery"
-  echo "  1) Install this Mac's Calibre SSH key on the server"
+  echo "  1) Create and install this Mac's Calibre SSH key"
   echo "  2) Create encrypted .ssh backup"
   echo "  3) List server backups"
   echo "  4) Restore a backup to a new folder"
