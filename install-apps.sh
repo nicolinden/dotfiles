@@ -31,6 +31,11 @@ install_brewfile() {
   echo
   echo "Installing: $label"
   install_brewfile_items "$DOTFILES_DIR/$file" "$HOME/Applications"
+
+  if [[ "$file" == "Brewfile.personal" ]] &&
+     { [[ -d "$HOME/Applications/calibre.app" ]] || [[ -d "/Applications/calibre.app" ]]; }; then
+    "$DOTFILES_DIR/calibre-setup.sh"
+  fi
 }
 
 install_all_optional_apps() {

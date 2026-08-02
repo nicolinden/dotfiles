@@ -32,6 +32,15 @@ wordt geladen.
 ### Handmatige stappen na de installatie
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
+- Bij installatie van het persoonlijke app-profiel wordt Calibre geïnstalleerd
+  en gevraagd of deze Mac `master` of `client` is. De master beheert de lokale
+  bibliotheek, draait de Content Server en maakt dagelijks een consistente
+  snapshot in iCloud Drive. Een nieuwe master herstelt de nieuwste snapshot
+  alleen wanneer lokaal nog geen bibliotheek bestaat. Clients gebruiken de
+  opgegeven URL van de master en bewaren geen tweede database. Start na
+  belangrijke wijzigingen desgewenst direct `./calibre-backup.sh`. Git bevat
+  bewust geen boeken of `metadata.db`; database, covers en boeken worden altijd
+  samen als één snapshot opgeslagen.
 - Kies in de manager voor optionele app-profielen. Het menu toont per profiel
   hoeveel apps al zijn geïnstalleerd en biedt keuzes voor development,
   persoonlijke apps, Mac App Store, Office/iWork en Docker. Hetzelfde menu
@@ -180,6 +189,8 @@ update-menu.sh  Keuze tussen volledige en beheerde macOS-updates
 health-check.sh  Leesbare controle van de installatie zonder wijzigingen
 diagnostics.sh  Health check, service-status en logweergave
 install-apps.sh  Interactief keuzemenu voor app-profielen
+calibre-setup.sh  Kies Calibre master/client en configureer de Content Server
+calibre-backup.sh  Maak een consistente masterbibliotheek-snapshot in iCloud
 install-linux-apps.sh  Interactief keuzemenu voor optionele Ubuntu-tools
 uninstall-apps.sh  Interactief menu voor het verwijderen van optionele apps
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten

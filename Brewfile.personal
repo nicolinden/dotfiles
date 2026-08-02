@@ -2,6 +2,7 @@
 
 cask "1password"
 cask "chatgpt"
+cask "calibre"
 cask "daisydisk"
 cask "figma"
 cask "forklift"
