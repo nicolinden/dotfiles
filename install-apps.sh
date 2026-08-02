@@ -34,7 +34,7 @@ install_brewfile() {
 
   if [[ "$file" == "Brewfile.personal" ]] &&
      { [[ -d "$HOME/Applications/calibre.app" ]] || [[ -d "/Applications/calibre.app" ]]; }; then
-    "$DOTFILES_DIR/calibre-setup.sh"
+    "$DOTFILES_DIR/calibre-sync.sh"
   fi
 }
 

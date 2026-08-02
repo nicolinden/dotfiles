@@ -82,6 +82,8 @@ case "$(uname -s)" in
       echo "  2) Manage apps"
       echo "  3) Update installed apps"
       echo "  4) Diagnostics"
+      echo "  5) Calibre library sync"
+      echo "  6) SSH key backup and recovery"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -101,6 +103,8 @@ case "$(uname -s)" in
         2) run_submenu "$DOTFILES_DIR/install-apps.sh" ;;
         3) run_submenu "$DOTFILES_DIR/update-menu.sh" ;;
         4) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
+        5) run_submenu "$DOTFILES_DIR/calibre-sync.sh" ;;
+        6) run_submenu "$DOTFILES_DIR/ssh-key-manager.sh" ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;
       esac

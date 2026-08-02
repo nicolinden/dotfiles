@@ -32,15 +32,18 @@ wordt geladen.
 ### Handmatige stappen na de installatie
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
-- Bij installatie van het persoonlijke app-profiel wordt Calibre geïnstalleerd
-  en gevraagd of deze Mac `master` of `client` is. De master beheert de lokale
-  bibliotheek, draait de Content Server en maakt dagelijks een consistente
-  snapshot in iCloud Drive. Een nieuwe master herstelt de nieuwste snapshot
-  alleen wanneer lokaal nog geen bibliotheek bestaat. Clients gebruiken de
-  opgegeven URL van de master en bewaren geen tweede database. Start na
-  belangrijke wijzigingen desgewenst direct `./calibre-backup.sh`. Git bevat
-  bewust geen boeken of `metadata.db`; database, covers en boeken worden altijd
-  samen als één snapshot opgeslagen.
+- Calibre staat lokaal op iedere Mac, zodat Kobo via USB en de Calibre-plug-ins
+  normaal werken. Kies in de centrale manager **Calibre library sync** om één
+  Mac als startbibliotheek te uploaden naar `server.nokionline.com`. Daarna
+  download je vóór gebruik de nieuwste bibliotheek en upload je hem pas nadat
+  Calibre gesloten is. Het menu probeert eerst Tailscale en daarna het lokale
+  fallback-adres. Upload vóór je van Mac wisselt en download vóór je op de
+  andere Mac werkt. Elke upload maakt op de server eerst een timestamp-back-up
+  van de bestaande bibliotheek; alleen de nieuwste drie blijven bewaard.
+  Kies eenmalig **SSH key backup and recovery** in de centrale manager om de
+  Calibre-sleutel te installeren. Dat menu maakt ook versleutelde `.ssh`
+  back-ups op de server en herstelt die altijd eerst naar een nieuwe map.
+  Git bevat bewust geen boeken of `metadata.db`.
 - Kies in de manager voor optionele app-profielen. Het menu toont per profiel
   hoeveel apps al zijn geïnstalleerd en biedt keuzes voor development,
   persoonlijke apps, Mac App Store, Office/iWork en Docker. Hetzelfde menu
@@ -189,8 +192,10 @@ update-menu.sh  Keuze tussen volledige en beheerde macOS-updates
 health-check.sh  Leesbare controle van de installatie zonder wijzigingen
 diagnostics.sh  Health check, service-status en logweergave
 install-apps.sh  Interactief keuzemenu voor app-profielen
-calibre-setup.sh  Kies Calibre master/client en configureer de Content Server
+calibre-setup.sh  Oude master/client-configuratie voor Calibre Content Server
 calibre-backup.sh  Maak een consistente masterbibliotheek-snapshot in iCloud
+calibre-sync.sh   Veilige upload/download; eerst Tailscale, daarna lokaal via 10.10.2.2
+ssh-key-manager.sh  Calibre-sleutel, versleutelde .ssh-back-ups en veilig herstel
 install-linux-apps.sh  Interactief keuzemenu voor optionele Ubuntu-tools
 uninstall-apps.sh  Interactief menu voor het verwijderen van optionele apps
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
