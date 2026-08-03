@@ -33,7 +33,7 @@ wordt geladen.
 
 - Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
 - Calibre staat lokaal op iedere Mac, zodat Kobo via USB en de Calibre-plug-ins
-  normaal werken. Kies in de centrale manager **Calibre library sync** om één
+  normaal werken. Kies in de centrale manager **Backup / restore** om één
   Mac als startbibliotheek te uploaden naar `server.nokionline.com`. Daarna
   download je vóór gebruik de nieuwste bibliotheek en upload je hem pas nadat
   Calibre gesloten is. Het menu probeert eerst Tailscale en daarna het lokale
@@ -42,7 +42,8 @@ wordt geladen.
   van de bestaande bibliotheek; alleen de nieuwste drie blijven bewaard.
   Kies eenmalig **SSH key backup and recovery** in de centrale manager om de
   Calibre-sleutel aan te maken en te installeren. Dat menu maakt ook versleutelde `.ssh`
-  back-ups op de server en herstelt die altijd eerst naar een nieuwe map.
+  back-ups op de server. Herstel vervangt na bevestiging `~/.ssh`, maar maakt
+  daarvoor altijd eerst een lokale, gecomprimeerde veiligheidskopie.
   Git bevat bewust geen boeken of `metadata.db`.
 - Kies in de manager voor optionele app-profielen. Het menu toont per profiel
   hoeveel apps al zijn geïnstalleerd en biedt keuzes voor development,
@@ -196,6 +197,8 @@ calibre-setup.sh  Oude master/client-configuratie voor Calibre Content Server
 calibre-backup.sh  Maak een consistente masterbibliotheek-snapshot in iCloud
 calibre-sync.sh   Veilige upload/download; eerst Tailscale, daarna lokaal via 10.10.2.2
 ssh-key-manager.sh  Calibre-sleutel, versleutelde .ssh-back-ups en veilig herstel
+backup-restore-manager.sh  Centrale ingang voor server, SSH, Calibre en Downloads-back-ups
+downloads-backup-manager.sh  Losse, gecomprimeerde Downloads-back-ups op de server
 install-linux-apps.sh  Interactief keuzemenu voor optionele Ubuntu-tools
 uninstall-apps.sh  Interactief menu voor het verwijderen van optionele apps
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
