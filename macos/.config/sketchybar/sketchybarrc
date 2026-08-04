@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-# Coolnight colours
-BACKGROUND=0xff011423
-FOREGROUND=0xffcbe0f0
-CYAN=0xff24eaf7
-PURPLE=0xffa277ff
-
 CONFIG_DIR="$HOME/.config/sketchybar"
+source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/icons.sh"
+
+FONT="SF Pro"
 
 # The bar itself
 sketchybar --bar \
   position=top \
   display=all \
   topmost=on \
+  drawing=on \
   height=36 \
-  color=$BACKGROUND \
-  blur_radius=20 \
+  color=$BAR_COLOR \
+  blur_radius=0 \
+  shadow=off \
   corner_radius=0 \
   margin=0 \
   y_offset=0 \
@@ -24,12 +24,82 @@ sketchybar --bar \
 
 # Defaults inherited by new items
 sketchybar --default \
-  icon.font="MesloLGS Nerd Font Mono:Bold:14.0" \
-  icon.color=$CYAN \
-  label.font="MesloLGS Nerd Font Mono:Regular:14.0" \
+  icon.font="$FONT:Bold:14.0" \
+  icon.color=$ACCENT \
+  label.font="$FONT:Semibold:13.0" \
   label.color=$FOREGROUND \
   padding_left=6 \
-  padding_right=6
+  padding_right=6 \
+  background.color=$PANEL_COLOR \
+  background.height=24 \
+  background.corner_radius=8 \
+  background.border_width=1 \
+  background.border_color=$BORDER_COLOR \
+  background.drawing=off \
+  background.shadow.drawing=off \
+  background.shadow.color=$SHADOW_COLOR \
+  background.shadow.angle=90 \
+  background.shadow.distance=2
+
+# Apple menu, shown on every display like the reference configuration.
+sketchybar --add item apple left \
+           --subscribe apple mouse.exited.global \
+           --set apple \
+             icon="$APPLE" \
+             icon.font="$FONT:Black:16.0" \
+             icon.color=$APPLE_GREEN \
+             icon.padding_left=9 \
+             icon.padding_right=9 \
+             label.drawing=off \
+             click_script="$CONFIG_DIR/plugins/apple.sh toggle" \
+             script="$CONFIG_DIR/plugins/apple.sh close" \
+             popup.background.color=$POPUP_BACKGROUND_COLOR \
+             popup.background.corner_radius=9 \
+             popup.background.border_width=2 \
+             popup.background.border_color=$POPUP_BORDER_COLOR \
+             popup.blur_radius=20 \
+             popup.background.shadow.drawing=on \
+             popup.background.shadow.color=$SHADOW_COLOR
+
+sketchybar --add item apple.preferences popup.apple \
+           --set apple.preferences \
+             icon="$PREFERENCES" \
+             icon.width=22 \
+             icon.align=center \
+             icon.padding_left=4 \
+             icon.padding_right=6 \
+             label="Preferences" \
+             label.padding_left=6 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8 \
+             click_script="$CONFIG_DIR/plugins/apple.sh preferences" \
+           --add item apple.activity popup.apple \
+           --set apple.activity \
+             icon="$ACTIVITY" \
+             icon.width=22 \
+             icon.align=center \
+             icon.padding_left=4 \
+             icon.padding_right=6 \
+             label="Activity" \
+             label.padding_left=6 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8 \
+             click_script="$CONFIG_DIR/plugins/apple.sh activity" \
+           --add item apple.lock popup.apple \
+           --set apple.lock \
+             icon="$LOCK" \
+             icon.width=22 \
+             icon.align=center \
+             icon.padding_left=4 \
+             icon.padding_right=6 \
+             label="Lock Screen" \
+             label.padding_left=6 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8 \
+             click_script="$CONFIG_DIR/plugins/apple.sh lock"
 
 # AeroSpace workspaces
 # Maak een indicatorreeks per mogelijk scherm. Items op niet-aangesloten
@@ -45,6 +115,7 @@ sketchybar --add item aerospace_workspace_updater left \
              script="$CONFIG_DIR/plugins/aerospace.sh"
 
 for DISPLAY in 1 2 3; do
+  WORKSPACE_MEMBERS=()
   # Gebruik op het hoofdscherm de main-reeks en op andere schermen side-*.
   # De zichtbare labels blijven op alle schermen simpelweg 1 t/m 6.
   if aerospace list-monitors --format '%{monitor-appkit-nsscreen-screens-id} %{monitor-is-main}' \
@@ -59,6 +130,7 @@ for DISPLAY in 1 2 3; do
   for WORKSPACE in 1 2 3 4 5 6; do
     ITEM="workspace.$DISPLAY.$WORKSPACE"
     WORKSPACE_NAME="$WORKSPACE_PREFIX-$WORKSPACE"
+    WORKSPACE_MEMBERS+=("$ITEM")
 
     if (( WORKSPACE > WORKSPACE_COUNT )); then
       sketchybar --add item "$ITEM" left \
@@ -70,18 +142,30 @@ for DISPLAY in 1 2 3; do
                --set "$ITEM" \
                  display=$DISPLAY \
                  icon="$WORKSPACE" \
-                 icon.font="MesloLGS Nerd Font Mono:Bold:14.0" \
+                 icon.font="$FONT:Bold:14.0" \
                  icon.padding_left=8 \
                  icon.padding_right=5 \
                  label.font="sketchybar-app-font:Regular:12.0" \
                  label.padding_left=2 \
                  label.padding_right=8 \
-                 background.color=$CYAN \
+                 background.color=$ACCENT_MUTED \
                  background.height=24 \
-                 background.corner_radius=7 \
+                 background.corner_radius=6 \
+                 background.border_width=0 \
                  background.drawing=off \
                  click_script="aerospace workspace $WORKSPACE_NAME"
   done
+
+  sketchybar --add bracket "workspace_group.$DISPLAY" "${WORKSPACE_MEMBERS[@]}" \
+             --set "workspace_group.$DISPLAY" \
+               display=$DISPLAY \
+               background.color=$PANEL_COLOR \
+               background.height=28 \
+               background.corner_radius=9 \
+               background.border_width=1 \
+               background.border_color=$BORDER_COLOR \
+               background.drawing=on \
+               background.shadow.drawing=off
 done
 
 # Huidige app uitsluitend op het scherm waarop de focus staat.
@@ -92,10 +176,11 @@ for DISPLAY in 1 2 3; do
              --set "app_separator.$DISPLAY" \
                display=$DISPLAY \
                icon="❯" \
-               icon.color=$CYAN \
+               icon.color=$MUTED \
                icon.padding_left=8 \
                icon.padding_right=4 \
                label.drawing=off \
+               background.drawing=off \
                drawing=off
 
   sketchybar --add item "front_app.$DISPLAY" left \
@@ -103,15 +188,14 @@ for DISPLAY in 1 2 3; do
              --set "front_app.$DISPLAY" \
                display=$DISPLAY \
                icon.font="sketchybar-app-font:Regular:16.0" \
-               icon.color=$BACKGROUND \
+               icon.color=$APP_ACCENT \
                icon.padding_left=8 \
                icon.padding_right=6 \
-               label.color=$BACKGROUND \
+               label.color=$FOREGROUND \
+               label.font="$FONT:Black:12.0" \
                label.padding_right=10 \
                label.max_chars=24 \
-               background.color=$CYAN \
-               background.height=24 \
-               background.corner_radius=7 \
+               background.drawing=off \
                drawing=off \
                script="$CONFIG_DIR/plugins/front_app.sh $DISPLAY"
 done
@@ -119,28 +203,207 @@ done
 # Date and time
 sketchybar --add item clock right \
            --set clock \
-             icon="󰥔" \
-             icon.color=$PURPLE \
-             icon.padding_right=6 \
+             icon.font="$FONT:Black:12.0" \
+             icon.padding_left=8 \
+             icon.padding_right=8 \
+             label.font="$FONT:Semibold:13.0" \
+             label.padding_left=4 \
+             label.width=45 \
+             label.align=right \
+             label.padding_right=8 \
+             padding_left=8 \
+             padding_right=1 \
              update_freq=30 \
              script="$CONFIG_DIR/plugins/clock.sh"
+
+sketchybar --add item brew_updates right \
+           --set brew_updates \
+             icon="$BREW" \
+             icon.font="$FONT:Regular:15.0" \
+             icon.color=$ORANGE \
+             icon.padding_left=5 \
+             icon.padding_right=4 \
+             label="?" \
+             label.padding_left=0 \
+             label.padding_right=9 \
+             update_freq=900 \
+             script="$CONFIG_DIR/plugins/brew_updates.sh"
+
+# Separate Tailscale toggle: color communicates the state, click toggles it.
+sketchybar --add item tailscale right \
+           --subscribe tailscale system_woke \
+           --set tailscale \
+             icon=":tailscale:" \
+             icon.font="sketchybar-app-font:Regular:16.0" \
+             icon.color=$GREY \
+             icon.padding_left=5 \
+             icon.padding_right=5 \
+             label.drawing=off \
+             update_freq=10 \
+             click_script="$CONFIG_DIR/plugins/network.sh toggle-tailscale" \
+             script="$CONFIG_DIR/plugins/network.sh"
+
+# Active physical network, with connection details in a popup.
+sketchybar --add item network right \
+           --subscribe network system_woke mouse.clicked mouse.exited.global \
+           --set network \
+             icon="󰖩" \
+             icon.font="MesloLGS Nerd Font Mono:Regular:20.0" \
+             icon.width=24 \
+             icon.align=center \
+             icon.color=$GREY \
+             icon.padding_left=4 \
+             icon.padding_right=4 \
+             label.drawing=off \
+             update_freq=10 \
+             script="$CONFIG_DIR/plugins/network.sh" \
+             popup.align=right \
+             popup.background.color=$POPUP_BACKGROUND_COLOR \
+             popup.background.corner_radius=9 \
+             popup.background.border_width=2 \
+             popup.background.border_color=$POPUP_BORDER_COLOR \
+             popup.blur_radius=0 \
+             popup.background.shadow.drawing=on \
+             popup.background.shadow.color=$SHADOW_COLOR \
+           --add item network.wifi popup.network \
+           --set network.wifi \
+             icon="󰖩" \
+             icon.font="MesloLGS Nerd Font Mono:Regular:18.0" \
+             icon.width=28 \
+             icon.align=center \
+             icon.color=$BLUE \
+             label="Wi-Fi: checking…" \
+             label.padding_left=7 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8 \
+           --add item network.ethernet popup.network \
+           --set network.ethernet \
+             icon="󰈀" \
+             icon.font="MesloLGS Nerd Font Mono:Regular:18.0" \
+             icon.width=28 \
+             icon.align=center \
+             icon.color=$GREEN \
+             label="Ethernet: checking…" \
+             label.padding_left=7 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8 \
+           --add item network.settings popup.network \
+           --set network.settings \
+             icon="􀣋" \
+             icon.font="$FONT:Regular:15.0" \
+             icon.width=24 \
+             icon.color=$MAGENTA \
+             label="Choose another Wi-Fi network…" \
+             label.padding_left=7 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8 \
+             click_script="$CONFIG_DIR/plugins/network.sh open-wifi-settings"
 
 # Battery status
 sketchybar --add item battery right \
            --subscribe battery power_source_change system_woke \
            --set battery \
-             icon.color=$CYAN \
-             icon.padding_right=6 \
+             icon.font="$FONT:Regular:19.0" \
+             icon.color=$WHITE \
+             icon.padding_left=5 \
+             icon.padding_right=8 \
+             label.drawing=off \
              update_freq=120 \
              script="$CONFIG_DIR/plugins/battery.sh"
 
-# System output volume
-sketchybar --add item volume right \
-           --subscribe volume volume_change \
+# Animated volume detail and SF Symbol from commit e6288b3f.
+sketchybar --add slider volume right \
+           --subscribe volume volume_change mouse.clicked mouse.entered mouse.exited \
            --set volume \
-             icon.color=$FOREGROUND \
-             icon.padding_right=6 \
-             script="$CONFIG_DIR/plugins/volume.sh"
+             script="$CONFIG_DIR/plugins/volume.sh" \
+             updates=on \
+             label.drawing=off \
+             icon.drawing=off \
+             slider.width=0 \
+             slider.highlight_color=$BLUE \
+             slider.background.height=5 \
+             slider.background.corner_radius=3 \
+             slider.background.color=$BACKGROUND_2 \
+             slider.knob=􀀁 \
+             slider.knob.drawing=off \
+           --add item volume_icon right \
+           --set volume_icon \
+             click_script="$CONFIG_DIR/plugins/volume_click.sh" \
+             padding_left=10 \
+             padding_right=0 \
+             icon="$VOLUME_100" \
+             icon.width=0 \
+             icon.align=left \
+             icon.color=$GREY \
+             icon.font="$FONT:Regular:14.0" \
+             label="$VOLUME_100" \
+             label.width=25 \
+             label.align=left \
+             label.font="$FONT:Regular:14.0"
+
+# Exact grouped status pill from the reference configuration.
+sketchybar --add bracket system_status volume_icon tailscale network brew_updates \
+           --set system_status \
+             background.color=$BACKGROUND_1 \
+             background.height=30 \
+             background.corner_radius=9 \
+             background.border_width=2 \
+             background.border_color=$BACKGROUND_2 \
+             background.drawing=on \
+             background.shadow.drawing=off
+
+# CPU graph and two-line process/percentage readout from the reference layout.
+sketchybar --add item cpu.top right \
+           --set cpu.top \
+             label.font="$FONT:Semibold:9.0" \
+             label="CPU" \
+             label.width=110 \
+             label.align=right \
+             icon.drawing=off \
+             width=0 \
+             padding_right=12 \
+             y_offset=7 \
+           --add item cpu.percent right \
+           --set cpu.percent \
+             label.font="$FONT:Heavy:20.0" \
+             label.color=$YELLOW \
+             label="–%" \
+             label.width=110 \
+             label.align=right \
+             icon.drawing=off \
+             width=110 \
+             padding_right=12 \
+             y_offset=-6 \
+             update_freq=2 \
+             script="$CONFIG_DIR/plugins/cpu.sh" \
+           --add graph cpu.sys right 150 \
+           --set cpu.sys \
+             width=0 \
+             graph.color=$RED \
+             graph.fill_color=0x30ed8796 \
+             label.drawing=off \
+             icon.drawing=off \
+             background.height=30 \
+             background.color=$TRANSPARENT \
+             background.border_width=0 \
+             background.corner_radius=0 \
+             background.shadow.drawing=off \
+             background.drawing=on \
+           --add graph cpu.user right 150 \
+           --set cpu.user \
+             graph.color=$BLUE \
+             graph.fill_color=0x308aadf4 \
+             label.drawing=off \
+             icon.drawing=off \
+             background.height=30 \
+             background.color=$TRANSPARENT \
+             background.border_width=0 \
+             background.corner_radius=0 \
+             background.shadow.drawing=off \
+             background.drawing=on
 
 sketchybar --trigger aerospace_workspace_change
 sketchybar --update

@@ -17,11 +17,13 @@ tap "nikitabobko/tap", trusted: {
 brew "fzf"
 brew "gh"
 brew "git"
+brew "jq"
 brew "mas"
 brew "neovim"
 brew "ripgrep"
 brew "starship"
 brew "stow"
+brew "switchaudio-osx"
 brew "tmux"
 brew "tree"
 brew "zsh-autosuggestions"
@@ -40,6 +42,7 @@ brew "sketchybar"
 
 cask "font-sketchybar-app-font"
 cask "font-meslo-lg-nerd-font"
+cask "sf-symbols"
 
 # ---------------------------------------------------------------------
 # Core macOS workflow

@@ -3,6 +3,7 @@
 CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
 
 source "$CONFIG_DIR/plugins/icon_map.sh"
+source "$CONFIG_DIR/colors.sh"
 
 # Eén snapshot per event. Daardoor blijven focus- en workspacewisselingen ook
 # met meerdere schermen vloeiend: geen process-spawn per indicator.
@@ -12,11 +13,6 @@ WORKSPACES="$(aerospace list-workspaces --all \
   --format '%{workspace}|%{monitor-appkit-nsscreen-screens-id}|%{workspace-is-visible}|%{workspace-is-focused}' 2>/dev/null)" || exit 0
 WINDOWS="$(aerospace list-windows --all \
   --format '%{workspace}|%{app-name}' 2>/dev/null)" || exit 0
-
-BACKGROUND=0xff011423
-FOREGROUND=0xffcbe0f0
-CYAN=0xff24eaf7
-MUTED_CYAN=0x9924eaf7
 
 display_prefix() {
   local display="$1"
@@ -94,21 +90,21 @@ for display in 1 2 3; do
 
     if [[ "$visible" == "true" ]]; then
       if [[ "$focused" == "true" ]]; then
-        background_color="$CYAN"
+        icon_color="$ACTIVE_WORKSPACE"
       else
         # De zichtbare, maar niet-gefocuste workspace blijft nadrukkelijk
         # herkenbaar, ook als er geen app-iconen in staan.
-        background_color="$MUTED_CYAN"
+        icon_color="$FOREGROUND"
       fi
 
       SKETCHYBAR_ARGS+=(
         --set "$item"
         drawing=on
         "label=$icons"
-        "icon.color=$BACKGROUND"
-        "label.color=$BACKGROUND"
-        "background.color=$background_color"
-        background.drawing=on
+        "icon.color=$icon_color"
+        "label.color=$FOREGROUND"
+        background.border_width=0
+        background.drawing=off
       )
     else
       SKETCHYBAR_ARGS+=(
@@ -117,6 +113,9 @@ for display in 1 2 3; do
         "label=$icons"
         "icon.color=$FOREGROUND"
         "label.color=$FOREGROUND"
+        "background.color=$PANEL_COLOR"
+        "background.border_color=$BORDER_COLOR"
+        background.border_width=0
         background.drawing=off
       )
     fi
