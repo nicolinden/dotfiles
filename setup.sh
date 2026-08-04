@@ -83,6 +83,7 @@ case "$(uname -s)" in
       echo "  3) Update installed apps"
       echo "  4) Diagnostics"
       echo "  5) Backup / restore"
+      echo "  6) Reload configuration after git pull"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -103,6 +104,17 @@ case "$(uname -s)" in
         3) run_submenu "$DOTFILES_DIR/update-menu.sh" ;;
         4) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
         5) run_submenu "$DOTFILES_DIR/backup-restore-manager.sh" ;;
+        6)
+          echo
+          echo "This reapplies Stow configuration and reloads AeroSpace, SketchyBar,"
+          echo "Borders and an active tmux server. It does not install or update apps."
+          if confirm_action "Reload configuration after git pull?"; then
+            "$DOTFILES_DIR/reload.sh"
+            wait_for_menu_return
+          else
+            echo "Cancelled."
+          fi
+          ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;
       esac
@@ -127,6 +139,7 @@ case "$(uname -s)" in
       echo "  4) Diagnostics"
       echo "  5) Restart Ubuntu"
       echo "  6) Manage Docker containers"
+      echo "  7) Reload configuration after git pull"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -163,6 +176,17 @@ case "$(uname -s)" in
           else
             echo "Docker is not installed."
             wait_for_menu_return
+          fi
+          ;;
+        7)
+          echo
+          echo "This reapplies the shared Stow configuration and reloads an active"
+          echo "tmux server. It does not install or update apps."
+          if confirm_action "Reload configuration after git pull?"; then
+            "$DOTFILES_DIR/reload.sh"
+            wait_for_menu_return
+          else
+            echo "Cancelled."
           fi
           ;;
         q|Q|"") exit 0 ;;

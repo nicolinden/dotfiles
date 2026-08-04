@@ -83,6 +83,9 @@ wordt geladen.
   AeroSpace-workspace.
   Druk `⌃⌥Spatie` om SketchyBar tijdelijk te verbergen en de native menubalk te
   gebruiken; druk opnieuw om SketchyBar terug te zetten.
+  De core-installatie beheert zowel `sketchybar-app-font` voor app-iconen als
+  Apple SF Symbols voor de systeemiconen. De SF Symbols-installer vraagt tijdens
+  **(Re)install and apply configuration** eenmalig om het macOS-beheerderswachtwoord.
 - Installeer Docker Desktop desgewenst apart met:
 
   ```bash
@@ -121,9 +124,13 @@ stoppen, herstarten en logs bekijken; lokale images zijn vanuit hetzelfde menu
 op te vragen.
 
 Kies **Install optional Ubuntu tools** in hetzelfde menu om aanvullende tools
-te kiezen: GitHub CLI, `jq`, `tree`, `btop`, `htop`, `ncdu` en de actuele
-stabiele Neovim-release. Dit zijn bewuste optionele keuzes; Docker zelf wordt
-niet automatisch op een server geïnstalleerd.
+te kiezen: GitHub CLI, `jq`, `tree`, `btop`, `htop`, `ncdu`, de actuele
+stabiele Neovim-release en `cmatrix` in de aparte categorie **Terminal extras**.
+Dit zijn bewuste optionele keuzes; Docker zelf wordt niet automatisch op een
+server geïnstalleerd. Op macOS staat `cmatrix` in het optionele
+development-profiel. Binnen tmux werkt het daarna als schermvullende screensaver:
+automatisch na 15 minuten inactiviteit of handmatig met `Ctrl+A`, gevolgd door
+`Shift+M`; een willekeurige toets brengt de bestaande panes terug.
 
 ## Dagelijks onderhoud
 
@@ -154,6 +161,9 @@ Het hoofdmenu blijft bewust klein: **(Re)install and apply configuration**
 herstelt de basissoftware en past Stow opnieuw toe; **Manage apps** of
 **Manage optional tools** bevat de installaties; **Update** werkt software bij;
 en **Diagnostics** bevat de health check en logweergave.
+Gebruik **Reload configuration after git pull** om dezelfde reload na
+bevestiging vanuit het hoofdmenu uit te voeren, zonder apps te installeren of
+bij te werken.
 Elke actie die software installeert, bijwerkt, Stow opnieuw toepast of het
 systeem herstart, toont eerst een korte beschrijving en vraagt om bevestiging.
 

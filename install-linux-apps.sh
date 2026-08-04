@@ -13,6 +13,7 @@ source "$DOTFILES_DIR/menu-ui.sh"
 
 DEVELOPER_PACKAGES=(gh jq tree)
 MONITORING_PACKAGES=(btop htop ncdu)
+TERMINAL_EXTRA_PACKAGES=(cmatrix)
 NEOVIM_LABEL="Current stable Neovim from the official release"
 
 join_items() {
@@ -59,6 +60,7 @@ print_menu_header "Optional Ubuntu tools"
 echo "  1) Developer CLI"
 echo "  2) Monitoring and disk usage"
 echo "  3) Neovim"
+echo "  4) Terminal extras"
 echo "  a) Install everything"
 echo "  q) Quit"
 echo
@@ -66,12 +68,12 @@ read -r -p "Choose one or more numbers (for example 1 2), a or q: " selection
 
 case "$selection" in
   q|Q|"") exit 0 ;;
-  a|A) selected=(1 2 3) ;;
+  a|A) selected=(1 2 3 4) ;;
   *) IFS=', ' read -r -a selected <<< "$selection" ;;
 esac
 
 for choice in "${selected[@]}"; do
-  if ! [[ "$choice" =~ ^[1-3]$ ]]; then
+  if ! [[ "$choice" =~ ^[1-4]$ ]]; then
     echo "Invalid choice: $choice"
     exit 1
   fi
@@ -84,6 +86,7 @@ for choice in "${selected[@]}"; do
     1) printf '  - %s\n' "$(join_items "${DEVELOPER_PACKAGES[@]}")" ;;
     2) printf '  - %s\n' "$(join_items "${MONITORING_PACKAGES[@]}")" ;;
     3) printf '  - %s\n' "$NEOVIM_LABEL" ;;
+    4) printf '  - %s\n' "$(join_items "${TERMINAL_EXTRA_PACKAGES[@]}")" ;;
   esac
 done
 
@@ -97,6 +100,7 @@ for choice in "${selected[@]}"; do
     1) install_apt_packages "${DEVELOPER_PACKAGES[@]}" ;;
     2) install_apt_packages "${MONITORING_PACKAGES[@]}" ;;
     3) install_neovim ;;
+    4) install_apt_packages "${TERMINAL_EXTRA_PACKAGES[@]}" ;;
   esac
 done
 

@@ -2,6 +2,7 @@
 
 brew "lazydocker"
 brew "lazygit"
+brew "cmatrix"
 
 cask "android-platform-tools"
 cask "bruno"
