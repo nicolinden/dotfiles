@@ -191,7 +191,8 @@ Brewfile       Basisformules, taps en macOS-workflow
 Brewfile.dev   Optionele development-tools en -apps
 Brewfile.personal  Optionele persoonlijke apps
 Brewfile.mas   Persoonlijke Mac App Store-apps
-Brewfile.office.mas  Apple iWork- en Microsoft Office-apps
+Brewfile.office      Microsoft Office-apps via Homebrew
+Brewfile.office.mas  Apple iWork- en Microsoft Office-apps uit de App Store
 bootstrap.sh   Installatie voor macOS en Ubuntu
 setup.sh       Centrale manager voor installatie, verwijderen en updates
 menu-ui.sh     Gedeelde ASCII-header en schermnavigatie voor menu's

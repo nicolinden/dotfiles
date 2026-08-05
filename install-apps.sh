@@ -50,6 +50,7 @@ install_all_optional_apps() {
   show_mas_plan "$DOTFILES_DIR/Brewfile.mas"
   echo "Office and iWork:"
   show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
+  show_brewfile_plan "$DOTFILES_DIR/Brewfile.office"
   echo "System apps:"
   for label in "${SYSTEM_LABELS[@]}"; do
     printf '  - %s\n' "$label"

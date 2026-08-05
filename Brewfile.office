@@ -1,0 +1,2 @@
+# Microsoft productivity apps distributed outside the Mac App Store.
+cask "microsoft-teams" # label: Microsoft Teams

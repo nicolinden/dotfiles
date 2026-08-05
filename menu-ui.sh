@@ -148,11 +148,18 @@ confirm_action() {
 
 show_brewfile_plan() {
   local brewfile="$1"
+  local line name label
 
-  sed -nE \
-    -e 's/^brew "([^"]+)".*/  - \1/p' \
-    -e 's/^cask "([^"]+)".*/  - \1/p' \
-    "$brewfile"
+  while IFS= read -r line; do
+    name="$(printf '%s\n' "$line" | sed -nE \
+      -e 's/^brew "([^"]+)".*/\1/p' \
+      -e 's/^cask "([^"]+)".*/\1/p')"
+    [[ -n "$name" ]] || continue
+
+    label="$(printf '%s\n' "$line" \
+      | sed -nE 's/.*#[[:space:]]*label:[[:space:]]*(.*)$/\1/p')"
+    printf '  - %s\n' "${label:-$name}"
+  done < "$brewfile"
 }
 
 show_mas_plan() {

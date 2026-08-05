@@ -46,6 +46,7 @@ add_brewfile_entries() {
 
 add_brewfile_entries "$DOTFILES_DIR/Brewfile.dev"
 add_brewfile_entries "$DOTFILES_DIR/Brewfile.personal"
+add_brewfile_entries "$DOTFILES_DIR/Brewfile.office"
 
 if brew list --cask docker-desktop >/dev/null 2>&1; then
   entries+=("cask|docker-desktop|Docker Desktop")

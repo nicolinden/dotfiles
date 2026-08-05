@@ -30,9 +30,19 @@ fi
 print_menu_header "Office and iWork"
 echo "This will install or update:"
 show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
+show_brewfile_plan "$DOTFILES_DIR/Brewfile.office"
 if ! confirm_action "Install Office and iWork apps?"; then
   echo "Cancelled."
   exit "$MENU_CANCELLED"
+fi
+
+echo
+echo "Office-apps via Homebrew installeren..."
+mkdir -p "$HOME/Applications"
+if ! install_brewfile_items "$DOTFILES_DIR/Brewfile.office" "$HOME/Applications"; then
+  echo
+  echo "Een of meer Office-apps konden niet via Homebrew worden geïnstalleerd."
+  exit 1
 fi
 
 echo
