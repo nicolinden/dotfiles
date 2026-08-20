@@ -94,6 +94,13 @@ outer.right = 10
 
 [mode.main.binding]
 
+# Open a persistent service mode for grouping and layout maintenance.
+# SketchyBar shows clearly that normal bindings are temporarily inactive.
+alt-shift-semicolon = [
+  "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-service-mode enter'",
+  "mode service",
+]
+
 # ------------------------------------------------------------
 # Focus
 # Select the nearest window without moving anything.
@@ -180,3 +187,42 @@ alt-period = "focus-monitor --wrap-around next"
 
 # Move the focused window to the next monitor and follow it
 alt-shift-period = "move-node-to-monitor --focus-follows-window --wrap-around next"
+
+# ------------------------------------------------------------
+# Service mode
+#
+# Enter with Option+Shift+semicolon. Unlike AeroSpace's sample config, this
+# mode stays active so several layout operations can be performed in a row.
+# Escape returns to main mode and reloads the configuration.
+# ------------------------------------------------------------
+
+[mode.service.binding]
+
+esc = [
+  "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-service-mode exit'",
+  "mode main",
+  "reload-config",
+]
+
+# Group the focused window with its neighbour. Both the short keys and the
+# familiar move chords work while service mode is active.
+h = "join-with left"
+j = "join-with down"
+k = "join-with up"
+l = "join-with right"
+alt-shift-h = "join-with left"
+alt-shift-j = "join-with down"
+alt-shift-k = "join-with up"
+alt-shift-l = "join-with right"
+
+# Layout maintenance; service mode deliberately remains active.
+r = "flatten-workspace-tree"
+b = "balance-sizes"
+f = "layout floating tiling"
+a = "layout accordion tiles"
+slash = "layout horizontal vertical"
+m = "fullscreen --no-outer-gaps"
+
+# Navigate while inspecting or adjusting a nested layout.
+leftSquareBracket = "focus dfs-prev"
+rightSquareBracket = "focus dfs-next"

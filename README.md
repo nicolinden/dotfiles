@@ -73,7 +73,14 @@ wordt geladen.
   | `⌥⇧1`–`⌥⇧6` | Verplaats app naar workspace (op scherm twee: 1–3) |
   | `⌥M` | Maximaliseer/herstel venster |
   | `⌥⇧Spatie` | Toggle floating/tiling |
+  | `⌥⇧;` | Open blijvende service mode voor groeperen en layouts |
   | `⌃⌥Spatie` | Wissel tussen SketchyBar en de native macOS-menubalk |
+
+  In service mode toont SketchyBar een rode statusbalk en blijven opdrachten
+  actief: `H/J/K/L` groepeert met het venster in die richting, `A` wisselt
+  tiles/accordion, `/` wisselt de richting, `B` balanceert, `F` wisselt
+  floating/tiling, `M` maximaliseert en `R` maakt de workspace vlak. `Esc`
+  verlaat service mode, verbergt de status en herlaadt de AeroSpace-configuratie.
 - SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
   iedere volgende login automatisch terug en wordt op alle aangesloten
   schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk

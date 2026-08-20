@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+# Keep the SketchyBar service-mode indicator in sync with AeroSpace.
+set -euo pipefail
+
+case "${1:-}" in
+  enter)
+    sketchybar --set '/aerospace_mode\..*/' drawing=on
+    ;;
+  exit)
+    sketchybar --set '/aerospace_mode\..*/' drawing=off
+    ;;
+  *)
+    echo "Usage: aerospace-service-mode enter|exit" >&2
+    exit 2
+    ;;
+esac
