@@ -57,17 +57,25 @@ on-window-detected = [
   { if = "test %{app-bundle-id} = com.microsoft.teams2", run = "move-node-to-workspace main-6" },
 ]
 
-# Keep SketchyBar in sync with the active workspace
+# Keep the heavier workspace snapshot limited to actual workspace changes.
 exec-on-workspace-change = [
   '/bin/bash',
   '-c',
-  'sleep 0.1; sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE; sketchybar --trigger aerospace_focus_change',
+  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
 ]
 
-# Laat de korte vertraging eerst verlopen, zodat een geopend of gesloten
-# venster al in de AeroSpace-snapshot is verwerkt voordat SketchyBar ververst.
+# Move the pointer to the exact center of every newly focused window. An empty
+# workspace falls back to the center of its monitor. The SketchyBar focus event
+# is deliberately lightweight and does not rebuild all workspace indicators.
 on-focus-changed = [
-  'exec-and-forget /bin/bash -c "sleep 0.1; sketchybar --trigger aerospace_workspace_change; sketchybar --trigger aerospace_focus_change"',
+  'move-mouse window-force-center || move-mouse monitor-force-center',
+  'exec-and-forget sketchybar --trigger aerospace_focus_change',
+]
+
+# Changing monitors can change which of two visible workspaces is focused,
+# even if neither workspace itself changes.
+on-focused-monitor-changed = [
+  'exec-and-forget sketchybar --trigger aerospace_workspace_change',
 ]
 
 # Het hoofdscherm en het tweede scherm krijgen allebei 1 t/m 6. Bij één monitor

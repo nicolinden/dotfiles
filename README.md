@@ -54,6 +54,9 @@ wordt geladen.
   Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
+  Bij iedere focuswissel verplaatst AeroSpace de muis naar het midden van het
+  nieuwe venster; op een lege workspace valt dit terug naar het midden van het
+  scherm.
 - Bij twee schermen heeft het hoofdscherm workspaces `1` t/m `6`; het tweede
   scherm heeft `1` t/m `3`. Focus eerst het gewenste scherm met `⌥.` en kies
   daarna het gewenste nummer. Verplaats de gefocuste app naar het gekozen
