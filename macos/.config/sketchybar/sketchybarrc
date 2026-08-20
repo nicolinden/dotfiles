@@ -41,65 +41,39 @@ sketchybar --default \
   background.shadow.angle=90 \
   background.shadow.distance=2
 
-# Apple menu, shown on every display like the reference configuration.
-sketchybar --add item apple left \
-           --subscribe apple mouse.exited.global \
-           --set apple \
-             icon="$APPLE" \
-             icon.font="$FONT:Black:16.0" \
-             icon.color=$APPLE_GREEN \
-             icon.padding_left=9 \
-             icon.padding_right=9 \
-             label.drawing=off \
-             click_script="$CONFIG_DIR/plugins/apple.sh toggle" \
-             script="$CONFIG_DIR/plugins/apple.sh close" \
-             popup.background.color=$POPUP_BACKGROUND_COLOR \
-             popup.background.corner_radius=9 \
-             popup.background.border_width=2 \
-             popup.background.border_color=$POPUP_BORDER_COLOR \
-             popup.blur_radius=20 \
-             popup.background.shadow.drawing=on \
-             popup.background.shadow.color=$SHADOW_COLOR
+# Eén Apple-menu per scherm, zodat alleen het logo op het actieve scherm groen is.
+sketchybar --add event aerospace_focus_change
 
-sketchybar --add item apple.preferences popup.apple \
-           --set apple.preferences \
-             icon="$PREFERENCES" \
-             icon.width=22 \
-             icon.align=center \
-             icon.padding_left=4 \
-             icon.padding_right=6 \
-             label="Preferences" \
-             label.padding_left=6 \
-             label.padding_right=12 \
-             padding_left=8 \
-             padding_right=8 \
-             click_script="$CONFIG_DIR/plugins/apple.sh preferences" \
-           --add item apple.activity popup.apple \
-           --set apple.activity \
-             icon="$ACTIVITY" \
-             icon.width=22 \
-             icon.align=center \
-             icon.padding_left=4 \
-             icon.padding_right=6 \
-             label="Activity" \
-             label.padding_left=6 \
-             label.padding_right=12 \
-             padding_left=8 \
-             padding_right=8 \
-             click_script="$CONFIG_DIR/plugins/apple.sh activity" \
-           --add item apple.lock popup.apple \
-           --set apple.lock \
-             icon="$LOCK" \
-             icon.width=22 \
-             icon.align=center \
-             icon.padding_left=4 \
-             icon.padding_right=6 \
-             label="Lock Screen" \
-             label.padding_left=6 \
-             label.padding_right=12 \
-             padding_left=8 \
-             padding_right=8 \
-             click_script="$CONFIG_DIR/plugins/apple.sh lock"
+for DISPLAY in 1 2 3; do
+  APPLE_ITEM="apple.$DISPLAY"
+
+  sketchybar --add item "$APPLE_ITEM" left \
+             --subscribe "$APPLE_ITEM" mouse.exited.global aerospace_focus_change \
+             --set "$APPLE_ITEM" \
+               display=$DISPLAY \
+               icon="$APPLE" \
+               icon.font="$FONT:Black:16.0" \
+               icon.color=$MUTED \
+               icon.padding_left=9 \
+               icon.padding_right=9 \
+               label.drawing=off \
+               click_script="$CONFIG_DIR/plugins/apple.sh toggle $APPLE_ITEM" \
+               script="$CONFIG_DIR/plugins/apple.sh update $APPLE_ITEM $DISPLAY" \
+               popup.background.color=$POPUP_BACKGROUND_COLOR \
+               popup.background.corner_radius=9 \
+               popup.background.border_width=2 \
+               popup.background.border_color=$POPUP_BORDER_COLOR \
+               popup.blur_radius=20 \
+               popup.background.shadow.drawing=on \
+               popup.background.shadow.color=$SHADOW_COLOR
+
+  sketchybar --add item "$APPLE_ITEM.preferences" "popup.$APPLE_ITEM" \
+             --set "$APPLE_ITEM.preferences" icon="$PREFERENCES" icon.width=22 icon.align=center icon.padding_left=4 icon.padding_right=6 label="Preferences" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 click_script="$CONFIG_DIR/plugins/apple.sh preferences $APPLE_ITEM" \
+             --add item "$APPLE_ITEM.activity" "popup.$APPLE_ITEM" \
+             --set "$APPLE_ITEM.activity" icon="$ACTIVITY" icon.width=22 icon.align=center icon.padding_left=4 icon.padding_right=6 label="Activity" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 click_script="$CONFIG_DIR/plugins/apple.sh activity $APPLE_ITEM" \
+             --add item "$APPLE_ITEM.lock" "popup.$APPLE_ITEM" \
+             --set "$APPLE_ITEM.lock" icon="$LOCK" icon.width=22 icon.align=center icon.padding_left=4 icon.padding_right=6 label="Lock Screen" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 click_script="$CONFIG_DIR/plugins/apple.sh lock $APPLE_ITEM"
+done
 
 # AeroSpace workspaces
 # Maak een indicatorreeks per mogelijk scherm. Items op niet-aangesloten
@@ -169,7 +143,6 @@ for DISPLAY in 1 2 3; do
 done
 
 # Huidige app uitsluitend op het scherm waarop de focus staat.
-sketchybar --add event aerospace_focus_change
 
 for DISPLAY in 1 2 3; do
   sketchybar --add item "app_separator.$DISPLAY" left \
