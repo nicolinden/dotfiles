@@ -2,12 +2,12 @@
 
 set -euo pipefail
 
-workspace_number="${1:?Gebruik: aerospace-move-to-workspace-on-focused-monitor <1-6>}"
+workspace_number="${1:?Gebruik: aerospace-move-to-workspace-on-focused-monitor <1-10>}"
 
 case "$workspace_number" in
-  [1-6]) ;;
+  [1-9]|10) ;;
   *)
-    echo "Workspace moet een nummer van 1 t/m 6 zijn." >&2
+    echo "Workspace moet een nummer van 1 t/m 10 zijn." >&2
     exit 1
     ;;
 esac
@@ -18,8 +18,9 @@ else
   workspace_prefix="side"
 fi
 
-if [[ "$workspace_prefix" == "side" && "$workspace_number" -gt 3 ]]; then
+if [[ "$workspace_prefix" == "main" && "$workspace_number" -gt 6 ]]; then
   exit 0
 fi
 
-exec aerospace move-node-to-workspace "$workspace_prefix-$workspace_number"
+aerospace move-node-to-workspace "$workspace_prefix-$workspace_number"
+"$HOME/.local/bin/aerospace-refresh-sketchybar"

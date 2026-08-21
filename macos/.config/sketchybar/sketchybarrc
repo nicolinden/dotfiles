@@ -81,7 +81,7 @@ done
 sketchybar --add event aerospace_workspace_change
 
 # Eén updater verwerkt alle workspace-items tegelijk. Dit voorkomt dat elk van
-# de 18 indicatoren afzonderlijk AeroSpace-processen start bij focuswijziging.
+# de 30 mogelijke indicatoren afzonderlijk AeroSpace-processen start.
 sketchybar --add item aerospace_workspace_updater left \
            --subscribe aerospace_workspace_updater aerospace_workspace_change \
            --set aerospace_workspace_updater \
@@ -90,32 +90,29 @@ sketchybar --add item aerospace_workspace_updater left \
 
 for DISPLAY in 1 2 3; do
   WORKSPACE_MEMBERS=()
-  # Gebruik op het hoofdscherm de main-reeks en op andere schermen side-*.
-  # De zichtbare labels blijven op alle schermen simpelweg 1 t/m 6.
+  # Het hoofdscherm heeft vier vaste letter-workspaces en zes dynamische
+  # nummers. Externe schermen hebben tien dynamische nummers.
   if aerospace list-monitors --format '%{monitor-appkit-nsscreen-screens-id} %{monitor-is-main}' \
     | awk -v display="$DISPLAY" '$1 == display && $2 == "true" { found = 1 } END { exit !found }'; then
-    WORKSPACE_PREFIX="main"
-    WORKSPACE_COUNT=6
+    WORKSPACE_NAMES=(V B F T main-1 main-2 main-3 main-4 main-5 main-6)
+    WORKSPACE_LABELS=(V B F T 1 2 3 4 5 6)
   else
-    WORKSPACE_PREFIX="side"
-    WORKSPACE_COUNT=3
+    WORKSPACE_NAMES=(side-1 side-2 side-3 side-4 side-5 side-6 side-7 side-8 side-9 side-10)
+    WORKSPACE_LABELS=(1 2 3 4 5 6 7 8 9 10)
   fi
 
-  for WORKSPACE in 1 2 3 4 5 6; do
-    ITEM="workspace.$DISPLAY.$WORKSPACE"
-    WORKSPACE_NAME="$WORKSPACE_PREFIX-$WORKSPACE"
+  for INDEX in {0..9}; do
+    SLOT=$((INDEX + 1))
+    ITEM="workspace.$DISPLAY.$SLOT"
+    WORKSPACE_NAME="${WORKSPACE_NAMES[$INDEX]}"
+    WORKSPACE_LABEL="${WORKSPACE_LABELS[$INDEX]}"
     WORKSPACE_MEMBERS+=("$ITEM")
-
-    if (( WORKSPACE > WORKSPACE_COUNT )); then
-      sketchybar --add item "$ITEM" left \
-                 --set "$ITEM" display=$DISPLAY drawing=off
-      continue
-    fi
 
     sketchybar --add item "$ITEM" left \
                --set "$ITEM" \
                  display=$DISPLAY \
-                 icon="$WORKSPACE" \
+                 drawing=off \
+                 icon="$WORKSPACE_LABEL" \
                  icon.font="$FONT:Bold:14.0" \
                  icon.padding_left=8 \
                  icon.padding_right=5 \

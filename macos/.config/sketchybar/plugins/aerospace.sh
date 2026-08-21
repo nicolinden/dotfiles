@@ -60,13 +60,26 @@ workspace_icons() {
   printf '%s' "$icons"
 }
 
+workspace_has_windows() {
+  local target_workspace="$1"
+  local workspace _app
+
+  while IFS='|' read -r workspace _app; do
+    if [[ "$workspace" == "$target_workspace" ]]; then
+      return 0
+    fi
+  done <<< "$WINDOWS"
+
+  return 1
+}
+
 SKETCHYBAR_ARGS=()
 
 for display in 1 2 3; do
   prefix="$(display_prefix "$display")"
 
-  for number in 1 2 3 4 5 6; do
-    item="workspace.$display.$number"
+  for slot in {1..10}; do
+    item="workspace.$display.$slot"
 
     # Niet-aangesloten schermen krijgen geen indicatoren; dat voorkomt
     # achtergebleven items na het loskoppelen van een monitor.
@@ -75,18 +88,32 @@ for display in 1 2 3; do
       continue
     fi
 
-    workspace="$prefix-$number"
-
-    # Het hoofdscherm heeft zes workspaces; een secundair scherm heeft er drie.
-    if [[ "$prefix" == "side" && "$number" -gt 3 ]]; then
-      SKETCHYBAR_ARGS+=(--set "$item" drawing=off)
-      continue
+    fixed=false
+    if [[ "$prefix" == "main" ]]; then
+      case "$slot" in
+        1) workspace="V"; fixed=true ;;
+        2) workspace="B"; fixed=true ;;
+        3) workspace="F"; fixed=true ;;
+        4) workspace="T"; fixed=true ;;
+        *) workspace="main-$((slot - 4))" ;;
+      esac
+    else
+      workspace="side-$slot"
     fi
 
     state="$(workspace_state "$workspace")"
     visible="${state%%|*}"
     focused="${state##*|}"
     icons="$(workspace_icons "$workspace")"
+
+    # V, B, F en T staan altijd op het hoofdscherm. Numerieke workspaces
+    # verschijnen alleen wanneer ze een venster bevatten of actief zijn.
+    if [[ "$fixed" != "true" ]] \
+      && ! workspace_has_windows "$workspace" \
+      && [[ "$visible" != "true" ]]; then
+      SKETCHYBAR_ARGS+=(--set "$item" drawing=off)
+      continue
+    fi
 
     if [[ "$visible" == "true" ]]; then
       if [[ "$focused" == "true" ]]; then

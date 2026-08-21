@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/aerospace"
+STATE_FILE="$CACHE_DIR/sketchybar-window-state"
+
+# AeroSpace may still be finishing an open/close/move operation when its
+# callback starts. A short delay keeps SketchyBar from reading stale state.
+sleep 0.12
+
+WINDOW_STATE="$(aerospace list-windows --all \
+  --format '%{window-id}|%{workspace}' 2>/dev/null | sort)" || exit 0
+
+if [[ -f "$STATE_FILE" ]] && [[ "$(<"$STATE_FILE")" == "$WINDOW_STATE" ]]; then
+  exit 0
+fi
+
+mkdir -p "$CACHE_DIR"
+TEMP_FILE="$(mktemp "$CACHE_DIR/sketchybar-window-state.XXXXXX")"
+printf '%s\n' "$WINDOW_STATE" > "$TEMP_FILE"
+mv "$TEMP_FILE" "$STATE_FILE"
+
+sketchybar --trigger aerospace_workspace_change
