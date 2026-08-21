@@ -215,6 +215,7 @@ sketchybar --add item clock right \
              script="$CONFIG_DIR/plugins/clock.sh"
 
 sketchybar --add item brew_updates right \
+           --subscribe brew_updates mouse.clicked mouse.exited.global \
            --set brew_updates \
              icon="$BREW" \
              icon.font="$FONT:Regular:15.0" \
@@ -224,8 +225,57 @@ sketchybar --add item brew_updates right \
              label="?" \
              label.padding_left=0 \
              label.padding_right=9 \
-             update_freq=900 \
-             script="$CONFIG_DIR/plugins/brew_updates.sh"
+             update_freq=3600 \
+             script="$CONFIG_DIR/plugins/brew_updates.sh" \
+             popup.align=right \
+             popup.background.color=$POPUP_BACKGROUND_COLOR \
+             popup.background.corner_radius=9 \
+             popup.background.border_width=2 \
+             popup.background.border_color=$POPUP_BORDER_COLOR \
+             popup.blur_radius=0 \
+             popup.background.shadow.drawing=on \
+             popup.background.shadow.color=$SHADOW_COLOR \
+           --add item brew_updates.header popup.brew_updates \
+           --set brew_updates.header \
+             icon="$BREW" \
+             icon.font="$FONT:Regular:15.0" \
+             icon.color=$ORANGE \
+             icon.width=24 \
+             label="Homebrew updates" \
+             label.font="$FONT:Bold:13.0" \
+             label.padding_left=7 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8
+
+for INDEX in $(seq 1 20); do
+  sketchybar --add item "brew_updates.$INDEX" popup.brew_updates \
+             --set "brew_updates.$INDEX" \
+               drawing=off \
+               icon="•" \
+               icon.color=$BLUE \
+               icon.width=24 \
+               label="" \
+               label.font="$FONT:Regular:12.0" \
+               label.padding_left=7 \
+               label.padding_right=12 \
+               padding_left=8 \
+               padding_right=8
+done
+
+sketchybar --add item brew_updates.more popup.brew_updates \
+           --set brew_updates.more \
+             drawing=off \
+             icon="…" \
+             icon.color=$MUTED \
+             icon.width=24 \
+             label="" \
+             label.color=$MUTED \
+             label.font="$FONT:Regular:12.0" \
+             label.padding_left=7 \
+             label.padding_right=12 \
+             padding_left=8 \
+             padding_right=8
 
 # Separate Tailscale toggle: color communicates the state, click toggles it.
 sketchybar --add item tailscale right \

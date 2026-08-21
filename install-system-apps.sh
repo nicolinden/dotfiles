@@ -112,5 +112,6 @@ for choice in "${selected[@]}"; do
     "$current" "$total_selected" "${SYSTEM_LABELS[$index]}"
 done
 
+refresh_sketchybar_updates
 echo
 echo "Gekozen systeemapps zijn verwerkt. Volg eventuele macOS- of vendor-dialoogvensters."

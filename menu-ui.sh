@@ -3,6 +3,20 @@
 # Shared terminal presentation for the interactive dotfiles menus.
 MENU_CANCELLED=20
 
+refresh_sketchybar_updates() {
+  local config_dir="${HOME}/.config/sketchybar"
+  local update_script="$config_dir/plugins/brew_updates.sh"
+
+  [[ "$(uname -s)" == "Darwin" ]] || return 0
+  command -v sketchybar >/dev/null 2>&1 || return 0
+  [[ -x "$update_script" ]] || return 0
+
+  # De installatie hoeft niet op Homebrew en de App Store-query te wachten.
+  # De plugin vervangt zijn cache atomair zodra de nieuwe telling gereed is.
+  NAME=brew_updates SENDER=routine CONFIG_DIR="$config_dir" \
+    "$update_script" >/dev/null 2>&1 &
+}
+
 run_with_progress() {
   local label="$1"
   shift

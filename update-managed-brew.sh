@@ -4,6 +4,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "$DOTFILES_DIR/menu-ui.sh"
 BREWFILES=(Brewfile Brewfile.dev Brewfile.personal)
 formulae=()
 casks=()
@@ -62,4 +63,5 @@ echo "Cleaning up old Homebrew downloads and versions..."
 brew cleanup
 
 "$DOTFILES_DIR/reload.sh"
+refresh_sketchybar_updates
 echo "Managed Homebrew packages are up to date."

@@ -36,6 +36,8 @@ install_brewfile() {
      { [[ -d "$HOME/Applications/calibre.app" ]] || [[ -d "/Applications/calibre.app" ]]; }; then
     "$DOTFILES_DIR/calibre-sync.sh"
   fi
+
+  refresh_sketchybar_updates
 }
 
 install_all_optional_apps() {

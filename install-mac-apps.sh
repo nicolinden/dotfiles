@@ -46,4 +46,5 @@ if ! install_mas_items "$DOTFILES_DIR/Brewfile.mas"; then
   exit 1
 fi
 
+refresh_sketchybar_updates
 echo "Mac App Store-apps zijn verwerkt."
