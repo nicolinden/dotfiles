@@ -59,11 +59,10 @@ exec-on-workspace-change = [
   'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
 ]
 
-# Move the pointer to the exact center of every newly focused window. An empty
-# workspace falls back to the center of its monitor. The SketchyBar focus event
-# is deliberately lightweight and does not rebuild all workspace indicators.
+# Cursor centering is temporarily disabled; uncomment the move-mouse command
+# below to restore it. The SketchyBar focus event remains active.
 on-focus-changed = [
-  'move-mouse window-force-center || move-mouse monitor-force-center',
+  # 'move-mouse window-force-center || move-mouse monitor-force-center',
   'exec-and-forget sketchybar --trigger aerospace_focus_change',
   'exec-and-forget /bin/bash -lc "$HOME/.local/bin/aerospace-refresh-sketchybar"',
 ]
