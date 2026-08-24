@@ -57,3 +57,5 @@ if command -v brew >/dev/null 2>&1; then
 elif [[ -r "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
+
+alias sap-hana='cd /home/nico/.local/share/sap-hana-automation'
