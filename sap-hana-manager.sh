@@ -64,6 +64,23 @@ require_runtime() {
   fi
 }
 
+runtime_is_current() {
+  local file
+  require_runtime >/dev/null 2>&1 || return 1
+  for file in start-hana.sh check-sap.sh login-sap.sh compose.yaml; do
+    cmp -s "$SOURCE_DIR/$file" "$RUNTIME_DIR/$file" || return 1
+  done
+}
+
+require_current_runtime() {
+  require_runtime || return
+  if ! runtime_is_current; then
+    echo "The installed SAP HANA automation is older than the dotfiles version."
+    echo "Choose Install / update automation first; notification.env will be preserved."
+    return 1
+  fi
+}
+
 run_cf() {
   docker compose --project-directory "$RUNTIME_DIR" \
     --file "$RUNTIME_DIR/compose.yaml" run --rm -T cf "$@"
@@ -102,6 +119,10 @@ show_logs_menu() {
 
 while true; do
   print_menu_header "SAP HANA Trial"
+  if [[ -d "$RUNTIME_DIR" ]] && ! runtime_is_current; then
+    echo "  ! Update available: install the current dotfiles automation first."
+    echo
+  fi
   echo "  1) Install / update automation"
   echo "  2) Show complete status overview"
   echo "  3) Start HANA and PlayNext now"
@@ -113,9 +134,9 @@ while true; do
   read -r -p "Choose an option: " choice
   case "$choice" in
     1) install_automation; wait_for_menu_return ;;
-    2) require_runtime && "$RUNTIME_DIR/check-sap.sh" || true; wait_for_menu_return ;;
+    2) require_current_runtime && "$RUNTIME_DIR/check-sap.sh" || true; wait_for_menu_return ;;
     3)
-      if require_runtime; then
+      if require_current_runtime; then
         if automation_is_running; then
           echo "The HANA / PlayNext start task is already running; no second run was started."
           sudo systemctl status sap-hana-start.service --no-pager -l || true
