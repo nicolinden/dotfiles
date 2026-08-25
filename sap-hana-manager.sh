@@ -10,8 +10,20 @@ source "$DOTFILES_DIR/menu-ui.sh"
 
 [[ "$(uname -s)" == Linux ]] || { echo "SAP HANA Trial management is available on Linux only."; exit 1; }
 
+automation_is_running() {
+  systemctl is-active --quiet sap-hana-start.service
+}
+
+require_automation_idle() {
+  if automation_is_running; then
+    echo "The HANA / PlayNext start task is currently running. Wait for it to finish first."
+    return 1
+  fi
+}
+
 install_automation() {
   local tmp_dir current_user current_group webhook
+  require_automation_idle || return
   command -v docker >/dev/null 2>&1 || { echo "Docker is required."; return 1; }
   current_user="$(id -un)"
   current_group="$(id -gn)"
@@ -80,8 +92,8 @@ show_logs_menu() {
         systemctl list-timers sap-hana-start.timer --no-pager
         wait_for_menu_return
         ;;
-      4) run_cf logs playnext-srv --recent; wait_for_menu_return ;;
-      5) run_cf logs playnext --recent; wait_for_menu_return ;;
+      4) run_cf logs playnext-srv --recent || true; wait_for_menu_return ;;
+      5) run_cf logs playnext --recent || true; wait_for_menu_return ;;
       b|B|"") return ;;
       *) echo "Invalid choice."; wait_for_menu_return ;;
     esac
@@ -91,7 +103,7 @@ show_logs_menu() {
 while true; do
   print_menu_header "SAP HANA Trial"
   echo "  1) Install / update automation"
-  echo "  2) Check HANA instance and PlayNext apps"
+  echo "  2) Show complete status overview"
   echo "  3) Start HANA and PlayNext now"
   echo "  4) Renew SAP SSO login"
   echo "  5) Send test notification"
@@ -104,12 +116,17 @@ while true; do
     2) require_runtime && "$RUNTIME_DIR/check-sap.sh" || true; wait_for_menu_return ;;
     3)
       if require_runtime; then
-        sudo systemctl start sap-hana-start.service
-        sudo systemctl status sap-hana-start.service --no-pager -l
+        if automation_is_running; then
+          echo "The HANA / PlayNext start task is already running; no second run was started."
+          sudo systemctl status sap-hana-start.service --no-pager -l || true
+        else
+          sudo systemctl start sap-hana-start.service
+          sudo systemctl status sap-hana-start.service --no-pager -l
+        fi
       fi
       wait_for_menu_return
       ;;
-    4) require_runtime && "$RUNTIME_DIR/login-sap.sh" || true; wait_for_menu_return ;;
+    4) require_runtime && require_automation_idle && "$RUNTIME_DIR/login-sap.sh" || true; wait_for_menu_return ;;
     5)
       if require_runtime; then
         echo "Sending a test notification through the configured Home Assistant webhook..."

@@ -21,26 +21,50 @@ run_cf() {
 
 normalize_output() { tr '\n' ' ' | tr -s '[:space:]' ' '; }
 
+hana_requested_state() {
+  local params
+  params="$(run_cf service "${HANA_INSTANCE}" --params 2>/dev/null || true)"
+  if grep -Eqi '"serviceStopped"[[:space:]]*:[[:space:]]*false' <<<"$params"; then
+    printf 'running'
+  elif grep -Eqi '"serviceStopped"[[:space:]]*:[[:space:]]*true' <<<"$params"; then
+    printf 'stopped'
+  else
+    printf 'unknown'
+  fi
+}
+
 start_hana() {
-  local attempt service_output normalized_output
-  log "Startopdracht voor ${HANA_INSTANCE} versturen."
-  if ! run_cf update-service "${HANA_INSTANCE}" \
-    -c '{"data":{"serviceStopped":false}}' >/dev/null; then
-    log "FOUT: startopdracht voor ${HANA_INSTANCE} is mislukt."
-    return 1
+  local attempt service_output normalized_output requested_state
+  requested_state="$(hana_requested_state)"
+  if [[ "$requested_state" == running ]]; then
+    log "${HANA_INSTANCE} is al aangezet; geen startopdracht nodig."
+  else
+    if [[ "$requested_state" == stopped ]]; then
+      log "${HANA_INSTANCE} staat uit en wordt gestart."
+    else
+      log "Actuele HANA-status is onbekend; veilige startopdracht wordt uitgevoerd."
+    fi
+    log "Startopdracht voor ${HANA_INSTANCE} versturen."
+    if ! run_cf update-service "${HANA_INSTANCE}" \
+      -c '{"data":{"serviceStopped":false}}' >/dev/null; then
+      log "FOUT: startopdracht voor ${HANA_INSTANCE} is mislukt."
+      return 1
+    fi
   fi
 
+  # Ook wanneer serviceStopped al false was, kan een eerdere start nog bezig
+  # zijn. Controleer daarom altijd de brokerstatus voordat apps worden gestart.
   for ((attempt = 1; attempt <= HANA_MAX_CHECKS; attempt++)); do
     if ! service_output="$(run_cf service "${HANA_INSTANCE}" 2>&1)"; then
       log "FOUT: status van ${HANA_INSTANCE} kon niet worden opgehaald."
       return 1
     fi
     normalized_output="$(printf '%s' "${service_output}" | normalize_output)"
-    if grep -Eqi 'status:[[:space:]]+update[[:space:]]+succeeded' <<<"${normalized_output}"; then
+    if grep -Eqi 'status:[[:space:]]+(create|update)[[:space:]]+succeeded' <<<"${normalized_output}"; then
       log "${HANA_INSTANCE} is succesvol gestart."
       return 0
     fi
-    if grep -Eqi 'status:[[:space:]]+update[[:space:]]+(failed|error)' <<<"${normalized_output}"; then
+    if grep -Eqi 'status:[[:space:]]+(create|update)[[:space:]]+(failed|error)' <<<"${normalized_output}"; then
       log "FOUT: de update van ${HANA_INSTANCE} is mislukt."
       return 1
     fi
@@ -52,10 +76,29 @@ start_hana() {
 }
 
 start_app() {
-  local app="$1" attempt app_output normalized_output
-  log "Cloud Foundry-app ${app} starten."
-  if ! app_output="$(run_cf start "${app}" 2>&1)"; then
-    log "FOUT: startopdracht voor ${app} is mislukt."
+  local app="$1" attempt app_output normalized_output action
+
+  if ! app_output="$(run_cf app "${app}" 2>&1)"; then
+    log "FOUT: status van ${app} kon niet worden opgehaald."
+    return 1
+  fi
+  normalized_output="$(printf '%s' "${app_output}" | normalize_output)"
+  if grep -Eqi 'requested state:[[:space:]]+started' <<<"${normalized_output}" &&
+     grep -Eqi 'instances:[[:space:]]+1/1' <<<"${normalized_output}"; then
+    log "${app} draait al gezond met 1/1 instance; geen actie nodig."
+    return 0
+  fi
+
+  if grep -Eqi 'requested state:[[:space:]]+started' <<<"${normalized_output}"; then
+    action="restart"
+    log "${app} is aangezet maar niet gezond; app wordt herstart."
+  else
+    action="start"
+    log "${app} staat uit en wordt gestart."
+  fi
+
+  if ! app_output="$(run_cf "$action" "${app}" 2>&1)"; then
+    log "FOUT: ${action}-opdracht voor ${app} is mislukt."
     printf '%s\n' "${app_output}" >&2
     return 1
   fi

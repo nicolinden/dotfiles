@@ -9,6 +9,7 @@ problem_found=false
 
 ok() { printf 'OK: %s\n' "$1"; }
 fail() { printf 'FOUT: %s\n' "$1"; problem_found=true; }
+info() { printf 'INFO: %s\n' "$1"; }
 run_cf() { docker compose --project-directory "$SCRIPT_DIR" --file "$SCRIPT_DIR/compose.yaml" run --rm -T cf "$@"; }
 
 printf '%s SAP HANA/PlayNext-controle\n\n' "$(date --iso-8601=seconds)"
@@ -17,10 +18,13 @@ systemctl is-active --quiet "$TIMER" && ok "de dagelijkse timer is actief." || f
 result="$(systemctl show "$SERVICE" --property=Result --value)"
 [[ "$result" == success ]] && ok "de laatste uitvoering was succesvol." || fail "de laatste uitvoering was niet succesvol (${result:-onbekend})."
 
-if run_cf service ExamDB >/dev/null 2>&1; then
-  ok "Cloud Foundry is bereikbaar en ExamDB bestaat."
+params="$(run_cf service ExamDB --params 2>/dev/null || true)"
+if grep -Eqi '"serviceStopped"[[:space:]]*:[[:space:]]*false' <<<"$params"; then
+  ok "ExamDB is aangezet (serviceStopped=false)."
+elif grep -Eqi '"serviceStopped"[[:space:]]*:[[:space:]]*true' <<<"$params"; then
+  fail "ExamDB staat uit (serviceStopped=true)."
 else
-  fail "Cloud Foundry-login of toegang tot ExamDB werkt niet."
+  fail "status van ExamDB is onbekend; controleer de Cloud Foundry-login."
 fi
 
 for app in playnext-srv playnext; do
@@ -32,6 +36,13 @@ for app in playnext-srv playnext; do
     fail "$app draait niet gezond met 1/1 instance."
   fi
 done
+
+[[ -s "$SCRIPT_DIR/notification.env" ]] && ok "de Home Assistant-webhook is geconfigureerd." || fail "notification.env ontbreekt of is leeg."
+if systemctl is-active --quiet "$SERVICE"; then
+  info "de starttaak is momenteel bezig."
+else
+  info "de starttaak is momenteel niet bezig."
+fi
 
 printf '\nVolgende geplande uitvoering:\n'
 systemctl list-timers "$TIMER" --no-pager

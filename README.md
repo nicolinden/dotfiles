@@ -137,7 +137,10 @@ aanwezig is; macOS krijgt daardoor geen onbruikbare alias meer. Vanuit het
 servermenu kun je de instance en apps controleren of direct starten, de
 SAP SSO-login vernieuwen, een Home Assistant-testnotificatie versturen en
 afzonderlijk de automatiserings-, notificatie-, timer- en Cloud
-Foundry-applicatielogs bekijken.
+Foundry-applicatielogs bekijken. Starten is idempotent: een gezonde component
+wordt overgeslagen, een gestopte app wordt gestart en een aangezette maar
+ongezonde app wordt herstart. Installeren en opnieuw inloggen worden geweigerd
+zolang de starttaak actief is.
 
 Wanneer Docker al op de Ubuntu-machine aanwezig is, verschijnt in `./setup.sh`
 de optie **Manage Docker containers**. Daarmee kun je containers starten,
