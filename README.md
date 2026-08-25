@@ -128,6 +128,17 @@ Op Ubuntu installeert hetzelfde script de basispakketten, Starship, Oh My Zsh
 en de algemene dotfiles. De macOS-configuratie wordt daar niet gekoppeld.
 LazyGit en LazyDocker worden daarbij ook geïnstalleerd.
 
+Op de Ubuntu-server bevat het hoofdmenu **SAP HANA Trial**. Deze module bewaart
+de reproduceerbare Cloud Foundry-, HANA-, PlayNext- en systemd-configuratie in
+Git en installeert een runtimekopie in `~/.local/share/sap-hana-automation`.
+De echte `notification.env` en de Cloud Foundry-login blijven uitsluitend op
+de server. De alias `sap-hana` bestaat alleen op Linux wanneer die runtimemap
+aanwezig is; macOS krijgt daardoor geen onbruikbare alias meer. Vanuit het
+servermenu kun je de instance en apps controleren of direct starten, de
+SAP SSO-login vernieuwen, een Home Assistant-testnotificatie versturen en
+afzonderlijk de automatiserings-, notificatie-, timer- en Cloud
+Foundry-applicatielogs bekijken.
+
 Wanneer Docker al op de Ubuntu-machine aanwezig is, verschijnt in `./setup.sh`
 de optie **Manage Docker containers**. Daarmee kun je containers starten,
 stoppen, herstarten en logs bekijken; lokale images zijn vanuit hetzelfde menu

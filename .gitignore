@@ -8,3 +8,4 @@
 !macos/.local/bin/*
 .env
 .env.*
+sap-hana/notification.env

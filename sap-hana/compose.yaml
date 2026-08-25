@@ -1,0 +1,17 @@
+services:
+  cf:
+    image: cloudfoundry/cli:8.18.4@sha256:7990a05f0ba2f3e5e2cb47eeb746aa810dec7c496e8812d6353f3050d4ec3a54
+    environment:
+      CF_HOME: /cf-home
+    volumes:
+      - cf-home:/cf-home
+    entrypoint:
+      - cf
+    command:
+      - version
+    stdin_open: true
+    tty: true
+
+volumes:
+  cf-home:
+    name: sap-hana-automation-cf-home

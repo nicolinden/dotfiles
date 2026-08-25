@@ -1,0 +1,17 @@
+[Unit]
+Description=Send Home Assistant notification when ExamDB or PlayNext fails
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User=@USER@
+Group=@GROUP@
+EnvironmentFile=@HOME@/.local/share/sap-hana-automation/notification.env
+ExecStart=/usr/bin/curl --fail --silent --show-error --output /dev/null --retry 2 --retry-all-errors --connect-timeout 5 --max-time 8 --request POST ${SAP_FAILURE_WEBHOOK_URL}
+UMask=0077
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=read-only
+TimeoutStartSec=30s
