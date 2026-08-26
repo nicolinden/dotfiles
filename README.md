@@ -134,13 +134,21 @@ Git en installeert een runtimekopie in `~/.local/share/sap-hana-automation`.
 De echte `notification.env` en de Cloud Foundry-login blijven uitsluitend op
 de server. De alias `sap-hana` bestaat alleen op Linux wanneer die runtimemap
 aanwezig is; macOS krijgt daardoor geen onbruikbare alias meer. Vanuit het
-servermenu kun je de instance en apps controleren of direct starten, de
+servermenu kun je de instance en apps controleren of handmatig starten, de
 SAP SSO-login vernieuwen, een Home Assistant-testnotificatie versturen en
-afzonderlijk de automatiserings-, notificatie-, timer- en Cloud
+afzonderlijk de start-, notificatie-, gezondheidscontrole- en Cloud
 Foundry-applicatielogs bekijken. Starten is idempotent: een gezonde component
 wordt overgeslagen, een gestopte app wordt gestart en een aangezette maar
 ongezonde app wordt herstart. Installeren en opnieuw inloggen worden geweigerd
 zolang de starttaak actief is.
+
+Er is bewust geen automatische starttaak: een interactieve SAP SSO-login
+verloopt en is daardoor niet geschikt voor betrouwbare, onbeheerde starts. Een
+read-only systemd-timer controleert iedere zes uur de publieke frontend- en
+backendroutes en stuurt via de Home Assistant-webhook een melding bij uitval en
+herstel. De laatste volledig geslaagde handmatige start wordt lokaal bewaard.
+Vanaf dag 21 zonder zo'n bevestigde start volgt dagelijks een waarschuwing,
+zodat de trial ruim vóór de 30-dagengrens handmatig gestart kan worden.
 
 Wanneer Docker al op de Ubuntu-machine aanwezig is, verschijnt in `./setup.sh`
 de optie **Manage Docker containers**. Daarmee kun je containers starten,

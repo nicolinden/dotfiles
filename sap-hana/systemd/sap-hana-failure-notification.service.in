@@ -1,5 +1,5 @@
 [Unit]
-Description=Send Home Assistant notification when ExamDB or PlayNext fails
+Description=Send a test Home Assistant notification for SAP HANA/PlayNext
 After=network-online.target
 Wants=network-online.target
 
@@ -7,8 +7,7 @@ Wants=network-online.target
 Type=oneshot
 User=@USER@
 Group=@GROUP@
-EnvironmentFile=@HOME@/.local/share/sap-hana-automation/notification.env
-ExecStart=/usr/bin/curl --fail --silent --show-error --output /dev/null --retry 2 --retry-all-errors --connect-timeout 5 --max-time 8 --request POST ${SAP_FAILURE_WEBHOOK_URL}
+ExecStart=@HOME@/.local/share/sap-hana-automation/notify-ha.sh "Testmelding: SAP HANA/PlayNext webhook werkt." info 0
 UMask=0077
 NoNewPrivileges=true
 PrivateTmp=true

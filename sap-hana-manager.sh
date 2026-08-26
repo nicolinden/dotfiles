@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Install and operate the server-only SAP HANA Trial automation.
+# Install and operate the server-only SAP HANA Trial tools and health monitor.
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -25,6 +25,7 @@ install_automation() {
   local tmp_dir current_user current_group webhook
   require_automation_idle || return
   command -v docker >/dev/null 2>&1 || { echo "Docker is required."; return 1; }
+  command -v python3 >/dev/null 2>&1 || { echo "Python 3 is required for safe webhook messages."; return 1; }
   current_user="$(id -un)"
   current_group="$(id -gn)"
   mkdir -p "$RUNTIME_DIR"
@@ -32,7 +33,12 @@ install_automation() {
   install -m 0755 "$SOURCE_DIR/start-hana.sh" "$RUNTIME_DIR/start-hana.sh"
   install -m 0755 "$SOURCE_DIR/check-sap.sh" "$RUNTIME_DIR/check-sap.sh"
   install -m 0755 "$SOURCE_DIR/login-sap.sh" "$RUNTIME_DIR/login-sap.sh"
+  install -m 0755 "$SOURCE_DIR/logs-sap.sh" "$RUNTIME_DIR/logs-sap.sh"
+  install -m 0755 "$SOURCE_DIR/monitor-health.sh" "$RUNTIME_DIR/monitor-health.sh"
+  install -m 0755 "$SOURCE_DIR/notify-ha.sh" "$RUNTIME_DIR/notify-ha.sh"
   install -m 0644 "$SOURCE_DIR/compose.yaml" "$RUNTIME_DIR/compose.yaml"
+  mkdir -p "$RUNTIME_DIR/state"
+  chmod 700 "$RUNTIME_DIR/state"
 
   if [[ ! -f "$RUNTIME_DIR/notification.env" ]]; then
     read -r -s -p "Home Assistant failure webhook URL: " webhook
@@ -49,12 +55,18 @@ install_automation() {
     "$SOURCE_DIR/systemd/sap-hana-start.service.in" >"$tmp_dir/sap-hana-start.service"
   sed -e "s|@USER@|$current_user|g" -e "s|@GROUP@|$current_group|g" -e "s|@HOME@|$HOME|g" \
     "$SOURCE_DIR/systemd/sap-hana-failure-notification.service.in" >"$tmp_dir/sap-hana-failure-notification.service"
+  sed -e "s|@USER@|$current_user|g" -e "s|@GROUP@|$current_group|g" -e "s|@HOME@|$HOME|g" \
+    "$SOURCE_DIR/systemd/sap-hana-health.service.in" >"$tmp_dir/sap-hana-health.service"
   sudo install -m 0644 "$tmp_dir/sap-hana-start.service" /etc/systemd/system/sap-hana-start.service
   sudo install -m 0644 "$tmp_dir/sap-hana-failure-notification.service" /etc/systemd/system/sap-hana-failure-notification.service
-  sudo install -m 0644 "$SOURCE_DIR/systemd/sap-hana-start.timer" /etc/systemd/system/sap-hana-start.timer
+  sudo install -m 0644 "$tmp_dir/sap-hana-health.service" /etc/systemd/system/sap-hana-health.service
+  sudo install -m 0644 "$SOURCE_DIR/systemd/sap-hana-health.timer" /etc/systemd/system/sap-hana-health.timer
+  sudo systemctl disable --now sap-hana-start.timer 2>/dev/null || true
+  sudo rm -f /etc/systemd/system/sap-hana-start.timer
   sudo systemctl daemon-reload
-  sudo systemctl enable --now sap-hana-start.timer
-  echo "SAP HANA Trial automation installed/updated; notification.env was preserved."
+  sudo systemctl reset-failed sap-hana-start.service 2>/dev/null || true
+  sudo systemctl enable --now sap-hana-health.timer
+  echo "SAP HANA tools installed/updated. Automatic startup is disabled; the read-only health monitor is active."
 }
 
 require_runtime() {
@@ -67,7 +79,7 @@ require_runtime() {
 runtime_is_current() {
   local file
   require_runtime >/dev/null 2>&1 || return 1
-  for file in start-hana.sh check-sap.sh login-sap.sh compose.yaml; do
+  for file in start-hana.sh check-sap.sh login-sap.sh logs-sap.sh monitor-health.sh notify-ha.sh compose.yaml; do
     cmp -s "$SOURCE_DIR/$file" "$RUNTIME_DIR/$file" || return 1
   done
 }
@@ -92,25 +104,26 @@ show_logs_menu() {
 
   while true; do
     print_menu_header "SAP HANA Trial logs"
-    echo "  1) HANA / PlayNext automation log"
-    echo "  2) Failure notification log"
-    echo "  3) Timer status and next run"
+    echo "  1) Manual HANA / PlayNext start log"
+    echo "  2) Home Assistant notification log"
+    echo "  3) Background health-check log and next run"
     echo "  4) playnext-srv recent Cloud Foundry log"
     echo "  5) playnext recent Cloud Foundry log"
     echo "  b) Back"
     echo
     read -r -p "Choose an option: " log_choice
     case "$log_choice" in
-      1) sudo journalctl -u sap-hana-start.service -n 150 --no-pager -o cat; wait_for_menu_return ;;
-      2) sudo journalctl -u sap-hana-failure-notification.service -n 100 --no-pager -o cat; wait_for_menu_return ;;
+      1) "$RUNTIME_DIR/logs-sap.sh" start; wait_for_menu_return ;;
+      2) "$RUNTIME_DIR/logs-sap.sh" notification; wait_for_menu_return ;;
       3)
-        systemctl status sap-hana-start.timer --no-pager -l || true
+        "$RUNTIME_DIR/logs-sap.sh" health
         echo
-        systemctl list-timers sap-hana-start.timer --no-pager
+        systemctl status sap-hana-health.timer --no-pager -l || true
+        systemctl list-timers sap-hana-health.timer --no-pager
         wait_for_menu_return
         ;;
-      4) run_cf logs playnext-srv --recent || true; wait_for_menu_return ;;
-      5) run_cf logs playnext --recent || true; wait_for_menu_return ;;
+      4) "$RUNTIME_DIR/logs-sap.sh" backend || true; wait_for_menu_return ;;
+      5) "$RUNTIME_DIR/logs-sap.sh" frontend || true; wait_for_menu_return ;;
       b|B|"") return ;;
       *) echo "Invalid choice."; wait_for_menu_return ;;
     esac
@@ -123,12 +136,12 @@ while true; do
     echo "  ! Update available: install the current dotfiles automation first."
     echo
   fi
-  echo "  1) Install / update automation"
+  echo "  1) Install / update tools and background check"
   echo "  2) Show complete status overview"
   echo "  3) Start HANA and PlayNext now"
   echo "  4) Renew SAP SSO login"
   echo "  5) Send test notification"
-  echo "  6) Logs and timer status"
+  echo "  6) Logs and health-check status"
   echo "  b) Back"
   echo
   read -r -p "Choose an option: " choice

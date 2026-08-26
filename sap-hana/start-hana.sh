@@ -11,6 +11,7 @@ readonly HANA_MAX_CHECKS=30
 readonly HANA_CHECK_INTERVAL=20
 readonly APP_MAX_CHECKS=30
 readonly APP_CHECK_INTERVAL=10
+readonly STATE_DIR="${SAP_STATE_DIR:-${SCRIPT_DIR}/state}"
 
 log() { printf '%s %s\n' "$(date --iso-8601=seconds)" "$*"; }
 
@@ -132,4 +133,8 @@ log "Cloud Foundry-target staat op org ${CF_ORG}, space ${CF_SPACE}."
 start_hana
 start_app "playnext-srv"
 start_app "playnext"
+mkdir -p "${STATE_DIR}"
+date +%s >"${STATE_DIR}/last-online.epoch.tmp"
+mv "${STATE_DIR}/last-online.epoch.tmp" "${STATE_DIR}/last-online.epoch"
+printf 'up\n' >"${STATE_DIR}/last-status"
 log "ExamDB, playnext-srv en playnext draaien succesvol."
