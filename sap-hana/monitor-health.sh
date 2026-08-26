@@ -29,30 +29,36 @@ reachable() {
   return 1
 }
 
+read_state() {
+  local file="$1"
+  [[ -r "$file" ]] && command cat -- "$file"
+  return 0
+}
+
 frontend=down
 backend=down
 reachable "$FRONTEND_URL" && frontend=up
 reachable "$BACKEND_URL" && backend=up
 
 if [[ "$frontend" == up && "$backend" == up ]]; then
-  previous="$(<"$STATE_DIR/last-status" 2>/dev/null || true)"
+  previous="$(read_state "$STATE_DIR/last-status")"
   printf 'up\n' >"$STATE_DIR/last-status"
   if [[ "$previous" == down ]]; then
     "$SCRIPT_DIR/notify-ha.sh" "SAP HANA/PlayNext is weer bereikbaar." info 0
   fi
 fi
 
-last_online="$(<"$STATE_DIR/last-online.epoch" 2>/dev/null || true)"
+last_online="$(read_state "$STATE_DIR/last-online.epoch")"
 if [[ "$last_online" =~ ^[0-9]+$ ]] && (( now >= last_online )); then
   offline_days=$(( (now - last_online) / 86400 ))
 else
   offline_days=-1
 fi
 
-last_alert_day="$(<"$STATE_DIR/last-alert-day" 2>/dev/null || true)"
+last_alert_day="$(read_state "$STATE_DIR/last-alert-day")"
 
 if [[ "$frontend" == down || "$backend" == down ]]; then
-  previous="$(<"$STATE_DIR/last-status" 2>/dev/null || true)"
+  previous="$(read_state "$STATE_DIR/last-status")"
   printf 'down\n' >"$STATE_DIR/last-status"
   message="SAP-omgeving niet volledig bereikbaar: frontend=${frontend}, backend=${backend}."
   [[ "$previous" == down ]] || "$SCRIPT_DIR/notify-ha.sh" "$message" warning "$offline_days"
