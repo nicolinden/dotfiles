@@ -22,6 +22,7 @@ stow --restow --dir="$DOTFILES_DIR" --target="$HOME" home
 
 if [[ "$(uname -s)" == "Darwin" ]]; then
   stow --restow --dir="$DOTFILES_DIR" --target="$HOME" macos
+  "$DOTFILES_DIR/configure-noki-ssh.sh"
 
   if command -v aerospace >/dev/null 2>&1; then
     echo "AeroSpace herladen..."

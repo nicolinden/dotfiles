@@ -149,6 +149,14 @@ backendroutes en stuurt via de Home Assistant-webhook een melding bij uitval en
 herstel. De laatste volledig geslaagde handmatige start wordt lokaal bewaard.
 Vanaf dag 21 zonder zo'n bevestigde start volgt dagelijks een waarschuwing,
 zodat de trial ruim vóór de 30-dagengrens handmatig gestart kan worden.
+Op macOS opent **SAP HANA Trial on server** hetzelfde menu via de ingebouwde
+SSH-client. De Mac installeert of draait daarbij geen SAP-, Cloud Foundry-,
+Docker- of systemd-componenten; alle opdrachten worden op de Ubuntu-server
+uitgevoerd. Bootstrap en reload beheren daarnaast een afgebakend blok in
+`~/.ssh/config`, waardoor zowel `ssh noki-server` als de volledige hostnaam
+automatisch `~/.ssh/noki-server` gebruiken. De privésleutel zelf staat bewust
+niet in Git en moet op iedere Mac aanwezig zijn of via de versleutelde
+SSH-back-up worden hersteld.
 
 Wanneer Docker al op de Ubuntu-machine aanwezig is, verschijnt in `./setup.sh`
 de optie **Manage Docker containers**. Daarmee kun je containers starten,

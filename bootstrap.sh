@@ -203,6 +203,7 @@ stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose home
 if [[ "$(uname -s)" == "Darwin" ]]; then
   echo "macOS-dotfiles koppelen..."
   stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose macos
+  "$DOTFILES_DIR/configure-noki-ssh.sh"
 
   # AeroSpace registreert `start-at-login` pas nadat de app minstens één keer
   # heeft gedraaid. Start hem daarom na het koppelen van de configuratie.
