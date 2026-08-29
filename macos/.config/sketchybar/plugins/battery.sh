@@ -17,16 +17,19 @@ PERCENTAGE_NUMBER="${PERCENTAGE%%%}"
 if echo "$BATTERY_INFO" | grep -q "AC Power"; then
   ICON="$BATTERY_CHARGING"
   COLOR="$GREEN"
-elif [[ "$PERCENTAGE_NUMBER" -lt 20 ]]; then
+elif [[ "$PERCENTAGE_NUMBER" -lt 13 ]]; then
   ICON="$BATTERY_0"
   COLOR="$RED"
-elif [[ "$PERCENTAGE_NUMBER" -lt 50 ]]; then
+elif [[ "$PERCENTAGE_NUMBER" -lt 20 ]]; then
   ICON="$BATTERY_25"
   COLOR="$ORANGE"
-elif [[ "$PERCENTAGE_NUMBER" -lt 80 ]]; then
+elif [[ "$PERCENTAGE_NUMBER" -lt 38 ]]; then
+  ICON="$BATTERY_25"
+  COLOR="$WHITE"
+elif [[ "$PERCENTAGE_NUMBER" -lt 63 ]]; then
   ICON="$BATTERY_50"
   COLOR="$WHITE"
-elif [[ "$PERCENTAGE_NUMBER" -lt 90 ]]; then
+elif [[ "$PERCENTAGE_NUMBER" -lt 88 ]]; then
   ICON="$BATTERY_75"
   COLOR="$WHITE"
 else

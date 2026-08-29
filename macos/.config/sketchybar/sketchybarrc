@@ -67,7 +67,13 @@ for DISPLAY in 1 2 3; do
                popup.background.shadow.drawing=on \
                popup.background.shadow.color=$SHADOW_COLOR
 
-  sketchybar --add item "$APPLE_ITEM.preferences" "popup.$APPLE_ITEM" \
+  sketchybar --add item "$APPLE_ITEM.user" "popup.$APPLE_ITEM" \
+             --set "$APPLE_ITEM.user" icon="󰀄" icon.font="MesloLGS Nerd Font Mono:Regular:17.0" icon.width=22 icon.align=center icon.color=$BLUE icon.padding_left=4 icon.padding_right=6 label="User" label.font="$FONT:Bold:13.0" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 \
+             --add item "$APPLE_ITEM.uptime" "popup.$APPLE_ITEM" \
+             --set "$APPLE_ITEM.uptime" icon="󰔟" icon.font="MesloLGS Nerd Font Mono:Regular:17.0" icon.width=22 icon.align=center icon.color=$GREEN icon.padding_left=4 icon.padding_right=6 label="Uptime" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 \
+             --add item "$APPLE_ITEM.separator" "popup.$APPLE_ITEM" \
+             --set "$APPLE_ITEM.separator" icon.drawing=off label="────────────────────" label.font="$FONT:Regular:8.0" label.color=$BORDER_COLOR label.align=center label.padding_left=8 label.padding_right=8 padding_left=8 padding_right=8 background.height=10 \
+             --add item "$APPLE_ITEM.preferences" "popup.$APPLE_ITEM" \
              --set "$APPLE_ITEM.preferences" icon="$PREFERENCES" icon.width=22 icon.align=center icon.padding_left=4 icon.padding_right=6 label="Preferences" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 click_script="$CONFIG_DIR/plugins/apple.sh preferences $APPLE_ITEM" \
              --add item "$APPLE_ITEM.activity" "popup.$APPLE_ITEM" \
              --set "$APPLE_ITEM.activity" icon="$ACTIVITY" icon.width=22 icon.align=center icon.padding_left=4 icon.padding_right=6 label="Activity" label.padding_left=6 label.padding_right=12 padding_left=8 padding_right=8 click_script="$CONFIG_DIR/plugins/apple.sh activity $APPLE_ITEM" \
@@ -212,7 +218,7 @@ sketchybar --add item clock right \
              script="$CONFIG_DIR/plugins/clock.sh"
 
 sketchybar --add item brew_updates right \
-           --subscribe brew_updates mouse.clicked mouse.exited.global \
+           --subscribe brew_updates mouse.clicked mouse.entered mouse.exited mouse.exited.global \
            --set brew_updates \
              icon="$BREW" \
              icon.font="$FONT:Regular:15.0" \
@@ -233,7 +239,9 @@ sketchybar --add item brew_updates right \
              popup.background.shadow.drawing=on \
              popup.background.shadow.color=$SHADOW_COLOR \
            --add item brew_updates.header popup.brew_updates \
+           --subscribe brew_updates.header mouse.entered mouse.exited \
            --set brew_updates.header \
+             script="$CONFIG_DIR/plugins/popup_hover.sh brew_updates" \
              icon="$BREW" \
              icon.font="$FONT:Regular:15.0" \
              icon.color=$ORANGE \
@@ -247,7 +255,9 @@ sketchybar --add item brew_updates right \
 
 for INDEX in $(seq 1 20); do
   sketchybar --add item "brew_updates.$INDEX" popup.brew_updates \
+             --subscribe "brew_updates.$INDEX" mouse.entered mouse.exited \
              --set "brew_updates.$INDEX" \
+               script="$CONFIG_DIR/plugins/popup_hover.sh brew_updates" \
                drawing=off \
                icon="•" \
                icon.color=$BLUE \
@@ -261,7 +271,9 @@ for INDEX in $(seq 1 20); do
 done
 
 sketchybar --add item brew_updates.more popup.brew_updates \
+           --subscribe brew_updates.more mouse.entered mouse.exited \
            --set brew_updates.more \
+             script="$CONFIG_DIR/plugins/popup_hover.sh brew_updates" \
              drawing=off \
              icon="…" \
              icon.color=$MUTED \
@@ -290,7 +302,7 @@ sketchybar --add item tailscale right \
 
 # Active physical network, with connection details in a popup.
 sketchybar --add item network right \
-           --subscribe network system_woke mouse.clicked mouse.exited.global \
+           --subscribe network system_woke mouse.clicked mouse.entered mouse.exited mouse.exited.global \
            --set network \
              icon="󰖩" \
              icon.font="MesloLGS Nerd Font Mono:Regular:20.0" \
@@ -311,7 +323,9 @@ sketchybar --add item network right \
              popup.background.shadow.drawing=on \
              popup.background.shadow.color=$SHADOW_COLOR \
            --add item network.wifi popup.network \
+           --subscribe network.wifi mouse.entered mouse.exited \
            --set network.wifi \
+             script="$CONFIG_DIR/plugins/popup_hover.sh network" \
              icon="󰖩" \
              icon.font="MesloLGS Nerd Font Mono:Regular:18.0" \
              icon.width=28 \
@@ -323,7 +337,9 @@ sketchybar --add item network right \
              padding_left=8 \
              padding_right=8 \
            --add item network.ethernet popup.network \
+           --subscribe network.ethernet mouse.entered mouse.exited \
            --set network.ethernet \
+             script="$CONFIG_DIR/plugins/popup_hover.sh network" \
              icon="󰈀" \
              icon.font="MesloLGS Nerd Font Mono:Regular:18.0" \
              icon.width=28 \
@@ -335,7 +351,9 @@ sketchybar --add item network right \
              padding_left=8 \
              padding_right=8 \
            --add item network.settings popup.network \
+           --subscribe network.settings mouse.entered mouse.exited \
            --set network.settings \
+             script="$CONFIG_DIR/plugins/popup_hover.sh network" \
              icon="􀣋" \
              icon.font="$FONT:Regular:15.0" \
              icon.width=24 \
@@ -357,6 +375,7 @@ sketchybar --add item battery right \
              icon.padding_right=8 \
              label.drawing=off \
              update_freq=120 \
+             click_script="open 'x-apple.systempreferences:com.apple.Battery-Settings.extension'" \
              script="$CONFIG_DIR/plugins/battery.sh"
 
 # Animated volume detail and SF Symbol from commit e6288b3f.
@@ -390,7 +409,36 @@ sketchybar --add slider volume right \
              label.font="$FONT:Regular:14.0"
 
 # Exact grouped status pill from the reference configuration.
-sketchybar --add bracket system_status volume_icon tailscale network brew_updates \
+# Native privacy indicators. They are invisible unless an input is truly active.
+sketchybar --add item privacy.camera right \
+           --set privacy.camera \
+             drawing=off \
+             icon="󰄀" \
+             icon.font="MesloLGS Nerd Font Mono:Regular:17.0" \
+             icon.color=$GREEN \
+             icon.padding_left=5 \
+             icon.padding_right=3 \
+             label.drawing=off \
+             click_script="open 'x-apple.systempreferences:com.apple.preference.security?Privacy_Camera'" \
+           --add item privacy.mic right \
+           --set privacy.mic \
+             drawing=off \
+             icon="󰍬" \
+             icon.font="MesloLGS Nerd Font Mono:Regular:17.0" \
+             icon.color=$ORANGE \
+             icon.padding_left=3 \
+             icon.padding_right=5 \
+             label.drawing=off \
+             click_script="open 'x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone'" \
+           --add item privacy.observer right \
+           --subscribe privacy.observer system_woke \
+           --set privacy.observer \
+             drawing=off \
+             update_freq=3 \
+             updates=on \
+             script="$CONFIG_DIR/plugins/privacy.sh"
+
+sketchybar --add bracket system_status volume_icon privacy.mic privacy.camera tailscale network brew_updates \
            --set system_status \
              background.color=$BACKGROUND_1 \
              background.height=30 \
@@ -400,30 +448,20 @@ sketchybar --add bracket system_status volume_icon tailscale network brew_update
              background.drawing=on \
              background.shadow.drawing=off
 
-# CPU graph and two-line process/percentage readout from the reference layout.
-sketchybar --add item cpu.top right \
-           --set cpu.top \
-             label.font="$FONT:Semibold:9.0" \
-             label="CPU" \
-             label.width=110 \
+# CPU history stays visible; the percentage appears only above 50%.
+sketchybar --add item cpu.percent right \
+           --set cpu.percent \
+             label.font="$FONT:Heavy:13.0" \
+             label.color=$YELLOW \
+             label="" \
+             label.width=0 \
              label.align=right \
              icon.drawing=off \
              width=0 \
-             padding_right=12 \
-             y_offset=7 \
-           --add item cpu.percent right \
-           --set cpu.percent \
-             label.font="$FONT:Heavy:20.0" \
-             label.color=$YELLOW \
-             label="–%" \
-             label.width=110 \
-             label.align=right \
-             icon.drawing=off \
-             width=110 \
-             padding_right=12 \
-             y_offset=-6 \
-             update_freq=5 \
+             padding_right=8 \
+             update_freq=10 \
              script="$CONFIG_DIR/plugins/cpu.sh" \
+             click_script="open -a 'Activity Monitor'" \
            --add graph cpu.sys right 150 \
            --set cpu.sys \
              width=0 \
@@ -437,6 +475,7 @@ sketchybar --add item cpu.top right \
              background.corner_radius=0 \
              background.shadow.drawing=off \
              background.drawing=on \
+             click_script="open -a 'Activity Monitor'" \
            --add graph cpu.user right 150 \
            --set cpu.user \
              graph.color=$BLUE \
@@ -448,7 +487,8 @@ sketchybar --add item cpu.top right \
              background.border_width=0 \
              background.corner_radius=0 \
              background.shadow.drawing=off \
-             background.drawing=on
+             background.drawing=on \
+             click_script="open -a 'Activity Monitor'"
 
 sketchybar --trigger aerospace_workspace_change
 sketchybar --update

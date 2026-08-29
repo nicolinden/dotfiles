@@ -2,6 +2,7 @@
 
 CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
 source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/plugins/popup_hover.sh"
 
 TAILSCALE_APP="/Applications/Tailscale.app/Contents/MacOS/Tailscale"
 
@@ -104,6 +105,10 @@ case "${1:-}" in
     open_wifi_settings
     ;;
   *)
+    case "${SENDER:-routine}" in
+      mouse.entered) popup_hover_enter network; exit 0 ;;
+      mouse.exited) popup_hover_exit network; exit 0 ;;
+    esac
     case "${NAME:-network}:${SENDER:-routine}" in
       network:mouse.clicked) sketchybar --set network popup.drawing=toggle ;;
       network:mouse.exited.global) sketchybar --set network popup.drawing=off ;;

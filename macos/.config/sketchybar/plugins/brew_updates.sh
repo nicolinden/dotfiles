@@ -2,6 +2,8 @@
 
 CONFIG_DIR="${CONFIG_DIR:-$HOME/.config/sketchybar}"
 source "$CONFIG_DIR/colors.sh"
+source "$CONFIG_DIR/plugins/popup_hover.sh"
+export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
 
 MAX_ITEMS=20
 CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/sketchybar"
@@ -22,15 +24,15 @@ color_for_count() {
 render_cache() {
   [[ -s "$CACHE_FILE" ]] || return 1
 
-  local record total brew_count mas_count source package installed current
+  local record total brew_count mas_count checked source package installed current
   local index=0 color
-  IFS=$'\t' read -r record total brew_count mas_count < "$CACHE_FILE"
+  IFS=$'\t' read -r record total brew_count mas_count checked < "$CACHE_FILE"
   [[ "$record" == "META" && "$total" =~ ^[0-9]+$ ]] || return 1
 
   color="$(color_for_count "$total")"
   SKETCHYBAR_ARGS=(
     --set brew_updates "label=$total" "icon.color=$color"
-    --set brew_updates.header "label=Updates · $total  (Homebrew $brew_count · App Store $mas_count)"
+    --set brew_updates.header "label=Updates · $total  (Homebrew $brew_count · App Store $mas_count${checked:+ · $checked})"
   )
 
   for index in $(seq 1 "$MAX_ITEMS"); do
@@ -62,6 +64,14 @@ render_cache() {
 }
 
 case "${SENDER:-routine}" in
+  mouse.entered)
+    popup_hover_enter brew_updates
+    exit 0
+    ;;
+  mouse.exited)
+    popup_hover_exit brew_updates
+    exit 0
+    ;;
   mouse.clicked)
     sketchybar --set brew_updates popup.drawing=toggle
     exit 0
@@ -77,11 +87,18 @@ esac
 render_cache || true
 
 if ! command -v brew >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
-  [[ -s "$CACHE_FILE" ]] || sketchybar --set brew_updates label="–"
+  sketchybar --set brew_updates label="!" icon.color="$RED" \
+             --set brew_updates.header label="Updatecontrole niet beschikbaar"
   exit 0
 fi
 
-OUTDATED_JSON="$(brew outdated --json=v2 2>/dev/null)" || exit 0
+if ! OUTDATED_JSON="$(HOMEBREW_NO_AUTO_UPDATE=1 /usr/bin/perl -e 'alarm 45; exec @ARGV' \
+    "$(command -v brew)" outdated --json=v2 2>/dev/null)" ||
+   ! printf '%s' "$OUTDATED_JSON" | jq -e '.formulae and .casks' >/dev/null 2>&1; then
+  sketchybar --set brew_updates label="!" icon.color="$RED" \
+             --set brew_updates.header label="Updatecontrole mislukt · wordt later opnieuw geprobeerd"
+  exit 0
+fi
 
 BREW_COUNT="$(printf '%s' "$OUTDATED_JSON" \
   | jq '(.formulae | length) + (.casks | length)')"
@@ -94,11 +111,12 @@ if command -v mas >/dev/null 2>&1; then
 fi
 MAS_COUNT="$(printf '%s\n' "$MAS_JSON" | jq -s 'map(select(type == "object")) | length')"
 TOTAL=$((BREW_COUNT + MAS_COUNT))
+CHECKED="$(date '+%H:%M')"
 
 mkdir -p "$CACHE_DIR"
 TEMP_CACHE="$(mktemp "$CACHE_DIR/updates.XXXXXX")" || exit 0
 {
-  printf 'META\t%s\t%s\t%s\n' "$TOTAL" "$BREW_COUNT" "$MAS_COUNT"
+  printf 'META\t%s\t%s\t%s\t%s\n' "$TOTAL" "$BREW_COUNT" "$MAS_COUNT" "$CHECKED"
   printf '%s' "$OUTDATED_JSON" | jq -r '
     (.formulae + .casks)[]
     | ["Homebrew", .name, (.installed_versions | join(", ")), .current_version]
