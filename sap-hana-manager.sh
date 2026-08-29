@@ -98,6 +98,60 @@ run_cf() {
     --file "$RUNTIME_DIR/compose.yaml" run --rm -T cf "$@"
 }
 
+start_with_live_progress() {
+  local service="sap-hana-start.service"
+  local started_at log_pid state result deadline
+
+  echo "Starting HANA and PlayNext. Live progress follows below."
+  echo "This can take several minutes while SAP HANA becomes available."
+  echo
+
+  # Ask for sudo in the foreground; a password prompt from a background
+  # journal process would otherwise look like a frozen start.
+  sudo -v || return 1
+  sudo systemctl reset-failed "$service" 2>/dev/null || true
+  started_at="$(date --iso-8601=seconds)"
+  sudo systemctl start --no-block "$service"
+
+  sudo journalctl -u "$service" --since "$started_at" \
+    --follow --no-pager -o cat &
+  log_pid=$!
+  trap 'kill "$log_pid" 2>/dev/null || true' EXIT
+  trap 'kill "$log_pid" 2>/dev/null || true; exit 130' INT TERM
+
+  deadline=$((SECONDS + 1600))
+  while (( SECONDS < deadline )); do
+    state="$(systemctl show "$service" --property=ActiveState --value 2>/dev/null || true)"
+    case "$state" in
+      inactive|failed) break ;;
+    esac
+    sleep 2
+  done
+
+  # Give journald a moment to deliver the final service line before stopping
+  # the live follower.
+  sleep 1
+  kill "$log_pid" 2>/dev/null || true
+  wait "$log_pid" 2>/dev/null || true
+  trap - EXIT INT TERM
+
+  result="$(systemctl show "$service" --property=Result --value 2>/dev/null || true)"
+  echo
+  if [[ "$result" == success ]]; then
+    echo "SUCCESS: ExamDB, playnext-srv and playnext are running."
+    return 0
+  fi
+
+  if (( SECONDS >= deadline )); then
+    echo "ERROR: the start task did not finish within its 25-minute limit."
+  else
+    echo "ERROR: the start task failed (${result:-unknown})."
+  fi
+  echo "Open Logs and health-check status for the complete log."
+  sudo systemctl status "$service" --no-pager -l || true
+  return 1
+}
+
 show_logs_menu() {
   local log_choice
   require_runtime || return
@@ -154,8 +208,7 @@ while true; do
           echo "The HANA / PlayNext start task is already running; no second run was started."
           sudo systemctl status sap-hana-start.service --no-pager -l || true
         else
-          sudo systemctl start sap-hana-start.service
-          sudo systemctl status sap-hana-start.service --no-pager -l
+          start_with_live_progress || true
         fi
       fi
       wait_for_menu_return
