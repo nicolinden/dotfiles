@@ -36,6 +36,10 @@ on-window-detected = [
   # geregistreerd en eventuele plaatsingsregels hieronder zijn uitgevoerd.
   { check-further-callbacks = true, run = 'exec-and-forget /bin/bash -lc "$HOME/.local/bin/aerospace-refresh-sketchybar"' },
 
+  # Keep Citrix sessions at their chosen size and monitor. Floating prevents
+  # newly opened tiled windows from changing the VDI window resolution.
+  { if = "test %{app-bundle-id} = com.citrix.receiver.icaviewer.mac", run = "layout floating" },
+
   # Web and research
   { if = "test %{app-bundle-id} = com.apple.Safari", run = "move-node-to-workspace B" },
   { if = "test %{app-bundle-id} = com.google.Chrome", run = "move-node-to-workspace B" },

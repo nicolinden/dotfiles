@@ -225,6 +225,12 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     brew services restart borders
   fi
 
+  # skhd owns global shortcuts that must also work while AeroSpace is disabled.
+  if command -v skhd >/dev/null 2>&1; then
+    skhd --install-service 2>/dev/null || true
+    skhd --restart-service
+  fi
+
   if [[ "$CORE_ONLY" != true ]]; then
     echo
     read -r -p "Optionele app-profielen nu kiezen? [y/N] " install_optional_apps

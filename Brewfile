@@ -10,6 +10,10 @@ tap "nikitabobko/tap", trusted: {
   cask: "aerospace"
 }
 
+tap "jackielii/tap", trusted: {
+  cask: "skhd-zig"
+}
+
 # ---------------------------------------------------------------------
 # Core command-line tools
 # ---------------------------------------------------------------------
@@ -50,3 +54,4 @@ cask "sf-symbols"
 
 cask "nikitabobko/tap/aerospace"
 cask "raycast"
+cask "jackielii/tap/skhd-zig"

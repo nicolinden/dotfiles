@@ -29,6 +29,11 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     aerospace reload-config
   fi
 
+  if command -v skhd >/dev/null 2>&1; then
+    echo "Globale sneltoetsen herladen..."
+    skhd --restart-service
+  fi
+
   if command -v sketchybar >/dev/null 2>&1; then
     echo "SketchyBar herladen..."
     sketchybar --reload

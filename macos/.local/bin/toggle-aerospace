@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+AEROSPACE_BIN="$(command -v aerospace 2>/dev/null || true)"
+if [[ -z "$AEROSPACE_BIN" && -x /opt/homebrew/bin/aerospace ]]; then
+  AEROSPACE_BIN=/opt/homebrew/bin/aerospace
+elif [[ -z "$AEROSPACE_BIN" && -x /usr/local/bin/aerospace ]]; then
+  AEROSPACE_BIN=/usr/local/bin/aerospace
+fi
+
+[[ -n "$AEROSPACE_BIN" ]] || exit 1
+
+"$AEROSPACE_BIN" enable toggle
