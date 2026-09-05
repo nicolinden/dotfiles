@@ -29,9 +29,11 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     aerospace reload-config
   fi
 
-  if command -v skhd >/dev/null 2>&1; then
+  SKHD_APP_BIN="/Applications/skhd.app/Contents/MacOS/skhd"
+  if [[ -x "$SKHD_APP_BIN" ]]; then
     echo "Globale sneltoetsen herladen..."
-    skhd --restart-service
+    "$SKHD_APP_BIN" --install-service 2>/dev/null || true
+    "$SKHD_APP_BIN" --restart-service
   fi
 
   if command -v sketchybar >/dev/null 2>&1; then

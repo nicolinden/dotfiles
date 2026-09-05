@@ -11,4 +11,24 @@ fi
 
 [[ -n "$AEROSPACE_BIN" ]] || exit 1
 
-"$AEROSPACE_BIN" enable toggle
+BREW_BIN="$(command -v brew 2>/dev/null || true)"
+if [[ -z "$BREW_BIN" && -x /opt/homebrew/bin/brew ]]; then
+  BREW_BIN=/opt/homebrew/bin/brew
+elif [[ -z "$BREW_BIN" && -x /usr/local/bin/brew ]]; then
+  BREW_BIN=/usr/local/bin/brew
+fi
+
+if "$AEROSPACE_BIN" enable off --fail-if-noop; then
+  if [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
+    "$BREW_BIN" services stop borders >/dev/null
+  fi
+  echo "AeroSpace and Borders disabled."
+elif "$AEROSPACE_BIN" enable on --fail-if-noop; then
+  if [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
+    "$BREW_BIN" services start borders >/dev/null
+  fi
+  echo "AeroSpace and Borders enabled."
+else
+  echo "Could not change the AeroSpace state; Borders was left unchanged." >&2
+  exit 1
+fi

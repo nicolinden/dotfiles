@@ -2,16 +2,40 @@
 
 set -euo pipefail
 
-hidden_state="$(sketchybar --query bar | sed -n 's/.*"hidden": "\([^"]*\)".*/\1/p' | head -n 1)"
+SKETCHYBAR_BIN="$(command -v sketchybar 2>/dev/null || true)"
+if [[ -z "$SKETCHYBAR_BIN" && -x /opt/homebrew/bin/sketchybar ]]; then
+  SKETCHYBAR_BIN=/opt/homebrew/bin/sketchybar
+elif [[ -z "$SKETCHYBAR_BIN" && -x /usr/local/bin/sketchybar ]]; then
+  SKETCHYBAR_BIN=/usr/local/bin/sketchybar
+fi
+
+[[ -n "$SKETCHYBAR_BIN" ]] || exit 1
+
+CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/sketchybar"
+STATE_FILE="$CACHE_DIR/hidden-state"
+mkdir -p "$CACHE_DIR"
+
+hidden_state=""
+for _attempt in 1 2 3 4 5; do
+  hidden_state="$($SKETCHYBAR_BIN --query bar 2>/dev/null \
+    | sed -n 's/.*"hidden": "\([^"]*\)".*/\1/p' | head -n 1)"
+  [[ "$hidden_state" == on || "$hidden_state" == off ]] && break
+  sleep 0.1
+done
+if [[ "$hidden_state" != on && "$hidden_state" != off && -r "$STATE_FILE" ]]; then
+  hidden_state="$(<"$STATE_FILE")"
+fi
 
 if [[ "$hidden_state" == "on" ]]; then
   # SketchyBar terug: hij bedekt de permanent zichtbare native menubalk.
   # `topmost=on` is belangrijk: `off` laat AeroSpace-vensters over de balk
   # heen tekenen.
-  sketchybar --bar topmost=on hidden=off
+  "$SKETCHYBAR_BIN" --bar topmost=on hidden=off
+  printf 'off\n' >"$STATE_FILE"
 else
   # De native menubalk is in macOS ingesteld op "Nooit verbergen".  Deze
   # verschijnt meteen zodra SketchyBar verdwijnt.  Wijzig die macOS-instelling
   # niet hier: Tahoe past `defaults` pas na app-herstarts toe.
-  sketchybar --bar topmost=on hidden=on
+  "$SKETCHYBAR_BIN" --bar topmost=on hidden=on
+  printf 'on\n' >"$STATE_FILE"
 fi

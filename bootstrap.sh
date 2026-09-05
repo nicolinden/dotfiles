@@ -226,9 +226,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   fi
 
   # skhd owns global shortcuts that must also work while AeroSpace is disabled.
-  if command -v skhd >/dev/null 2>&1; then
-    skhd --install-service 2>/dev/null || true
-    skhd --restart-service
+  SKHD_APP_BIN="/Applications/skhd.app/Contents/MacOS/skhd"
+  if [[ -x "$SKHD_APP_BIN" ]]; then
+    "$SKHD_APP_BIN" --install-service 2>/dev/null || true
+    "$SKHD_APP_BIN" --restart-service
   fi
 
   if [[ "$CORE_ONLY" != true ]]; then

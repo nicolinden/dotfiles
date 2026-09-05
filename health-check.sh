@@ -36,8 +36,19 @@ case "$(uname -s)" in
     check_command aerospace "AeroSpace"
     check_command sketchybar "SketchyBar"
     check_command borders "Borders"
+    check_command skhd "Global hotkey helper (skhd)"
     check_file "$HOME/.config/aerospace/aerospace.toml" "AeroSpace configuration"
     check_file "$HOME/.config/sketchybar/sketchybarrc" "SketchyBar configuration"
+    check_file "$HOME/.config/skhd/skhdrc" "Global hotkey configuration"
+
+    if command -v skhd >/dev/null 2>&1; then
+      skhd_status="$(skhd --status 2>&1 || true)"
+      if grep -q 'Hotkeys functional:[[:space:]]*Yes' <<<"$skhd_status"; then
+        ok "Global hotkeys are functional"
+      else
+        warn "Global hotkeys need Accessibility/Input Monitoring permission (run skhd --status)"
+      fi
+    fi
 
     if command -v docker >/dev/null 2>&1; then
       if docker info >/dev/null 2>&1; then

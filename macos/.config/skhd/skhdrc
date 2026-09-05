@@ -1,3 +1,6 @@
 # Global AeroSpace toggle. This remains available while AeroSpace window
 # management and its own key bindings are disabled.
 ctrl + alt + cmd - a : "$HOME/.local/bin/toggle-aerospace"
+
+# SketchyBar remains independently available when AeroSpace is disabled.
+ctrl + alt - space : "$HOME/.local/bin/toggle-sketchybar-menu"

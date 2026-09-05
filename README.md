@@ -77,6 +77,7 @@ wordt geladen.
   | `⌥M` | Maximaliseer/herstel venster |
   | `⌥⇧Spatie` | Toggle floating/tiling |
   | `⌥⇧;` | Open blijvende service mode voor groeperen en layouts |
+  | `⌃⌥⌘A` | Schakel AeroSpace en Borders samen uit of weer in |
   | `⌃⌥Spatie` | Wissel tussen SketchyBar en de native macOS-menubalk |
 
   In service mode toont SketchyBar een rode statusbalk en blijven opdrachten
@@ -91,8 +92,12 @@ wordt geladen.
   dubbele of versprongen balken ontstaan wanneer macOS die tijdelijk toont.
   Elke aangesloten monitor markeert daarbij zijn eigen zichtbare
   AeroSpace-workspace.
-  Druk `⌃⌥Spatie` om SketchyBar tijdelijk te verbergen en de native menubalk te
-  gebruiken; druk opnieuw om SketchyBar terug te zetten.
+  De globale helper `skhd` beheert `⌃⌥⌘A` en `⌃⌥Spatie`, zodat beide
+  sneltoetsen ook blijven werken wanneer AeroSpace is uitgeschakeld. macOS
+  vraagt per Mac eenmalig om Toegankelijkheid en eventueel Input Monitoring
+  voor `/Applications/skhd.app`. Druk `⌃⌥Spatie` om SketchyBar tijdelijk te
+  verbergen en de native menubalk te gebruiken; druk opnieuw om SketchyBar
+  terug te zetten.
   De core-installatie beheert zowel `sketchybar-app-font` voor app-iconen als
   Apple SF Symbols voor de systeemiconen. De SF Symbols-installer vraagt tijdens
   **(Re)install and apply configuration** eenmalig om het macOS-beheerderswachtwoord.
