@@ -296,7 +296,7 @@ sketchybar --add item tailscale right \
              icon.padding_left=5 \
              icon.padding_right=5 \
              label.drawing=off \
-             update_freq=30 \
+             update_freq=10 \
              click_script="$CONFIG_DIR/plugins/network.sh toggle-tailscale" \
              script="$CONFIG_DIR/plugins/network.sh"
 
