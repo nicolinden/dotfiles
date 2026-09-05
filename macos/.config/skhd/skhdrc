@@ -2,5 +2,5 @@
 # management and its own key bindings are disabled.
 ctrl + alt + cmd - a : "$HOME/.local/bin/toggle-aerospace"
 
-# SketchyBar remains independently available when AeroSpace is disabled.
+# Show or hide SketchyBar independently of AeroSpace.
 ctrl + alt - space : "$HOME/.local/bin/toggle-sketchybar-menu"
