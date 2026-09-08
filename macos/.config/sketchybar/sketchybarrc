@@ -492,3 +492,12 @@ sketchybar --add item cpu.percent right \
 
 sketchybar --trigger aerospace_workspace_change
 sketchybar --update
+
+# Keep AeroSpace workspace indicators hidden when window management was
+# disabled through the global toggle, including after a SketchyBar reload.
+AEROSPACE_STATE_FILE="${XDG_CACHE_HOME:-$HOME/Library/Caches}/aerospace/enabled-state"
+if [[ -f "$AEROSPACE_STATE_FILE" ]] \
+  && [[ "$(<"$AEROSPACE_STATE_FILE")" == "disabled" ]]; then
+  sketchybar --set '/workspace\..*/' drawing=off \
+             --set '/workspace_group\..*/' drawing=off
+fi

@@ -16,6 +16,54 @@ show_log() {
   fi
 }
 
+show_hotkey_status() {
+  local skhd_bin="" config_file="$HOME/.config/skhd/skhdrc"
+
+  if [[ -x "/Applications/skhd.app/Contents/MacOS/skhd" ]]; then
+    skhd_bin="/Applications/skhd.app/Contents/MacOS/skhd"
+  elif command -v skhd >/dev/null 2>&1; then
+    skhd_bin="$(command -v skhd)"
+  fi
+
+  echo
+  echo "Global hotkey service"
+  if [[ -n "$skhd_bin" ]]; then
+    "$skhd_bin" --status || true
+  else
+    echo "skhd is not installed."
+  fi
+
+  echo
+  echo "Configured hotkeys"
+  if [[ -r "$config_file" ]]; then
+    sed -nE '/^[[:space:]]*($|#)/d; p' "$config_file"
+  else
+    echo "No readable config found at $config_file."
+  fi
+
+  echo
+  echo "Command helpers"
+  for helper in toggle-aerospace toggle-sketchybar-menu; do
+    if [[ -x "$HOME/.local/bin/$helper" ]]; then
+      echo "  OK      $HOME/.local/bin/$helper"
+    else
+      echo "  MISSING $HOME/.local/bin/$helper"
+    fi
+  done
+}
+
+show_hotkey_log() {
+  local log_file="$HOME/Library/Logs/skhd.log"
+
+  echo
+  echo "This is historical diagnostic output and can contain resolved errors."
+  echo "Use option 5 (global hotkey status) for the current service state."
+  if [[ -r "$log_file" ]]; then
+    echo "Last log change: $(stat -f '%Sm' -t '%Y-%m-%d %H:%M:%S' "$log_file")"
+  fi
+  show_log "$log_file" "global hotkeys (skhd, historical)"
+}
+
 case "$(uname -s)" in
   Darwin)
     print_menu_header "Diagnostics"
@@ -23,7 +71,9 @@ case "$(uname -s)" in
     echo "  2) Show SketchyBar log"
     echo "  3) Show Borders log"
     echo "  4) Show AeroSpace monitor and workspace status"
-    echo "  5) Manage Docker containers"
+    echo "  5) Show global hotkey status"
+    echo "  6) Show historical global hotkey log"
+    echo "  7) Manage Docker containers"
     echo "  b) Back"
     echo
     read -r -p "Choose an option: " selection
@@ -37,7 +87,9 @@ case "$(uname -s)" in
         echo
         aerospace list-workspaces --all
         ;;
-      5)
+      5) show_hotkey_status ;;
+      6) show_hotkey_log ;;
+      7)
         if command -v docker >/dev/null 2>&1; then
           "$DOTFILES_DIR/docker-manager.sh"
         else

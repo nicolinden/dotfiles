@@ -4,9 +4,10 @@
 set -u
 
 failures=0
+warnings=0
 
 ok() { printf '  ✓ %s\n' "$1"; }
-warn() { printf '  ! %s\n' "$1"; }
+warn() { printf '  ! %s\n' "$1"; warnings=$((warnings + 1)); }
 missing() { printf '  ✗ %s\n' "$1"; failures=$((failures + 1)); }
 
 check_command() {
@@ -41,12 +42,27 @@ case "$(uname -s)" in
     check_file "$HOME/.config/sketchybar/sketchybarrc" "SketchyBar configuration"
     check_file "$HOME/.config/skhd/skhdrc" "Global hotkey configuration"
 
-    if command -v skhd >/dev/null 2>&1; then
-      skhd_status="$(skhd --status 2>&1 || true)"
+    skhd_bin=""
+    if [[ -x "/Applications/skhd.app/Contents/MacOS/skhd" ]]; then
+      skhd_bin="/Applications/skhd.app/Contents/MacOS/skhd"
+    elif command -v skhd >/dev/null 2>&1; then
+      skhd_bin="$(command -v skhd)"
+    fi
+
+    if [[ -n "$skhd_bin" ]]; then
+      skhd_status="$("$skhd_bin" --status 2>&1 || true)"
       if grep -q 'Hotkeys functional:[[:space:]]*Yes' <<<"$skhd_status"; then
-        ok "Global hotkeys are functional"
+        ok "Global hotkeys are functional; no skhd action is needed"
+      elif grep -q 'Service installed:[[:space:]]*No' <<<"$skhd_status"; then
+        warn "skhd service is not installed; run ./reload.sh"
+      elif grep -q 'Daemon running:[[:space:]]*No' <<<"$skhd_status"; then
+        warn "skhd daemon is not running; run ./reload.sh"
+      elif grep -qi 'Accessibility.*denied' <<<"$skhd_status"; then
+        warn "skhd needs permission in Privacy & Security → Accessibility"
+      elif grep -qi 'Input Monitoring:[[:space:]]*Denied' <<<"$skhd_status"; then
+        warn "skhd needs permission in Privacy & Security → Input Monitoring"
       else
-        warn "Global hotkeys need Accessibility/Input Monitoring permission (run skhd --status)"
+        warn "Global hotkeys are not functional; choose Diagnostics option 5 for details"
       fi
     fi
 
@@ -112,8 +128,10 @@ case "$(uname -s)" in
 esac
 
 echo
-if (( failures == 0 )); then
-  echo "Health check complete."
-else
+if (( failures > 0 )); then
   echo "Health check found $failures required item(s) to fix."
+elif (( warnings > 0 )); then
+  echo "Health check complete with $warnings warning(s)."
+else
+  echo "Health check complete; no action is needed."
 fi

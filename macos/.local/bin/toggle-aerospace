@@ -11,6 +11,16 @@ fi
 
 [[ -n "$AEROSPACE_BIN" ]] || exit 1
 
+SKETCHYBAR_BIN="$(command -v sketchybar 2>/dev/null || true)"
+if [[ -z "$SKETCHYBAR_BIN" && -x /opt/homebrew/bin/sketchybar ]]; then
+  SKETCHYBAR_BIN=/opt/homebrew/bin/sketchybar
+elif [[ -z "$SKETCHYBAR_BIN" && -x /usr/local/bin/sketchybar ]]; then
+  SKETCHYBAR_BIN=/usr/local/bin/sketchybar
+fi
+
+AEROSPACE_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/aerospace"
+AEROSPACE_STATE_FILE="$AEROSPACE_CACHE_DIR/enabled-state"
+
 BREW_BIN="$(command -v brew 2>/dev/null || true)"
 if [[ -z "$BREW_BIN" && -x /opt/homebrew/bin/brew ]]; then
   BREW_BIN=/opt/homebrew/bin/brew
@@ -19,11 +29,25 @@ elif [[ -z "$BREW_BIN" && -x /usr/local/bin/brew ]]; then
 fi
 
 if "$AEROSPACE_BIN" enable off --fail-if-noop; then
+  mkdir -p "$AEROSPACE_CACHE_DIR"
+  printf 'disabled\n' > "$AEROSPACE_STATE_FILE"
+  if [[ -n "$SKETCHYBAR_BIN" ]]; then
+    "$SKETCHYBAR_BIN" \
+      --set '/workspace\..*/' drawing=off \
+      --set '/workspace_group\..*/' drawing=off
+  fi
   if [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
     "$BREW_BIN" services stop borders >/dev/null
   fi
   echo "AeroSpace and Borders disabled."
 elif "$AEROSPACE_BIN" enable on --fail-if-noop; then
+  mkdir -p "$AEROSPACE_CACHE_DIR"
+  printf 'enabled\n' > "$AEROSPACE_STATE_FILE"
+  if [[ -n "$SKETCHYBAR_BIN" ]]; then
+    "$SKETCHYBAR_BIN" \
+      --set '/workspace_group\..*/' drawing=on \
+      --trigger aerospace_workspace_change
+  fi
   if [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
     "$BREW_BIN" services start borders >/dev/null
   fi
