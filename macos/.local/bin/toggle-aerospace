@@ -20,12 +20,73 @@ fi
 
 AEROSPACE_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/aerospace"
 AEROSPACE_STATE_FILE="$AEROSPACE_CACHE_DIR/enabled-state"
+TOGGLE_LOCK_DIR="$AEROSPACE_CACHE_DIR/toggle.lock"
+
+mkdir -p "$AEROSPACE_CACHE_DIR"
+if ! mkdir "$TOGGLE_LOCK_DIR" 2>/dev/null; then
+  # Ignore a repeated hotkey event while the previous toggle is still busy.
+  exit 0
+fi
+trap 'rmdir "$TOGGLE_LOCK_DIR" 2>/dev/null || true' EXIT
 
 BREW_BIN="$(command -v brew 2>/dev/null || true)"
 if [[ -z "$BREW_BIN" && -x /opt/homebrew/bin/brew ]]; then
   BREW_BIN=/opt/homebrew/bin/brew
 elif [[ -z "$BREW_BIN" && -x /usr/local/bin/brew ]]; then
   BREW_BIN=/usr/local/bin/brew
+fi
+
+BORDERS_SERVICE="gui/$(id -u)/sh.brew.borders"
+BORDERS_PLIST="$HOME/Library/LaunchAgents/sh.brew.borders.plist"
+
+stop_borders() {
+  # `brew services stop borders` can hang while Borders is running. Talk to
+  # launchd directly; bootout leaves the plist in place so it can be restored.
+  launchctl bootout "$BORDERS_SERVICE" >/dev/null 2>&1 || true
+  if launchctl print "$BORDERS_SERVICE" >/dev/null 2>&1; then
+    echo "Could not stop Borders." >&2
+    return 1
+  fi
+}
+
+start_borders() {
+  if [[ -f "$BORDERS_PLIST" ]]; then
+    launchctl bootstrap "gui/$(id -u)" "$BORDERS_PLIST" >/dev/null 2>&1 || true
+    launchctl kickstart "$BORDERS_SERVICE" >/dev/null 2>&1 || true
+  elif [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
+    "$BREW_BIN" services start borders >/dev/null
+  fi
+  launchctl print "$BORDERS_SERVICE" >/dev/null 2>&1
+}
+
+# A disabled AeroSpace server rejects status commands, but still accepts
+# `enable on`. If the app was actually quit, launch it and retry that command.
+if ! "$AEROSPACE_BIN" list-modes >/dev/null 2>&1; then
+  if ! "$AEROSPACE_BIN" enable on >/dev/null 2>&1; then
+    open -a AeroSpace
+    enabled=false
+    for _ in {1..30}; do
+      if "$AEROSPACE_BIN" enable on >/dev/null 2>&1; then
+        enabled=true
+        break
+      fi
+      sleep 0.1
+    done
+    if [[ "$enabled" != true ]]; then
+      echo "Could not start AeroSpace." >&2
+      exit 1
+    fi
+  fi
+  mkdir -p "$AEROSPACE_CACHE_DIR"
+  printf 'enabled\n' > "$AEROSPACE_STATE_FILE"
+  if [[ -n "$SKETCHYBAR_BIN" ]]; then
+    "$SKETCHYBAR_BIN" \
+      --set '/workspace_group\..*/' drawing=on \
+      --trigger aerospace_workspace_change
+  fi
+  start_borders
+  echo "AeroSpace and Borders enabled."
+  exit 0
 fi
 
 if "$AEROSPACE_BIN" enable off --fail-if-noop; then
@@ -36,8 +97,14 @@ if "$AEROSPACE_BIN" enable off --fail-if-noop; then
       --set '/workspace\..*/' drawing=off \
       --set '/workspace_group\..*/' drawing=off
   fi
-  if [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
-    "$BREW_BIN" services stop borders >/dev/null
+  if ! stop_borders; then
+    "$AEROSPACE_BIN" enable on >/dev/null 2>&1 || true
+    if [[ -n "$SKETCHYBAR_BIN" ]]; then
+      "$SKETCHYBAR_BIN" --set '/workspace_group\..*/' drawing=on \
+        --trigger aerospace_workspace_change
+    fi
+    echo "AeroSpace was enabled again to avoid a partial state." >&2
+    exit 1
   fi
   echo "AeroSpace and Borders disabled."
 elif "$AEROSPACE_BIN" enable on --fail-if-noop; then
@@ -48,9 +115,7 @@ elif "$AEROSPACE_BIN" enable on --fail-if-noop; then
       --set '/workspace_group\..*/' drawing=on \
       --trigger aerospace_workspace_change
   fi
-  if [[ -n "$BREW_BIN" ]] && "$BREW_BIN" list borders >/dev/null 2>&1; then
-    "$BREW_BIN" services start borders >/dev/null
-  fi
+  start_borders
   echo "AeroSpace and Borders enabled."
 else
   echo "Could not change the AeroSpace state; Borders was left unchanged." >&2
