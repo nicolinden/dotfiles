@@ -86,8 +86,7 @@ done
 # schermen worden niet getekend; één config werkt dus voor één of meer schermen.
 sketchybar --add event aerospace_workspace_change
 
-# Eén updater verwerkt alle workspace-items tegelijk. Dit voorkomt dat elk van
-# de 30 mogelijke indicatoren afzonderlijk AeroSpace-processen start.
+# Eén updater verwerkt alle workspace-items tegelijk.
 sketchybar --add item aerospace_workspace_updater left \
            --subscribe aerospace_workspace_updater aerospace_workspace_change \
            --set aerospace_workspace_updater \
@@ -96,29 +95,17 @@ sketchybar --add item aerospace_workspace_updater left \
 
 for DISPLAY in 1 2 3; do
   WORKSPACE_MEMBERS=()
-  # Het hoofdscherm heeft vier vaste letter-workspaces en zes dynamische
-  # nummers. Externe schermen hebben tien dynamische nummers.
-  if aerospace list-monitors --format '%{monitor-appkit-nsscreen-screens-id} %{monitor-is-main}' \
-    | awk -v display="$DISPLAY" '$1 == display && $2 == "true" { found = 1 } END { exit !found }'; then
-    WORKSPACE_NAMES=(V B F T main-1 main-2 main-3 main-4 main-5 main-6)
-    WORKSPACE_LABELS=(V B F T 1 2 3 4 5 6)
-  else
-    WORKSPACE_NAMES=(side-1 side-2 side-3 side-4 side-5 side-6 side-7 side-8 side-9 side-10)
-    WORKSPACE_LABELS=(1 2 3 4 5 6 7 8 9 10)
-  fi
-
-  for INDEX in {0..9}; do
-    SLOT=$((INDEX + 1))
-    ITEM="workspace.$DISPLAY.$SLOT"
-    WORKSPACE_NAME="${WORKSPACE_NAMES[$INDEX]}"
-    WORKSPACE_LABEL="${WORKSPACE_LABELS[$INDEX]}"
+  # Elk item verwijst altijd naar dezelfde globale AeroSpace-workspace. De
+  # updater bepaalt op welk aangesloten scherm die workspace wordt getekend.
+  for WORKSPACE in {1..8}; do
+    ITEM="workspace.$DISPLAY.$WORKSPACE"
     WORKSPACE_MEMBERS+=("$ITEM")
 
     sketchybar --add item "$ITEM" left \
                --set "$ITEM" \
                  display=$DISPLAY \
                  drawing=off \
-                 icon="$WORKSPACE_LABEL" \
+                 icon="$WORKSPACE" \
                  icon.font="$FONT:Bold:14.0" \
                  icon.padding_left=8 \
                  icon.padding_right=5 \
@@ -130,7 +117,7 @@ for DISPLAY in 1 2 3; do
                  background.corner_radius=6 \
                  background.border_width=0 \
                  background.drawing=off \
-                 click_script="aerospace workspace $WORKSPACE_NAME"
+                 click_script="aerospace workspace $WORKSPACE"
   done
 
   sketchybar --add bracket "workspace_group.$DISPLAY" "${WORKSPACE_MEMBERS[@]}" \
@@ -365,6 +352,26 @@ sketchybar --add item network right \
              padding_right=8 \
              click_script="$CONFIG_DIR/plugins/network.sh open-wifi-settings"
 
+# Caffeinated is visible only while the app is running. Green means that its
+# sleep prevention is active; grey means that the app is currently inactive.
+sketchybar --add item caffeinated right \
+           --subscribe caffeinated system_woke \
+           --set caffeinated \
+             drawing=off \
+             icon="󰅶" \
+             icon.font="MesloLGS Nerd Font Mono:Regular:20.0" \
+             icon.width=24 \
+             icon.align=center \
+             icon.color=$GREY \
+             icon.padding_left=4 \
+             icon.padding_right=4 \
+             label.drawing=off \
+             update_freq=5 \
+             updates=on \
+             click_script="$CONFIG_DIR/plugins/caffeinated.sh toggle" \
+             script="$CONFIG_DIR/plugins/caffeinated.sh"
+"$CONFIG_DIR/plugins/caffeinated.sh"
+
 # Battery status
 sketchybar --add item battery right \
            --subscribe battery power_source_change system_woke \
@@ -438,7 +445,7 @@ sketchybar --add item privacy.camera right \
              updates=on \
              script="$CONFIG_DIR/plugins/privacy.sh"
 
-sketchybar --add bracket system_status volume_icon privacy.mic privacy.camera tailscale network brew_updates \
+sketchybar --add bracket system_status volume_icon privacy.mic privacy.camera caffeinated tailscale network brew_updates \
            --set system_status \
              background.color=$BACKGROUND_1 \
              background.height=30 \

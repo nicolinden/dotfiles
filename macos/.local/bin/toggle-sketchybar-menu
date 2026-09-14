@@ -16,14 +16,12 @@ STATE_FILE="$CACHE_DIR/hidden-state"
 mkdir -p "$CACHE_DIR"
 
 hidden_state=""
-for _attempt in 1 2 3 4 5; do
+if [[ -r "$STATE_FILE" ]]; then
+  hidden_state="$(<"$STATE_FILE")"
+fi
+if [[ "$hidden_state" != on && "$hidden_state" != off ]]; then
   hidden_state="$($SKETCHYBAR_BIN --query bar 2>/dev/null \
     | sed -n 's/.*"hidden": "\([^"]*\)".*/\1/p' | head -n 1)"
-  [[ "$hidden_state" == on || "$hidden_state" == off ]] && break
-  sleep 0.1
-done
-if [[ "$hidden_state" != on && "$hidden_state" != off && -r "$STATE_FILE" ]]; then
-  hidden_state="$(<"$STATE_FILE")"
 fi
 
 if [[ "$hidden_state" == "on" ]]; then

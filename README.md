@@ -54,17 +54,12 @@ wordt geladen.
   Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
-  Bij iedere focuswissel verplaatst AeroSpace de muis naar het midden van het
-  nieuwe venster; op een lege workspace valt dit terug naar het midden van het
-  scherm.
-- Bij twee schermen heeft het hoofdscherm workspaces `1` t/m `6`; het tweede
-  scherm heeft `1` t/m `3`. Focus eerst het gewenste scherm met `⌥.` en kies
-  daarna het gewenste nummer. Verplaats de gefocuste app naar het gekozen
-  nummer op het actieve scherm met `⌥⇧1`–`⌥⇧6`; op het tweede scherm hebben
-  `4`–`6` bewust geen effect. `⌥⇧.` verplaatst een app naar het andere scherm
-  en volgt hem.
-  De standaard appindeling komt op het hoofdscherm terecht. SketchyBar toont
-  de actieve app uitsluitend op het scherm dat op dat moment focus heeft.
+- De indeling gebruikt acht vaste globale workspaces: `1` t/m `4` op het
+  hoofdscherm en `5` t/m `8` op het tweede scherm. Zonder tweede scherm vallen
+  `5` t/m `8` terug op het hoofdscherm. Code opent op `1`, browsers op `2`,
+  terminals op `3`, Finder/ForkLift/ChatGPT op `4`, Citrix blijft handmatig op
+  `5` en communicatie opent op `6`. `7` en `8` zijn vrij. SketchyBar toont op
+  ieder scherm uitsluitend de workspaces die daar werkelijk bij horen.
 
   | Toets | Actie |
   | --- | --- |
@@ -72,8 +67,8 @@ wordt geladen.
   | `⌥⇧H/J/K/L` | Verplaats venster links/onder/boven/rechts |
   | `⌥.` | Focus volgend scherm |
   | `⌥⇧.` | Verplaats app naar volgend scherm en volg hem |
-  | `⌥1`–`⌥6` | Open workspace op het gefocuste scherm (op scherm twee: 1–3) |
-  | `⌥⇧1`–`⌥⇧6` | Verplaats app naar workspace (op scherm twee: 1–3) |
+  | `⌥1`–`⌥8` | Open de vaste workspace |
+  | `⌥⇧1`–`⌥⇧8` | Verplaats app naar workspace en volg hem |
   | `⌥M` | Maximaliseer/herstel venster |
   | `⌥⇧Spatie` | Toggle floating/tiling |
   | `⌥⇧;` | Open blijvende service mode voor groeperen en layouts |
