@@ -45,7 +45,13 @@ update_connections() {
   fi
 
   ethernet_devices="$(networksetup -listallhardwareports 2>/dev/null \
-    | awk '/Hardware Port: Ethernet/{getline; print $2}')"
+    | awk '
+        /^Hardware Port:/ {
+          port = tolower($0)
+          wired = (port ~ /ethernet/ || port ~ /(^|[^a-z])lan([^a-z]|$)/)
+        }
+        /^Device:/ && wired { print $2 }
+      ')"
   ethernet_ip=""
   ethernet_label="Ethernet: Disconnected"
   while IFS= read -r ethernet_device; do

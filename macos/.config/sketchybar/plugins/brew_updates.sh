@@ -8,6 +8,7 @@ export PATH="/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PAT
 MAX_ITEMS=20
 CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/sketchybar"
 CACHE_FILE="$CACHE_DIR/updates.tsv"
+UPDATE_LOCK="$CACHE_DIR/updates.lock"
 
 color_for_count() {
   local count="$1"
@@ -91,6 +92,21 @@ if ! command -v brew >/dev/null 2>&1 || ! command -v jq >/dev/null 2>&1; then
              --set brew_updates.header label="Updatecontrole niet beschikbaar"
   exit 0
 fi
+
+# Prevent the hourly refresh and an installer-triggered refresh from running
+# `brew update` concurrently. A stale lock is removed automatically by shlock.
+mkdir -p "$CACHE_DIR"
+if ! shlock -f "$UPDATE_LOCK" -p $$; then
+  exit 0
+fi
+trap 'rm -f "$UPDATE_LOCK"' EXIT
+
+# `brew outdated` only compares against locally cached package definitions.
+# Refresh those definitions first; otherwise SketchyBar can report zero while
+# a subsequent interactive `brew update && brew upgrade` finds new versions.
+# A network failure is non-fatal: the existing metadata is still useful.
+/usr/bin/perl -e 'alarm 120; exec @ARGV' \
+  "$(command -v brew)" update --quiet >/dev/null 2>&1 || true
 
 if ! OUTDATED_JSON="$(HOMEBREW_NO_AUTO_UPDATE=1 /usr/bin/perl -e 'alarm 45; exec @ARGV' \
     "$(command -v brew)" outdated --json=v2 2>/dev/null)" ||
