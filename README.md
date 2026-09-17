@@ -212,6 +212,20 @@ updates uit de Mac App Store en voert daarna altijd een configuratie-reload uit.
 Gebruik op macOS **Update managed Homebrew packages only** als je uitsluitend
 de al geïnstalleerde pakketten uit jouw drie Brewfiles wilt bijwerken.
 
+Op Ubuntu gebruikt **Update Ubuntu packages (conservative)** `apt-get upgrade --with-new-pkgs`
+om ook benodigde nieuwe afhankelijkheden te installeren, maar zonder bestaande
+pakketten te verwijderen (`--no-remove`). Package holds en Ubuntu's
+gefaseerde uitrol blijven gerespecteerd. Bij fouten tijdens het verversen van een
+repository stopt de actie. Er is geen release-upgrade, autoremove of automatische
+herstart; updates kunnen wel services herstarten. Dit geldt voor alle ingestelde
+APT-repositories, inclusief eventuele externe bronnen, en is geen garantie op
+risicoloze updates. Updates die verwijderingen vereisen of door phasing, holds of
+dependencyconflicten worden tegengehouden, worden niet geforceerd.
+Na afloop toont het menu het aantal en de lijst van resterende updates (of expliciet
+nul resterende updates), holds en of een herstart
+nodig is. ESM Apps-updates vereisen een actief Ubuntu Pro-recht. Een SSH-loginmelding
+over beschikbare updates betekent daarom niet vanzelf dat de update is mislukt.
+
 Kies **Run health check** in het centrale menu om zonder wijzigingen te zien of
 de kernonderdelen, services en Stow-configuratie beschikbaar zijn.
 

@@ -45,11 +45,41 @@ linux_core_ready() {
 }
 
 run_linux_update() {
-  echo "Updating and upgrading Ubuntu packages..."
-  sudo apt-get update
-  sudo apt-get upgrade -y
+  local remaining_updates remaining_count held_packages
+  local upgrade_options=(
+    --no-remove
+    --with-new-pkgs
+    -o APT::Get::Always-Include-Phased-Updates=false
+    -o APT::Get::Never-Include-Phased-Updates=false
+  )
+
+  echo "Refreshing package lists (stop if any repository cannot be refreshed)..."
+  sudo apt-get -o APT::Update::Error-Mode=any update
+  echo "Upgrading packages with required new dependencies, respecting holds and phased rollout..."
+  sudo apt-get "${upgrade_options[@]}" upgrade -y
   stow --restow --dir="$DOTFILES_DIR" --target="$HOME" home
-  echo "Ubuntu packages and dotfiles are up to date."
+  echo "Conservative package update completed; shared dotfiles reapplied."
+  echo
+  remaining_updates="$(LC_ALL=C apt list --upgradable 2>/dev/null)"
+  remaining_updates="$(printf '%s\n' "$remaining_updates" | sed '/^Listing\.\.\.$/d; /^[[:space:]]*$/d')"
+  if [[ -n "$remaining_updates" ]]; then
+    remaining_count="$(printf '%s\n' "$remaining_updates" | awk 'END { print NR }')"
+    echo "$remaining_count package update(s) remain; not all available updates were installed."
+    printf '%s\n' "$remaining_updates"
+    echo "APT may defer updates due to phasing, holds or dependency conflicts."
+    echo "See APT's output above for the reason; these updates are not forced."
+  else
+    echo "0 package updates remain in the current APT package lists."
+  fi
+  held_packages="$(apt-mark showhold)"
+  if [[ -n "$held_packages" ]]; then
+    echo "Explicitly held packages:"
+    printf '%s\n' "$held_packages"
+  fi
+  echo "ESM Apps updates require an enabled Ubuntu Pro entitlement."
+  if [[ -f /var/run/reboot-required ]]; then
+    echo "A restart is required to finish applying installed updates; no automatic reboot."
+  fi
 }
 
 restart_linux_system() {
@@ -137,7 +167,7 @@ case "$(uname -s)" in
       echo
       echo "  1) (Re)install and apply configuration"
       echo "  2) Manage optional tools"
-      echo "  3) Update Ubuntu packages"
+      echo "  3) Update Ubuntu packages (conservative)"
       echo "  4) Diagnostics"
       echo "  5) Restart Ubuntu"
       echo "  6) Manage Docker containers"
@@ -162,8 +192,10 @@ case "$(uname -s)" in
         2) run_submenu "$DOTFILES_DIR/install-linux-apps.sh" ;;
         3)
           echo
-          echo "This will refresh Ubuntu package lists, upgrade installed packages"
-          echo "and reapply your shared Stow configuration."
+          echo "This refreshes package lists from configured repositories and upgrades packages,"
+          echo "including required new dependencies, then reapplies shared Stow configuration."
+          echo "Holds and phasing are respected. No removals, release upgrade or automatic reboot."
+          echo "Updates can restart services; no update is guaranteed risk-free."
           if confirm_action "Update Ubuntu packages?"; then
             run_linux_update
             wait_for_menu_return
