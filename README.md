@@ -56,10 +56,10 @@ wordt geladen.
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
 - De indeling gebruikt acht vaste globale workspaces: `1` t/m `4` op het
   hoofdscherm en `5` t/m `8` op het tweede scherm. Zonder tweede scherm vallen
-  `5` t/m `8` terug op het hoofdscherm. Code opent op `1`, browsers op `2`,
-  terminals op `3`, Finder/ForkLift/ChatGPT op `4`, Citrix blijft handmatig op
-  `5` en communicatie opent op `6`. `7` en `8` zijn vrij. SketchyBar toont op
-  ieder scherm uitsluitend de workspaces die daar werkelijk bij horen.
+  `5` t/m `8` terug op het hoofdscherm. Apps worden niet automatisch aan een
+  workspace toegewezen; verplaats vensters zelf met de sneltoetsen hieronder.
+  Citrix-vensters blijven floating. SketchyBar toont op ieder scherm uitsluitend
+  de workspaces die daar werkelijk bij horen.
 
   | Toets | Actie |
   | --- | --- |
