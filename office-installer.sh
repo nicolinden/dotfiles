@@ -54,5 +54,4 @@ if ! install_mas_items "$DOTFILES_DIR/Brewfile.office.mas"; then
   exit 1
 fi
 
-refresh_sketchybar_updates
 echo "Office-installatie voltooid. Log in met je Microsoft-account in de gewenste apps."

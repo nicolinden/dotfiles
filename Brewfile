@@ -3,15 +3,11 @@
 # ---------------------------------------------------------------------
 
 tap "FelixKratz/formulae", trusted: {
-  formula: ["sketchybar", "borders"]
+  formula: ["borders"]
 }
 
 tap "nikitabobko/tap", trusted: {
   cask: "aerospace"
-}
-
-tap "jackielii/tap", trusted: {
-  cask: "skhd-zig"
 }
 
 # ---------------------------------------------------------------------
@@ -27,26 +23,22 @@ brew "neovim"
 brew "ripgrep"
 brew "starship"
 brew "stow"
-brew "switchaudio-osx"
 brew "tmux"
 brew "tree"
 brew "zsh-autosuggestions"
 brew "zsh-syntax-highlighting"
 
 # ---------------------------------------------------------------------
-# macOS window management and status bar
+# macOS window management
 # ---------------------------------------------------------------------
 
 brew "borders"
-brew "sketchybar"
 
 # ---------------------------------------------------------------------
 # Fonts
 # ---------------------------------------------------------------------
 
-cask "font-sketchybar-app-font"
 cask "font-meslo-lg-nerd-font"
-cask "sf-symbols"
 
 # ---------------------------------------------------------------------
 # Core macOS workflow
@@ -54,4 +46,3 @@ cask "sf-symbols"
 
 cask "nikitabobko/tap/aerospace"
 cask "raycast"
-cask "jackielii/tap/skhd-zig"

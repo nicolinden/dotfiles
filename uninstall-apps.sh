@@ -180,5 +180,4 @@ for choice in "${selected[@]}"; do
   fi
 done
 
-refresh_sketchybar_updates
 echo "Selected apps have been removed."

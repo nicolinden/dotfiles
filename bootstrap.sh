@@ -213,23 +213,10 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     open "/Applications/AeroSpace.app"
   fi
 
-  # SketchyBar is een Homebrew-gebruikersservice. Herstart hem nadat de eigen
-  # configuratie is gekoppeld, zodat wijzigingen direct zichtbaar zijn.
-  if command -v brew >/dev/null 2>&1 && brew list sketchybar >/dev/null 2>&1; then
-    brew services restart felixkratz/formulae/sketchybar
-  fi
-
   # Borders is a separate user service so it remains active after AeroSpace
   # restarts and is automatically restored at the next login.
   if command -v brew >/dev/null 2>&1 && brew list borders >/dev/null 2>&1; then
     brew services restart borders
-  fi
-
-  # skhd owns global shortcuts that must also work while AeroSpace is disabled.
-  SKHD_APP_BIN="/Applications/skhd.app/Contents/MacOS/skhd"
-  if [[ -x "$SKHD_APP_BIN" ]]; then
-    "$SKHD_APP_BIN" --install-service 2>/dev/null || true
-    "$SKHD_APP_BIN" --restart-service
   fi
 
   if [[ "$CORE_ONLY" != true ]]; then

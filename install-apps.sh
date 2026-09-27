@@ -37,7 +37,6 @@ install_brewfile() {
     "$DOTFILES_DIR/calibre-sync.sh"
   fi
 
-  refresh_sketchybar_updates
 }
 
 install_all_optional_apps() {

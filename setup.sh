@@ -32,7 +32,7 @@ configure_homebrew_for_current_shell() {
 macos_core_ready() {
   command -v brew >/dev/null 2>&1 &&
     brew list stow >/dev/null 2>&1 &&
-    brew list sketchybar >/dev/null 2>&1
+    brew list --cask aerospace >/dev/null 2>&1
 }
 
 linux_core_ready() {
@@ -123,7 +123,7 @@ case "$(uname -s)" in
         1)
           echo
           echo "This will ensure core tooling is installed, reapply your Stow files,"
-          echo "start AeroSpace and restart SketchyBar and Borders. Optional apps are unchanged."
+          echo "start AeroSpace and restart Borders. Optional apps are unchanged."
           if confirm_action "(Re)install and apply configuration?"; then
             "$DOTFILES_DIR/bootstrap.sh" --core-only
             wait_for_menu_return
@@ -137,8 +137,8 @@ case "$(uname -s)" in
         5) run_submenu "$DOTFILES_DIR/backup-restore-manager.sh" ;;
         6)
           echo
-          echo "This reapplies Stow configuration and reloads AeroSpace, SketchyBar,"
-          echo "Borders and an active tmux server. It does not install or update apps."
+          echo "This reapplies Stow configuration and reloads AeroSpace, Borders"
+          echo "and an active tmux server. It does not install or update apps."
           if confirm_action "Reload configuration after git pull?"; then
             "$DOTFILES_DIR/reload.sh"
             wait_for_menu_return

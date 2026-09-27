@@ -11,15 +11,7 @@ fi
 
 [[ -n "$AEROSPACE_BIN" ]] || exit 1
 
-SKETCHYBAR_BIN="$(command -v sketchybar 2>/dev/null || true)"
-if [[ -z "$SKETCHYBAR_BIN" && -x /opt/homebrew/bin/sketchybar ]]; then
-  SKETCHYBAR_BIN=/opt/homebrew/bin/sketchybar
-elif [[ -z "$SKETCHYBAR_BIN" && -x /usr/local/bin/sketchybar ]]; then
-  SKETCHYBAR_BIN=/usr/local/bin/sketchybar
-fi
-
 AEROSPACE_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/Library/Caches}/aerospace"
-AEROSPACE_STATE_FILE="$AEROSPACE_CACHE_DIR/enabled-state"
 TOGGLE_LOCK_FILE="$AEROSPACE_CACHE_DIR/toggle.lock"
 
 mkdir -p "$AEROSPACE_CACHE_DIR"
@@ -95,36 +87,15 @@ if ! "$AEROSPACE_BIN" list-modes >/dev/null 2>&1; then
       exit 1
     fi
   fi
-  mkdir -p "$AEROSPACE_CACHE_DIR"
-  printf 'enabled\n' > "$AEROSPACE_STATE_FILE"
-  if [[ -n "$SKETCHYBAR_BIN" ]]; then
-    "$SKETCHYBAR_BIN" \
-      --set '/workspace_group\..*/' drawing=on \
-      --trigger aerospace_workspace_change
-  fi
   show_borders
   echo "AeroSpace and Borders enabled."
   exit 0
 fi
 
 if "$AEROSPACE_BIN" enable off --fail-if-noop; then
-  mkdir -p "$AEROSPACE_CACHE_DIR"
-  printf 'disabled\n' > "$AEROSPACE_STATE_FILE"
-  if [[ -n "$SKETCHYBAR_BIN" ]]; then
-    "$SKETCHYBAR_BIN" \
-      --set '/workspace\..*/' drawing=off \
-      --set '/workspace_group\..*/' drawing=off
-  fi
   hide_borders
   echo "AeroSpace disabled and Borders hidden."
 elif "$AEROSPACE_BIN" enable on --fail-if-noop; then
-  mkdir -p "$AEROSPACE_CACHE_DIR"
-  printf 'enabled\n' > "$AEROSPACE_STATE_FILE"
-  if [[ -n "$SKETCHYBAR_BIN" ]]; then
-    "$SKETCHYBAR_BIN" \
-      --set '/workspace_group\..*/' drawing=on \
-      --trigger aerospace_workspace_change
-  fi
   show_borders
   echo "AeroSpace and Borders enabled."
 else

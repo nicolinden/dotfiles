@@ -44,5 +44,4 @@ brew cleanup
 echo "Dotfiles opnieuw toepassen..."
 "$DOTFILES_DIR/reload.sh"
 
-refresh_sketchybar_updates
 echo "Homebrew-update voltooid."

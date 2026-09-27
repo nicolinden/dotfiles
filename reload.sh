@@ -29,18 +29,6 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
     aerospace reload-config
   fi
 
-  SKHD_APP_BIN="/Applications/skhd.app/Contents/MacOS/skhd"
-  if [[ -x "$SKHD_APP_BIN" ]]; then
-    echo "Globale sneltoetsen herladen..."
-    "$SKHD_APP_BIN" --install-service 2>/dev/null || true
-    "$SKHD_APP_BIN" --restart-service
-  fi
-
-  if command -v sketchybar >/dev/null 2>&1; then
-    echo "SketchyBar herladen..."
-    sketchybar --reload
-  fi
-
   # Borders reads ~/.config/borders/bordersrc at startup. The Homebrew service
   # keeps it alive after this script exits and also starts it at the next login.
   if command -v brew >/dev/null 2>&1 && brew list borders >/dev/null 2>&1; then

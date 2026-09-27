@@ -2,7 +2,7 @@
 
 Mijn macOS- en Ubuntu-configuratie, beheerd met GNU Stow. De map `home/`
 bevat configuratie die op beide platforms werkt; `macos/` bevat uitsluitend
-macOS-configuratie voor AeroSpace en SketchyBar.
+macOS-configuratie voor AeroSpace, Borders en Raycast.
 
 ## Nieuwe Mac installeren
 
@@ -58,8 +58,7 @@ wordt geladen.
   hoofdscherm en `5` t/m `8` op het tweede scherm. Zonder tweede scherm vallen
   `5` t/m `8` terug op het hoofdscherm. Apps worden niet automatisch aan een
   workspace toegewezen; verplaats vensters zelf met de sneltoetsen hieronder.
-  Citrix-vensters blijven floating. SketchyBar toont op ieder scherm uitsluitend
-  de workspaces die daar werkelijk bij horen.
+  Citrix-vensters blijven floating.
 
   | Toets | Actie |
   | --- | --- |
@@ -72,30 +71,20 @@ wordt geladen.
   | `⌥M` | Maximaliseer/herstel venster |
   | `⌥⇧Spatie` | Toggle floating/tiling |
   | `⌥⇧;` | Open blijvende service mode voor groeperen en layouts |
-  | `⌃⌥⌘A` | Schakel AeroSpace en Borders samen uit of weer in |
-  | `⌃⌥Spatie` | Wissel tussen SketchyBar en de native macOS-menubalk |
+  | `⌃⌥⌘A` | Schakel AeroSpace en Borders samen uit of weer in (via Raycast) |
 
-  In service mode toont SketchyBar een rode statusbalk en blijven opdrachten
-  actief: `H/J/K/L` groepeert met het venster in die richting, `A` wisselt
+  In service mode blijven opdrachten actief: `H/J/K/L` groepeert met het venster
+  in die richting, `A` wisselt
   tiles/accordion, `/` wisselt de richting, `B` balanceert, `F` wisselt
   floating/tiling, `M` maximaliseert en `R` maakt de workspace vlak. `Esc`
-  verlaat service mode, verbergt de status en herlaadt de AeroSpace-configuratie.
-- SketchyBar wordt na de bootstrap als gebruikersservice gestart, komt bij
-  iedere volgende login automatisch terug en wordt op alle aangesloten
-  schermen getoond. De bootstrap verbergt hiervoor ook de native macOS-menubalk
-  automatisch. SketchyBar tekent bovendien boven de native balk, zodat er geen
-  dubbele of versprongen balken ontstaan wanneer macOS die tijdelijk toont.
-  Elke aangesloten monitor markeert daarbij zijn eigen zichtbare
-  AeroSpace-workspace.
-  De globale helper `skhd` beheert `⌃⌥⌘A` en `⌃⌥Spatie`, zodat beide
-  sneltoetsen ook blijven werken wanneer AeroSpace is uitgeschakeld. macOS
-  vraagt per Mac eenmalig om Toegankelijkheid en eventueel Input Monitoring
-  voor `/Applications/skhd.app`. Druk `⌃⌥Spatie` om SketchyBar tijdelijk te
-  verbergen en de native menubalk te gebruiken; druk opnieuw om SketchyBar
-  terug te zetten.
-  De core-installatie beheert zowel `sketchybar-app-font` voor app-iconen als
-  Apple SF Symbols voor de systeemiconen. De SF Symbols-installer vraagt tijdens
-  **(Re)install and apply configuration** eenmalig om het macOS-beheerderswachtwoord.
+  verlaat service mode.
+- Om `⌃⌥⌘A` ook te laten werken wanneer AeroSpace uitstaat, gebruik je de
+  Raycast Script Command `~/.config/raycast/script-commands/toggle-aerospace.sh`.
+  Voeg `~/.config/raycast/script-commands` toe via **Raycast Settings → Extensions
+  → Script Commands → Add Script Directory**. Zoek daarna in Raycast naar
+  **Toggle AeroSpace** en stel bij die opdracht `⌃⌥⌘A` in als hotkey. Raycast
+  moet op de achtergrond draaien. De opdracht gebruikt het bestaande
+  `~/.local/bin/toggle-aerospace` en schakelt AeroSpace en Borders samen.
 - Installeer Docker Desktop desgewenst apart met:
 
   ```bash
@@ -181,9 +170,41 @@ nieuwe configuratie direct toe met:
 ./reload.sh
 ```
 
-Dit koppelt de Stow-pakketten opnieuw, herlaadt AeroSpace, SketchyBar en de
+Dit koppelt de Stow-pakketten opnieuw, herlaadt AeroSpace en de
 vensterborder, en leest de tmux-configuratie opnieuw in. Open alleen een nieuw
 terminalvenster wanneer `.zshrc` is gewijzigd.
+
+### SketchyBar en skhd verwijderen van een bestaande Mac
+
+Doe dit na een `git pull` op iedere Mac waarop de oude configuratie staat.
+Haal eerst de oude Stow-verwijzingen weg als het symlinks zijn en laad de nieuwe
+configuratie:
+
+```bash
+for path in ~/.config/sketchybar ~/.config/skhd \
+  ~/.local/bin/aerospace-refresh-sketchybar \
+  ~/.local/bin/aerospace-service-mode \
+  ~/.local/bin/toggle-sketchybar-menu; do
+  if [[ -L "$path" ]]; then unlink "$path"; fi
+done
+./reload.sh
+```
+
+Registreer dan de Raycast Script Command en geef **Toggle AeroSpace** de
+hotkey `⌃⌥⌘A` zoals hierboven beschreven. Verwijder daarna de oude services en
+apps:
+
+```bash
+brew services stop sketchybar
+skhd --uninstall-service
+brew uninstall sketchybar
+brew uninstall --cask skhd-zig
+```
+
+Op een tweede Mac gelden dezelfde stappen na het ophalen van deze versie.
+De native macOS-menubalk is daarna weer zichtbaar. Als die automatisch wordt
+verborgen, zet **Systeeminstellingen → Menubalk → Verberg en toon de menubalk
+automatisch** op **Nooit**.
 
 Open het centrale menu voor installeren, verwijderen, updaten of herladen met:
 
@@ -271,7 +292,7 @@ system-apps.conf  Gedeelde lijst van macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
 office-installer.sh  Losse installatie van Office-apps uit de App Store
 home/          Gedeelde shell-, terminal- en editorconfiguratie
-macos/         AeroSpace- en SketchyBar-configuratie
+macos/         AeroSpace-, Borders- en Raycast-configuratie
 ```
 
 De installatie gebruikt Stow en stopt bij bestaande, conflicterende bestanden

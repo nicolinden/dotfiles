@@ -63,5 +63,4 @@ echo "Cleaning up old Homebrew downloads and versions..."
 brew cleanup
 
 "$DOTFILES_DIR/reload.sh"
-refresh_sketchybar_updates
 echo "Managed Homebrew packages are up to date."

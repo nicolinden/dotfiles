@@ -7,8 +7,7 @@ start-at-login = true
 # Apply changes whenever this file is saved
 auto-reload-config = true
 
-# Acht vaste workspaces. De naam in AeroSpace, de sneltoets en het label in
-# SketchyBar zijn voortaan altijd hetzelfde.
+# Acht vaste workspaces met dezelfde namen als de sneltoetsen.
 persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8"]
 
 # Browsers share one wide accordion workspace by default.
@@ -30,10 +29,6 @@ accordion-padding = 60
 # -------------------------------------------------------------------
 
 on-window-detected = [
-  # Werk de workspace-iconen bij nadat AeroSpace het nieuwe venster heeft
-  # geregistreerd.
-  { check-further-callbacks = true, run = 'exec-and-forget /bin/bash -lc "$HOME/.local/bin/aerospace-refresh-sketchybar"' },
-
   # Keep Citrix sessions at their chosen size and monitor. Floating prevents
   # newly opened tiled windows from changing the VDI window resolution.
   { if = "test %{app-bundle-id} = com.citrix.receiver.icaviewer.mac", run = "layout floating" },
@@ -61,27 +56,6 @@ on-window-detected = [
   # { if = "test %{app-bundle-id} = net.whatsapp.WhatsApp", run = "move-node-to-workspace 6" },
 ]
 
-# Keep the heavier workspace snapshot limited to actual workspace changes.
-exec-on-workspace-change = [
-  '/bin/bash',
-  '-c',
-  'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE',
-]
-
-# Cursor centering is temporarily disabled; uncomment the move-mouse command
-# below to restore it. The SketchyBar focus event remains active.
-on-focus-changed = [
-  # 'move-mouse window-force-center || move-mouse monitor-force-center',
-  'exec-and-forget sketchybar --trigger aerospace_focus_change',
-  'exec-and-forget /bin/bash -lc "$HOME/.local/bin/aerospace-refresh-sketchybar"',
-]
-
-# Changing monitors can change which of two visible workspaces is focused,
-# even if neither workspace itself changes.
-on-focused-monitor-changed = [
-  'exec-and-forget sketchybar --trigger aerospace_workspace_change',
-]
-
 # 1 t/m 4 horen bij het hoofdscherm; 5 t/m 8 bij het tweede scherm. Zonder
 # tweede scherm vallen 5 t/m 8 terug op het hoofdscherm.
 [workspace-to-monitor-force-assignment]
@@ -106,11 +80,7 @@ outer.right = 10
 [mode.main.binding]
 
 # Open a persistent service mode for grouping and layout maintenance.
-# SketchyBar shows clearly that normal bindings are temporarily inactive.
-alt-shift-semicolon = [
-  "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-service-mode enter'",
-  "mode service",
-]
+alt-shift-semicolon = "mode service"
 
 # ------------------------------------------------------------
 # Focus
@@ -202,16 +172,12 @@ alt-shift-period = "move-node-to-monitor --focus-follows-window --wrap-around ne
 #
 # Enter with Option+Shift+semicolon. Unlike AeroSpace's sample config, this
 # mode stays active so several layout operations can be performed in a row.
-# Escape returns to main mode and reloads the configuration.
+# Escape returns to main mode.
 # ------------------------------------------------------------
 
 [mode.service.binding]
 
-esc = [
-  "exec-and-forget /bin/bash -lc '$HOME/.local/bin/aerospace-service-mode exit'",
-  "mode main",
-  "reload-config",
-]
+esc = "mode main"
 
 # Group the focused window with its neighbour. Both the short keys and the
 # familiar move chords work while service mode is active.
