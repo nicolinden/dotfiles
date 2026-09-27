@@ -110,8 +110,9 @@ alt-rightSquareBracket = "focus dfs-next"
 # Layout
 # ------------------------------------------------------------
 
-# Temporarily maximize the focused window; press again to restore
-alt-m = "fullscreen --no-outer-gaps"
+# Temporarily maximize the focused window; press again to restore.
+# Keep the configured outer gaps; add --no-outer-gaps to fill the screen edge to edge.
+alt-m = "fullscreen"
 
 # Let an exceptional window float, or return it to tiling
 alt-shift-space = "layout floating tiling"
@@ -196,7 +197,8 @@ b = "balance-sizes"
 f = "layout floating tiling"
 a = "layout accordion tiles"
 slash = "layout horizontal vertical"
-m = "fullscreen --no-outer-gaps"
+# Same padded fullscreen as alt-m; add --no-outer-gaps to remove the outer gaps.
+m = "fullscreen"
 
 # Navigate while inspecting or adjusting a nested layout.
 leftSquareBracket = "focus dfs-prev"
