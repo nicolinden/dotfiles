@@ -110,8 +110,28 @@ def refresh(only_ref=None):
 
 
 def compose_command(item):
-    workdir = Path(item["workdir"])
-    files = [Path(name) for name in item["files"].split(",") if name]
+    def host_path(path):
+        original = Path(path)
+        if original.exists():
+            return original
+        # Portainer records /data/compose/... in Docker labels. /data is a
+        # path inside Portainer; find the bind mount actually used by this host.
+        try:
+            portainer = docker_json("inspect", "portainer")[0]
+        except (subprocess.CalledProcessError, IndexError):
+            return original
+        for mount in portainer.get("Mounts", []):
+            if mount.get("Type") != "bind":
+                continue
+            try:
+                suffix = original.relative_to(mount["Destination"])
+            except ValueError:
+                continue
+            return Path(mount["Source"]) / suffix
+        return original
+
+    workdir = host_path(item["workdir"])
+    files = [host_path(name) for name in item["files"].split(",") if name]
     if not item["project"] or not item["service"] or not workdir.is_dir() or not files:
         raise ValueError("Compose-projectgegevens ontbreken")
     if any(not name.is_file() for name in files):
