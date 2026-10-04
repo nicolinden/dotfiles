@@ -62,12 +62,14 @@ echo "  2) Monitoring and disk usage"
 echo "  3) Neovim"
 echo "  4) Terminal extras"
 echo "  a) Install everything"
+echo "  b) Back"
 echo "  q) Quit"
 echo
-read -r -p "Choose one or more numbers (for example 1 2), a or q: " selection
+read -r -p "Choose one or more numbers (for example 1 2), a, b or q: " selection
 
 case "$selection" in
-  q|Q|"") exit 0 ;;
+  b|B|"") exit 0 ;;
+  q|Q) exit "$MENU_QUIT" ;;
   a|A) selected=(1 2 3 4) ;;
   *) IFS=', ' read -r -a selected <<< "$selection" ;;
 esac

@@ -21,14 +21,16 @@ while true; do
     echo "  4) Downloads backup / restore"
   fi
   echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " choice
   case "$choice" in
-    1) CALIBRE_CONFIGURE_ONLY=1 "$DOTFILES_DIR/calibre-sync.sh" ;;
-    2) configured && "$DOTFILES_DIR/ssh-key-manager.sh" || true ;;
-    3) configured && "$DOTFILES_DIR/calibre-sync.sh" || true ;;
-    4) configured && "$DOTFILES_DIR/downloads-backup-manager.sh" || true ;;
+    1) CALIBRE_CONFIGURE_ONLY=1 run_menu_child "$DOTFILES_DIR/calibre-sync.sh" ;;
+    2) if configured; then run_menu_child "$DOTFILES_DIR/ssh-key-manager.sh" || true; fi ;;
+    3) if configured; then run_menu_child "$DOTFILES_DIR/calibre-sync.sh" || true; fi ;;
+    4) if configured; then run_menu_child "$DOTFILES_DIR/downloads-backup-manager.sh" || true; fi ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice." ;;
   esac
 done

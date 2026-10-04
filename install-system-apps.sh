@@ -53,15 +53,17 @@ else
   done
 
   echo "  a) Alles installeren"
-  echo "  q) Stoppen"
+  echo "  b) Terug"
+  echo "  q) Afsluiten"
   echo
-  read -r -p "Kies nummers (bijvoorbeeld 1 2), a of q: " selection
+  read -r -p "Kies nummers (bijvoorbeeld 1 2), a, b of q: " selection
 
   case "$selection" in
-    q|Q|"")
+    b|B|"")
       echo "Geen systeemapps geïnstalleerd."
-      exit 0
+      exit "$MENU_CANCELLED"
       ;;
+    q|Q) exit "$MENU_QUIT" ;;
     a|A)
       selected=()
       for index in "${!SYSTEM_CASKS[@]}"; do

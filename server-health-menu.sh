@@ -12,6 +12,7 @@ while true; do
   echo "  4) Show disk usage"
   echo "  5) Show recent system log entries"
   echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " choice
   case "$choice" in
@@ -27,6 +28,7 @@ while true; do
     4) df -h / /mnt/mediadisk; wait_for_menu_return ;;
     5) journalctl -n 100 --no-pager; wait_for_menu_return ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice."; wait_for_menu_return ;;
   esac
 done

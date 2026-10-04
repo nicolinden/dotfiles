@@ -54,13 +54,15 @@ while true; do
   echo "  1) Back up Downloads folder"
   echo "  2) Restore latest Downloads backup"
   echo "  3) Show latest backup"
-  echo "  b) Back"; echo
+  echo "  b) Back"
+  echo "  q) Quit"; echo
   read -r -p "Choose an option: " choice
   case "$choice" in
     1) ( backup ) || true; wait_for_menu_return ;;
     2) ( restore ) || true; wait_for_menu_return ;;
     3) last_backup || true; wait_for_menu_return ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice." ;;
   esac
 done

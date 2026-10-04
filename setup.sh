@@ -17,6 +17,9 @@ run_submenu() {
   if (( status == MENU_CANCELLED )); then
     return 0
   fi
+  if (( status == MENU_QUIT )); then
+    exit 0
+  fi
 
   return "$status"
 }
@@ -105,6 +108,7 @@ linux_dotfiles_menu() {
     echo "  2) Manage optional tools"
     echo "  3) Reload configuration after git pull"
     echo "  b) Back"
+    echo "  q) Quit"
     echo
     read -r -p "Choose an option: " choice
     case "$choice" in
@@ -124,6 +128,7 @@ linux_dotfiles_menu() {
         fi
         ;;
       b|B|"") return ;;
+      q|Q) exit 0 ;;
       *) echo "Invalid choice."; wait_for_menu_return ;;
     esac
   done
@@ -139,6 +144,7 @@ linux_server_menu() {
     echo "  3) Health check and Matter IPv6"
     echo "  4) Restart Ubuntu"
     echo "  b) Back"
+    echo "  q) Quit"
     echo
     read -r -p "Choose an option: " choice
     case "$choice" in
@@ -157,6 +163,7 @@ linux_server_menu() {
       3) run_submenu "$DOTFILES_DIR/server-health-menu.sh" ;;
       4) restart_linux_system ;;
       b|B|"") return ;;
+      q|Q) exit 0 ;;
       *) echo "Invalid choice."; wait_for_menu_return ;;
     esac
   done

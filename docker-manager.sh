@@ -37,12 +37,14 @@ while true; do
 
   echo
   echo "  i) List local images"
-  echo "  q) Back"
+  echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose a container: " choice
 
   case "$choice" in
-    q|Q|"") break ;;
+    b|B|"") break ;;
+    q|Q) exit "$MENU_QUIT" ;;
     i|I)
       echo
       docker image ls
@@ -73,6 +75,7 @@ while true; do
       echo "  7) Start nginx if stopped"
     fi
     echo "  b) Back"
+    echo "  q) Quit"
     echo
     read -r -p "Choose an action: " action
 
@@ -100,6 +103,7 @@ while true; do
         fi
         ;;
       b|B|"") break ;;
+      q|Q) exit "$MENU_QUIT" ;;
       *) echo "Invalid choice." ;;
     esac
 
@@ -117,7 +121,8 @@ while true; do
   echo "  3) Update one container"
   echo "  4) Update all available containers"
   echo "  i) List local images"
-  echo "  q) Back"
+  echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " choice
   case "$choice" in
@@ -126,7 +131,8 @@ while true; do
     3) python3 "$DOTFILES_DIR/docker-updates.py" one || true; wait_for_menu_return ;;
     4) python3 "$DOTFILES_DIR/docker-updates.py" all || true; wait_for_menu_return ;;
     i|I) docker image ls; wait_for_menu_return ;;
-    q|Q|"") exit 0 ;;
+    b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice."; wait_for_menu_return ;;
   esac
 done

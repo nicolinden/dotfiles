@@ -164,6 +164,7 @@ show_logs_menu() {
     echo "  4) playnext-srv recent Cloud Foundry log"
     echo "  5) playnext recent Cloud Foundry log"
     echo "  b) Back"
+    echo "  q) Quit"
     echo
     read -r -p "Choose an option: " log_choice
     case "$log_choice" in
@@ -179,6 +180,7 @@ show_logs_menu() {
       4) "$RUNTIME_DIR/logs-sap.sh" backend || true; wait_for_menu_return ;;
       5) "$RUNTIME_DIR/logs-sap.sh" frontend || true; wait_for_menu_return ;;
       b|B|"") return ;;
+      q|Q) exit "$MENU_QUIT" ;;
       *) echo "Invalid choice."; wait_for_menu_return ;;
     esac
   done
@@ -197,6 +199,7 @@ while true; do
   echo "  5) Send test notification"
   echo "  6) Logs and health-check status"
   echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " choice
   case "$choice" in
@@ -227,6 +230,7 @@ while true; do
       ;;
     6) show_logs_menu ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice."; wait_for_menu_return ;;
   esac
 done

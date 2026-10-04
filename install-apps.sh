@@ -34,7 +34,7 @@ install_brewfile() {
 
   if [[ "$file" == "Brewfile.personal" ]] &&
      { [[ -d "$HOME/Applications/calibre.app" ]] || [[ -d "/Applications/calibre.app" ]]; }; then
-    "$DOTFILES_DIR/calibre-sync.sh"
+    run_menu_child "$DOTFILES_DIR/calibre-sync.sh"
   fi
 
 }
@@ -67,9 +67,9 @@ install_all_optional_apps() {
 
   install_brewfile "Brewfile.dev" "development apps"
   install_brewfile "Brewfile.personal" "personal apps"
-  "$DOTFILES_DIR/install-mac-apps.sh"
-  "$DOTFILES_DIR/office-installer.sh"
-  "$DOTFILES_DIR/install-system-apps.sh"
+  run_menu_child "$DOTFILES_DIR/install-mac-apps.sh"
+  run_menu_child "$DOTFILES_DIR/office-installer.sh"
+  run_menu_child "$DOTFILES_DIR/install-system-apps.sh"
 }
 
 if [[ "$(uname -s)" != "Darwin" ]]; then
@@ -98,6 +98,7 @@ while true; do
   echo "  6) Remove optional apps"
   echo "  a) Install all optional apps"
   echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " selection
 
@@ -105,69 +106,74 @@ while true; do
     1)
       if install_brewfile "Brewfile.dev" "development apps"; then
         wait_for_menu_return
-        exit 0
-      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
         continue
       else
-        exit "$?"
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+        continue
       fi
       ;;
     2)
       if install_brewfile "Brewfile.personal" "personal apps"; then
         wait_for_menu_return
-        exit 0
-      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
         continue
       else
-        exit "$?"
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+        continue
       fi
       ;;
     3)
-      if "$DOTFILES_DIR/install-mac-apps.sh"; then
+      if run_menu_child "$DOTFILES_DIR/install-mac-apps.sh"; then
         wait_for_menu_return
-        exit 0
-      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
         continue
       else
-        exit "$?"
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+        continue
       fi
       ;;
     4)
-      if "$DOTFILES_DIR/office-installer.sh"; then
+      if run_menu_child "$DOTFILES_DIR/office-installer.sh"; then
         wait_for_menu_return
-        exit 0
-      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
         continue
       else
-        exit "$?"
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+        continue
       fi
       ;;
     5)
-      if "$DOTFILES_DIR/install-system-apps.sh"; then
+      if run_menu_child "$DOTFILES_DIR/install-system-apps.sh"; then
         wait_for_menu_return
-        exit 0
-      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
         continue
       else
-        exit "$?"
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+        continue
       fi
       ;;
     6)
-      "$DOTFILES_DIR/uninstall-apps.sh"
-      wait_for_menu_return
-      exit 0
+      if run_menu_child "$DOTFILES_DIR/uninstall-apps.sh"; then
+        wait_for_menu_return
+      else
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+      fi
+      continue
       ;;
     a|A)
       if install_all_optional_apps; then
         wait_for_menu_return
-        exit 0
-      elif [[ $? -eq "$MENU_CANCELLED" ]]; then
         continue
       else
-        exit "$?"
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+        continue
       fi
       ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice."; wait_for_menu_return ;;
   esac
 done

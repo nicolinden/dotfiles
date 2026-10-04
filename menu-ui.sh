@@ -2,6 +2,22 @@
 
 # Shared terminal presentation for the interactive dotfiles menus.
 MENU_CANCELLED=20
+MENU_QUIT=21
+
+# A child menu runs in its own process. Preserve a request to quit the entire
+# manager while allowing callers to handle ordinary cancellation themselves.
+run_menu_child() {
+  local status
+  if "$@"; then
+    return 0
+  else
+    status=$?
+  fi
+  if (( status == MENU_QUIT )); then
+    exit "$MENU_QUIT"
+  fi
+  return "$status"
+}
 
 run_with_progress() {
   local label="$1"

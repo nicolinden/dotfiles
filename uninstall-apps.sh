@@ -78,13 +78,16 @@ for index in "${!entries[@]}"; do
 done
 
 echo
-read -r -p "Choose apps to uninstall (for example 1 3), or q to quit: " selection
+echo "  b) Back"
+echo "  q) Quit"
+read -r -p "Choose apps to uninstall (for example 1 3), b or q: " selection
 
 case "$selection" in
-  q|Q|"")
+  b|B|"")
     echo "No apps removed."
-    exit 0
+    exit "$MENU_CANCELLED"
     ;;
+  q|Q) exit "$MENU_QUIT" ;;
   *) IFS=', ' read -r -a selected <<< "$selection" ;;
 esac
 

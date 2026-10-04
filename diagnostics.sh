@@ -25,6 +25,7 @@ case "$(uname -s)" in
     echo "  4) Show Raycast toggle script status"
     echo "  5) Manage Docker containers"
     echo "  b) Back"
+    echo "  q) Quit"
     echo
     read -r -p "Choose an option: " selection
 
@@ -52,6 +53,7 @@ case "$(uname -s)" in
         fi
         ;;
       b|B|"") exit 0 ;;
+      q|Q) exit "$MENU_QUIT" ;;
       *) echo "Invalid choice." ;;
     esac
     ;;
@@ -62,6 +64,7 @@ case "$(uname -s)" in
     echo "  2) Show pending package updates"
     echo "  3) Show recent system log entries"
     echo "  b) Back"
+    echo "  q) Quit"
     echo
     read -r -p "Choose an option: " selection
 
@@ -70,6 +73,7 @@ case "$(uname -s)" in
       2) apt list --upgradable ;;
       3) journalctl -n 100 --no-pager ;;
       b|B|"") exit 0 ;;
+      q|Q) exit "$MENU_QUIT" ;;
       *) echo "Invalid choice." ;;
     esac
     ;;

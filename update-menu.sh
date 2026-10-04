@@ -9,6 +9,7 @@ print_menu_header "Update installed apps"
 echo "  1) Update everything (Homebrew and Mac App Store)"
 echo "  2) Update managed Homebrew apps only"
 echo "  b) Back"
+echo "  q) Quit"
 echo
 read -r -p "Choose an option: " selection
 
@@ -41,6 +42,7 @@ case "$selection" in
     fi
     ;;
   b|B|"") exit 0 ;;
+  q|Q) exit "$MENU_QUIT" ;;
   *) echo "Invalid choice." ;;
 esac
 

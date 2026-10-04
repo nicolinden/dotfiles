@@ -177,6 +177,7 @@ while true; do
   echo "  3) List server backups"
   echo "  4) Restore a backup and replace local ~/.ssh"
   echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " choice
   case "$choice" in
@@ -185,6 +186,7 @@ while true; do
     3) ( list_backups ) || true; wait_for_menu_return ;;
     4) ( restore_ssh_folder ) || true; wait_for_menu_return ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice." ;;
   esac
 done

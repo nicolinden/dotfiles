@@ -227,6 +227,7 @@ while true; do
     echo "Configure the server first to show backup and restore actions."
   fi
   echo "  b) Back"
+  echo "  q) Quit"
   echo
   read -r -p "Choose an option: " choice
   case "$choice" in
@@ -236,6 +237,7 @@ while true; do
     2) load_config && ( download_library ) || true; wait_for_menu_return ;;
     3) load_config && ( show_status ) || true; wait_for_menu_return ;;
     b|B|"") exit 0 ;;
+    q|Q) exit "$MENU_QUIT" ;;
     *) echo "Invalid choice." ;;
   esac
 done
