@@ -97,6 +97,71 @@ restart_linux_system() {
   esac
 }
 
+linux_dotfiles_menu() {
+  local choice
+  while true; do
+    print_menu_header "Dotfiles setup"
+    echo "  1) (Re)install and apply configuration"
+    echo "  2) Manage optional tools"
+    echo "  3) Reload configuration after git pull"
+    echo "  b) Back"
+    echo
+    read -r -p "Choose an option: " choice
+    case "$choice" in
+      1)
+        echo "This reapplies Stow files and installs or refreshes core Ubuntu tools."
+        if confirm_action "(Re)install and apply configuration?"; then
+          "$DOTFILES_DIR/bootstrap.sh" --core-only
+          wait_for_menu_return
+        fi
+        ;;
+      2) run_submenu "$DOTFILES_DIR/install-linux-apps.sh" ;;
+      3)
+        echo "This reapplies Stow files and reloads an active tmux server."
+        if confirm_action "Reload configuration after git pull?"; then
+          "$DOTFILES_DIR/reload.sh"
+          wait_for_menu_return
+        fi
+        ;;
+      b|B|"") return ;;
+      *) echo "Invalid choice."; wait_for_menu_return ;;
+    esac
+  done
+}
+
+linux_server_menu() {
+  local choice
+  while true; do
+    print_menu_header "Manage Ubuntu server"
+    [[ -f /var/run/reboot-required ]] && echo "System restart required after installed updates."
+    echo "  1) Show available package updates"
+    echo "  2) Update Ubuntu packages (conservative)"
+    echo "  3) Health check and Matter IPv6"
+    echo "  4) Restart Ubuntu"
+    echo "  b) Back"
+    echo
+    read -r -p "Choose an option: " choice
+    case "$choice" in
+      1)
+        echo "Refreshing package lists..."
+        sudo apt-get -o APT::Update::Error-Mode=any update && apt list --upgradable
+        wait_for_menu_return
+        ;;
+      2)
+        echo "This respects holds and phased rollout; it does not remove packages or reboot."
+        if confirm_action "Update Ubuntu packages?"; then
+          run_linux_update
+          wait_for_menu_return
+        fi
+        ;;
+      3) run_submenu "$DOTFILES_DIR/server-health-menu.sh" ;;
+      4) restart_linux_system ;;
+      b|B|"") return ;;
+      *) echo "Invalid choice."; wait_for_menu_return ;;
+    esac
+  done
+}
+
 case "$(uname -s)" in
   Darwin)
     configure_homebrew_for_current_shell
@@ -165,47 +230,18 @@ case "$(uname -s)" in
         echo "System restart required after installed updates."
       fi
       echo
-      echo "  1) (Re)install and apply configuration"
-      echo "  2) Manage optional tools"
-      echo "  3) Update Ubuntu packages (conservative)"
-      echo "  4) Diagnostics"
-      echo "  5) Restart Ubuntu"
-      echo "  6) Manage Docker containers"
-      echo "  7) SAP HANA Trial"
-      echo "  8) Reload configuration after git pull"
+      echo "  1) Dotfiles setup"
+      echo "  2) Manage Ubuntu server"
+      echo "  3) Manage Docker containers and images"
+      echo "  4) SAP HANA Trial"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
 
       case "$choice" in
-        1)
-          echo
-          echo "This will ensure core Ubuntu tools are installed, reapply your Stow files,"
-          echo "and install or refresh Starship, LazyGit and LazyDocker."
-          if confirm_action "(Re)install and apply configuration?"; then
-            "$DOTFILES_DIR/bootstrap.sh" --core-only
-            wait_for_menu_return
-          else
-            echo "Cancelled."
-          fi
-          ;;
-        2) run_submenu "$DOTFILES_DIR/install-linux-apps.sh" ;;
+        1) linux_dotfiles_menu ;;
+        2) linux_server_menu ;;
         3)
-          echo
-          echo "This refreshes package lists from configured repositories and upgrades packages,"
-          echo "including required new dependencies, then reapplies shared Stow configuration."
-          echo "Holds and phasing are respected. No removals, release upgrade or automatic reboot."
-          echo "Updates can restart services; no update is guaranteed risk-free."
-          if confirm_action "Update Ubuntu packages?"; then
-            run_linux_update
-            wait_for_menu_return
-          else
-            echo "Cancelled."
-          fi
-          ;;
-        4) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
-        5) restart_linux_system ;;
-        6)
           if command -v docker >/dev/null 2>&1; then
             run_submenu "$DOTFILES_DIR/docker-manager.sh"
           else
@@ -213,19 +249,8 @@ case "$(uname -s)" in
             wait_for_menu_return
           fi
           ;;
-        7)
+        4)
           run_submenu "$DOTFILES_DIR/sap-hana-manager.sh"
-          ;;
-        8)
-          echo
-          echo "This reapplies the shared Stow configuration and reloads an active"
-          echo "tmux server. It does not install or update apps."
-          if confirm_action "Reload configuration after git pull?"; then
-            "$DOTFILES_DIR/reload.sh"
-            wait_for_menu_return
-          else
-            echo "Cancelled."
-          fi
           ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;

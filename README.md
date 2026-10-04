@@ -147,10 +147,29 @@ automatisch `~/.ssh/noki-server` gebruiken. De privésleutel zelf staat bewust
 niet in Git en moet op iedere Mac aanwezig zijn of via de versleutelde
 SSH-back-up worden hersteld.
 
-Wanneer Docker al op de Ubuntu-machine aanwezig is, verschijnt in `./setup.sh`
-de optie **Manage Docker containers**. Daarmee kun je containers starten,
-stoppen, herstarten en logs bekijken; lokale images zijn vanuit hetzelfde menu
-op te vragen.
+Op Ubuntu groepeert `./setup.sh` de opties onder **Dotfiles setup**,
+**Manage Ubuntu server**, **Manage Docker containers and images** en
+**SAP HANA Trial**. Onder server health vind je de algemene controle, de
+Matter IPv6-controle en de bestaande IPv6-reparatie. Die reparatie activeert
+de netwerkverbinding opnieuw en vraagt daarom eerst bevestiging.
+
+Het Docker-menu toont containers en hun start/stop/logopties. **Check available
+image updates** voert op aanvraag `docker pull` uit voor images van actieve of
+gestopte containers. Dat haalt images op maar herstart nog niets. Daarna
+vergelijkt het menu de image-ID van iedere container met de opgehaalde image.
+**Update one** en **Update all** tonen de betrokken containers en vragen
+bevestiging voordat Compose de gekozen services opnieuw aanmaakt. Zelfgebouwde
+images en onduidelijke gevallen worden overgeslagen. Portainer is op deze
+server een losse container en gebruikt een apart script; de oude container
+blijft na een geslaagde update als `portainer-before-update` bestaan.
+Controleer voor een update zelf de release notes: een nieuwe digest vertelt
+niet welke functionele wijzigingen een applicatie bevat.
+
+De overgenomen serverscripts staan in `server-scripts/`. Het schijfcontrole-
+script voor Uptime Kuma verwacht `KUMA_DISK_PUSH_URL` in een lokale, niet
+ingecheckte `/etc/dotfiles/kuma-disk.env` (eventueel ook `KUMA_DISK_MOUNT` en
+`KUMA_DISK_THRESHOLD`). Migratie van een bestaande cronjob naar dit script
+vereist die lokale configuratie; de huidige serverjob blijft anders intact.
 
 Kies **Install optional Ubuntu tools** in hetzelfde menu om aanvullende tools
 te kiezen: GitHub CLI, `jq`, `tree`, `btop`, `htop`, `ncdu`, de actuele

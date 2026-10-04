@@ -16,6 +16,7 @@ if ! docker info >/dev/null 2>&1; then
   exit 1
 fi
 
+overview() {
 while true; do
   # macOS ships Bash 3.2, which does not support `mapfile`.
   containers=()
@@ -41,7 +42,7 @@ while true; do
   read -r -p "Choose a container: " choice
 
   case "$choice" in
-    q|Q|"") exit 0 ;;
+    q|Q|"") break ;;
     i|I)
       echo
       docker image ls
@@ -68,6 +69,9 @@ while true; do
     if command -v lazydocker >/dev/null 2>&1; then
       echo "  6) Open LazyDocker"
     fi
+    if [[ "$name" == nginx ]]; then
+      echo "  7) Start nginx if stopped"
+    fi
     echo "  b) Back"
     echo
     read -r -p "Choose an action: " action
@@ -88,6 +92,13 @@ while true; do
           echo "LazyDocker is not installed. Choose core tooling reinstall to install it."
         fi
         ;;
+      7)
+        if [[ "$name" == nginx ]]; then
+          bash "$DOTFILES_DIR/server-scripts/start-nginx.sh"
+        else
+          echo "This action is only available for nginx."
+        fi
+        ;;
       b|B|"") break ;;
       *) echo "Invalid choice." ;;
     esac
@@ -96,4 +107,26 @@ while true; do
       wait_for_menu_return
     fi
   done
+done
+}
+
+while true; do
+  print_menu_header "Docker manager"
+  echo "  1) Overview of containers"
+  echo "  2) Check available image updates"
+  echo "  3) Update one container"
+  echo "  4) Update all available containers"
+  echo "  i) List local images"
+  echo "  q) Back"
+  echo
+  read -r -p "Choose an option: " choice
+  case "$choice" in
+    1) overview ;;
+    2) python3 "$DOTFILES_DIR/docker-updates.py" check || true; wait_for_menu_return ;;
+    3) python3 "$DOTFILES_DIR/docker-updates.py" one || true; wait_for_menu_return ;;
+    4) python3 "$DOTFILES_DIR/docker-updates.py" all || true; wait_for_menu_return ;;
+    i|I) docker image ls; wait_for_menu_return ;;
+    q|Q|"") exit 0 ;;
+    *) echo "Invalid choice."; wait_for_menu_return ;;
+  esac
 done
