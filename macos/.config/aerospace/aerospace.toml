@@ -8,7 +8,7 @@ start-at-login = true
 auto-reload-config = true
 
 # Vaste workspaces per scherm, van links naar rechts.
-persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "Z", "X", "C", "V"]
+persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "Z", "X", "C", "V", "B"]
 
 # Browsers share one wide accordion workspace by default.
 after-startup-command = ['layout --workspace 2 --root h_accordion']
@@ -64,21 +64,26 @@ on-window-detected = [
   # { if = "test %{app-bundle-id} = net.whatsapp.WhatsApp", run = "move-node-to-workspace 6" },
 ]
 
-# Schermvolgorde van links naar rechts: 1-4, 5-8, Z/X/C/V.
-# Bij minder schermen vallen groepen terug op het laatst beschikbare scherm.
+# Open: 1-5 op het MacBook-scherm, 6-9 op het linker externe scherm,
+# Z/X/C/V/B op het rechter externe scherm.
+# Dicht: 1-5 links, 6-9 rechts (mits links de hoofdmonitor wordt).
+# Bij twee schermen is 'secondary' de niet-hoofdmonitor; bij drie schermen
+# valt 6-9 terug op het linkse scherm (monitor 1).
 [workspace-to-monitor-force-assignment]
-1 = 1
-2 = 1
-3 = 1
-4 = 1
-5 = [2, 1]
-6 = [2, 1]
-7 = [2, 1]
-8 = [2, 1]
+1 = ["built-in", 1]
+2 = ["built-in", 1]
+3 = ["built-in", 1]
+4 = ["built-in", 1]
+5 = ["built-in", 1]
+6 = ["secondary", 1]
+7 = ["secondary", 1]
+8 = ["secondary", 1]
+9 = ["secondary", 1]
 Z = [3, 2, 1]
 X = [3, 2, 1]
 C = [3, 2, 1]
 V = [3, 2, 1]
+B = [3, 2, 1]
 
 # Small gaps make separate windows easier to recognize
 [gaps]
@@ -152,10 +157,12 @@ alt-5 = "workspace 5"
 alt-6 = "workspace 6"
 alt-7 = "workspace 7"
 alt-8 = "workspace 8"
+alt-9 = "workspace 9"
 alt-z = "workspace Z"
 alt-x = "workspace X"
 alt-c = "workspace C"
 alt-v = "workspace V"
+alt-b = "workspace B"
 
 # Move only the focused window to another workspace
 alt-shift-1 = "move-node-to-workspace --focus-follows-window 1"
@@ -166,10 +173,12 @@ alt-shift-5 = "move-node-to-workspace --focus-follows-window 5"
 alt-shift-6 = "move-node-to-workspace --focus-follows-window 6"
 alt-shift-7 = "move-node-to-workspace --focus-follows-window 7"
 alt-shift-8 = "move-node-to-workspace --focus-follows-window 8"
+alt-shift-9 = "move-node-to-workspace --focus-follows-window 9"
 alt-shift-z = "move-node-to-workspace --focus-follows-window Z"
 alt-shift-x = "move-node-to-workspace --focus-follows-window X"
 alt-shift-c = "move-node-to-workspace --focus-follows-window C"
 alt-shift-v = "move-node-to-workspace --focus-follows-window V"
+alt-shift-b = "move-node-to-workspace --focus-follows-window B"
 
 # Cycle through all workspaces
 alt-tab = "list-workspaces --monitor focused --empty no | workspace --stdin --wrap-around next"
