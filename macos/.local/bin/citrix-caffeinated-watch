@@ -1,0 +1,55 @@
+#!/bin/bash
+
+# Keep Caffeinated in step with the Citrix Viewer session, while allowing
+# manual changes between Viewer launch and termination events.
+
+viewer_running() {
+  /usr/bin/pgrep -x 'Citrix Viewer' >/dev/null 2>&1
+}
+
+set_caffeinated() {
+  /usr/bin/osascript -e "tell application id \"design.yugen.Caffeinated\" to $1"
+}
+
+notify_change() {
+  if [[ "$1" == 'activate' ]]; then
+    /usr/bin/osascript -e 'display notification "Caffeinated is ingeschakeld" with title "Citrix Viewer gestart"' >/dev/null 2>&1 || true
+  else
+    /usr/bin/osascript -e 'display notification "Caffeinated is uitgeschakeld" with title "Citrix Viewer afgesloten"' >/dev/null 2>&1 || true
+  fi
+}
+
+last_state=''
+
+while :; do
+  if viewer_running; then
+    current_state='running'
+  else
+    current_state='stopped'
+  fi
+
+  if [[ -z "$last_state" ]]; then
+    # A Viewer session may already be open when the agent starts.
+    if [[ "$current_state" == 'running' ]]; then
+      if set_caffeinated activate; then
+        last_state="$current_state"
+        notify_change activate
+      fi
+    else
+      last_state="$current_state"
+    fi
+  elif [[ "$current_state" != "$last_state" ]]; then
+    if [[ "$current_state" == 'running' ]]; then
+      action='activate'
+    else
+      action='deactivate'
+    fi
+
+    if set_caffeinated "$action"; then
+      last_state="$current_state"
+      notify_change "$action"
+    fi
+  fi
+
+  /bin/sleep 5
+done

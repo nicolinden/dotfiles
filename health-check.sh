@@ -3,6 +3,7 @@
 # Read-only health check for the dotfiles setup.
 set -u
 
+DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 failures=0
 warnings=0
 
@@ -39,6 +40,32 @@ case "$(uname -s)" in
     check_file "$HOME/.config/aerospace/aerospace.toml" "AeroSpace configuration"
     check_file "$HOME/.local/bin/toggle-aerospace" "AeroSpace toggle command"
     check_file "$HOME/.config/raycast/script-commands/toggle-aerospace.sh" "Raycast AeroSpace toggle script"
+
+    citrix_agent="$HOME/Library/LaunchAgents/com.nico.citrix-caffeinated.plist"
+    citrix_agent_source="$DOTFILES_DIR/optional/citrix-caffeinated/com.nico.citrix-caffeinated.plist"
+    citrix_service="gui/$(id -u)/com.nico.citrix-caffeinated"
+    if [[ -e "$citrix_agent" || -L "$citrix_agent" ]]; then
+      if [[ -L "$citrix_agent" && "$(readlink "$citrix_agent")" == "$citrix_agent_source" ]]; then
+        ok "Optional Citrix/Caffeinated automation is installed"
+      else
+        warn "Citrix/Caffeinated agent link is outdated (reinstall it from Manage apps)"
+      fi
+      check_file "$HOME/.local/bin/citrix-caffeinated-watch" "Citrix/Caffeinated watcher"
+      if [[ -d "/Applications/Caffeinated.app" || -d "$HOME/Applications/Caffeinated.app" ]]; then
+        ok "Caffeinated is installed"
+      else
+        missing "Caffeinated is missing for the installed automation"
+      fi
+      if launchctl print "$citrix_service" >/dev/null 2>&1; then
+        ok "Citrix/Caffeinated service is running"
+      else
+        warn "Citrix/Caffeinated service is stopped (reinstall it from Manage apps)"
+      fi
+    elif launchctl print "$citrix_service" >/dev/null 2>&1; then
+      warn "Citrix/Caffeinated service is running without an installed agent link"
+    else
+      ok "Optional Citrix/Caffeinated automation is not installed"
+    fi
 
     if command -v docker >/dev/null 2>&1; then
       if docker info >/dev/null 2>&1; then

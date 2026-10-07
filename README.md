@@ -2,7 +2,7 @@
 
 Mijn macOS- en Ubuntu-configuratie, beheerd met GNU Stow. De map `home/`
 bevat configuratie die op beide platforms werkt; `macos/` bevat uitsluitend
-macOS-configuratie voor AeroSpace, Borders en Raycast.
+macOS-configuratie voor AeroSpace, Borders, Raycast en optionele lokale scripts.
 
 ## Nieuwe Mac installeren
 
@@ -54,9 +54,11 @@ wordt geladen.
   Apple-account zijn gekoppeld.
 - AeroSpace start automatisch na de bootstrap en registreert daarna zijn
   login-item. Geef de gevraagde Accessibility-permissie in macOS.
-- De indeling gebruikt acht vaste globale workspaces: `1` t/m `4` op het
-  hoofdscherm en `5` t/m `8` op het tweede scherm. Zonder tweede scherm vallen
-  `5` t/m `8` terug op het hoofdscherm. Apps worden niet automatisch aan een
+- De indeling gebruikt vaste globale workspaces: `1` t/m `5` op het
+  MacBook-scherm, `6` t/m `9` op het eerste externe scherm en
+  `Z/X/C/V/B` op het tweede externe scherm. Met dichtgeklapte MacBook
+  vallen `1` t/m `5` terug op het linker scherm en gaan `6` t/m `9`
+  naar de niet-hoofdmonitor. Apps worden niet automatisch aan een
   workspace toegewezen; verplaats vensters zelf met de sneltoetsen hieronder.
   Citrix-vensters blijven floating.
 
@@ -66,8 +68,8 @@ wordt geladen.
   | `⌥⇧H/J/K/L` | Verplaats venster links/onder/boven/rechts |
   | `⌥.` | Focus volgend scherm |
   | `⌥⇧.` | Verplaats app naar volgend scherm en volg hem |
-  | `⌥1`–`⌥8` | Open de vaste workspace |
-  | `⌥⇧1`–`⌥⇧8` | Verplaats app naar workspace en volg hem |
+  | `⌥1`–`⌥9`, `⌥Z/X/C/V/B` | Open de vaste workspace |
+  | `⌥⇧1`–`⌥⇧9`, `⌥⇧Z/X/C/V/B` | Verplaats app naar workspace en volg hem |
   | `⌥M` | Maximaliseer/herstel venster |
   | `⌥⇧Spatie` | Toggle floating/tiling |
   | `⌥⇧;` | Open blijvende service mode voor groeperen en layouts |
@@ -85,6 +87,14 @@ wordt geladen.
   **Toggle AeroSpace** en stel bij die opdracht `⌃⌥⌘A` in als hotkey. Raycast
   moet op de achtergrond draaien. De opdracht gebruikt het bestaande
   `~/.local/bin/toggle-aerospace` en schakelt AeroSpace en Borders samen.
+- De Citrix Viewer/Caffeinated-automatisering is optioneel. Kies in
+  **Manage apps → Citrix Viewer / Caffeinated automation** voor installeren,
+  status of verwijderen. De achtergrondservice schakelt Caffeinated aan als
+  Citrix Viewer start en uit als de laatste Viewer afsluit. Bij beide
+  overgangen verschijnt een macOS-melding. Handmatig aan- en uitzetten blijft
+  tussendoor mogelijk. Zet in Caffeinated zelf **Keep Awake with Lid Closed**
+  aan als je de sessie met gesloten MacBook wilt behouden. De healthcheck
+  controleert de service alleen wanneer deze optioneel is geïnstalleerd.
 - Installeer Docker Desktop desgewenst apart met:
 
   ```bash
@@ -298,6 +308,7 @@ update-menu.sh  Keuze tussen volledige en beheerde macOS-updates
 health-check.sh  Leesbare controle van de installatie zonder wijzigingen
 diagnostics.sh  Health check, service-status en logweergave
 install-apps.sh  Interactief keuzemenu voor app-profielen
+citrix-caffeinated-manager.sh  Optionele installatie, status en verwijdering
 calibre-setup.sh  Oude master/client-configuratie voor Calibre Content Server
 calibre-backup.sh  Maak een consistente masterbibliotheek-snapshot in iCloud
 calibre-sync.sh   Veilige upload/download; eerst Tailscale, daarna lokaal via 10.10.2.2

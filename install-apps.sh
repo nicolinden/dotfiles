@@ -96,6 +96,7 @@ while true; do
   echo "  4) Office and iWork"
   echo "  5) System apps"
   echo "  6) Remove optional apps"
+  echo "  7) Citrix Viewer / Caffeinated automation"
   echo "  a) Install all optional apps"
   echo "  b) Back"
   echo "  q) Quit"
@@ -155,6 +156,15 @@ while true; do
       ;;
     6)
       if run_menu_child "$DOTFILES_DIR/uninstall-apps.sh"; then
+        wait_for_menu_return
+      else
+        status=$?
+        (( status == MENU_CANCELLED )) || exit "$status"
+      fi
+      continue
+      ;;
+    7)
+      if run_menu_child "$DOTFILES_DIR/citrix-caffeinated-manager.sh"; then
         wait_for_menu_return
       else
         status=$?
