@@ -195,7 +195,7 @@ case "$(uname -s)" in
         1)
           echo
           echo "This will ensure core tooling is installed, reapply your Stow files,"
-          echo "start AeroSpace and restart Borders. Optional apps are unchanged."
+          echo "start AeroSpace if configured and restart Borders. Optional apps are unchanged."
           if confirm_action "(Re)install and apply configuration?"; then
             "$DOTFILES_DIR/bootstrap.sh" --core-only
             wait_for_menu_return

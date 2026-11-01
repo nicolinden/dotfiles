@@ -205,12 +205,14 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose macos
   "$DOTFILES_DIR/configure-noki-ssh.sh"
 
-  # AeroSpace registreert `start-at-login` pas nadat de app minstens één keer
-  # heeft gedraaid. Start hem daarom na het koppelen van de configuratie.
-  if [[ -d "$HOME/Applications/AeroSpace.app" ]]; then
-    open "$HOME/Applications/AeroSpace.app"
-  elif [[ -d "/Applications/AeroSpace.app" ]]; then
-    open "/Applications/AeroSpace.app"
+  # Start AeroSpace alleen als automatisch starten in de configuratie aanstaat.
+  if grep -Eq '^[[:space:]]*start-at-login[[:space:]]*=[[:space:]]*true([[:space:]]|$)' \
+    "$DOTFILES_DIR/macos/.config/aerospace/aerospace.toml"; then
+    if [[ -d "$HOME/Applications/AeroSpace.app" ]]; then
+      open "$HOME/Applications/AeroSpace.app"
+    elif [[ -d "/Applications/AeroSpace.app" ]]; then
+      open "/Applications/AeroSpace.app"
+    fi
   fi
 
   # Borders is a separate user service so it remains active after AeroSpace

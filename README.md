@@ -52,8 +52,10 @@ wordt geladen.
   Log vóór een App Store-keuze in bij de Mac App Store. Voor betaalde apps,
   zoals Caffeinated en Pixelmator Pro, moet de app eerst aan hetzelfde
   Apple-account zijn gekoppeld.
-- AeroSpace start automatisch na de bootstrap en registreert daarna zijn
-  login-item. Geef de gevraagde Accessibility-permissie in macOS.
+- AeroSpace blijft geïnstalleerd, maar automatisch starten staat uit
+  (`start-at-login = false`). Start de app handmatig of via **Toggle AeroSpace**
+  in Raycast wanneer je hem weer wilt gebruiken. De bootstrap start AeroSpace
+  alleen als `start-at-login = true` is ingesteld.
 - De indeling gebruikt vaste globale workspaces: `1` t/m `5` op het
   MacBook-scherm, `6` t/m `9` op het eerste externe scherm en
   `Z/X/C/V/B` op het tweede externe scherm. Met dichtgeklapte MacBook
