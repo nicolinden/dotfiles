@@ -4,7 +4,6 @@ if [[ -x "/opt/homebrew/bin/brew" ]]; then
 elif [[ -x "/usr/local/bin/brew" ]]; then
   eval "$(/usr/local/bin/brew shellenv)"
 fi
-
 # WezTerm CLI on macOS
 if [[ -d "$HOME/Applications/WezTerm.app/Contents/MacOS" ]]; then
   export PATH="$PATH:$HOME/Applications/WezTerm.app/Contents/MacOS"
