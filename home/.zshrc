@@ -57,8 +57,3 @@ if command -v brew >/dev/null 2>&1; then
 elif [[ -r "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh" ]]; then
   source "/usr/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh"
 fi
-
-# Server-only shortcut; do not expose a broken alias on macOS workstations.
-if [[ "$OSTYPE" == linux* && -d "$HOME/.local/share/sap-hana-automation" ]]; then
-  alias sap-hana='cd "$HOME/.local/share/sap-hana-automation"'
-fi

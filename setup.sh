@@ -186,7 +186,6 @@ case "$(uname -s)" in
       echo "  4) Diagnostics"
       echo "  5) Backup / restore"
       echo "  6) Reload configuration after git pull"
-      echo "  7) SAP HANA Trial on server"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -218,7 +217,6 @@ case "$(uname -s)" in
             echo "Cancelled."
           fi
           ;;
-        7) run_submenu "$DOTFILES_DIR/sap-hana-remote.sh" ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;
       esac
@@ -240,7 +238,6 @@ case "$(uname -s)" in
       echo "  1) Dotfiles setup"
       echo "  2) Manage Ubuntu server"
       echo "  3) Manage Docker containers and images"
-      echo "  4) SAP HANA Trial"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -255,9 +252,6 @@ case "$(uname -s)" in
             echo "Docker is not installed."
             wait_for_menu_return
           fi
-          ;;
-        4)
-          run_submenu "$DOTFILES_DIR/sap-hana-manager.sh"
           ;;
         q|Q|"") exit 0 ;;
         *) echo "Invalid choice." ;;

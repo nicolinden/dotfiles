@@ -129,39 +129,9 @@ Op Ubuntu installeert hetzelfde script de basispakketten, Starship, Oh My Zsh
 en de algemene dotfiles. De macOS-configuratie wordt daar niet gekoppeld.
 LazyGit en LazyDocker worden daarbij ook geïnstalleerd.
 
-Op de Ubuntu-server bevat het hoofdmenu **SAP HANA Trial**. Deze module bewaart
-de reproduceerbare Cloud Foundry-, HANA-, PlayNext- en systemd-configuratie in
-Git en installeert een runtimekopie in `~/.local/share/sap-hana-automation`.
-De echte `notification.env` en de Cloud Foundry-login blijven uitsluitend op
-de server. De alias `sap-hana` bestaat alleen op Linux wanneer die runtimemap
-aanwezig is; macOS krijgt daardoor geen onbruikbare alias meer. Vanuit het
-servermenu kun je de instance en apps controleren of handmatig starten, de
-SAP SSO-login vernieuwen, een Home Assistant-testnotificatie versturen en
-afzonderlijk de start-, notificatie-, gezondheidscontrole- en Cloud
-Foundry-applicatielogs bekijken. Starten is idempotent: een gezonde component
-wordt overgeslagen, een gestopte app wordt gestart en een aangezette maar
-ongezonde app wordt herstart. Installeren en opnieuw inloggen worden geweigerd
-zolang de starttaak actief is.
-
-Er is bewust geen automatische starttaak: een interactieve SAP SSO-login
-verloopt en is daardoor niet geschikt voor betrouwbare, onbeheerde starts. Een
-read-only systemd-timer controleert iedere zes uur de publieke frontend- en
-backendroutes en stuurt via de Home Assistant-webhook een melding bij uitval en
-herstel. De laatste volledig geslaagde handmatige start wordt lokaal bewaard.
-Vanaf dag 21 zonder zo'n bevestigde start volgt dagelijks een waarschuwing,
-zodat de trial ruim vóór de 30-dagengrens handmatig gestart kan worden.
-Op macOS opent **SAP HANA Trial on server** hetzelfde menu via de ingebouwde
-SSH-client. De Mac installeert of draait daarbij geen SAP-, Cloud Foundry-,
-Docker- of systemd-componenten; alle opdrachten worden op de Ubuntu-server
-uitgevoerd. Bootstrap en reload beheren daarnaast een afgebakend blok in
-`~/.ssh/config`, waardoor zowel `ssh noki-server` als de volledige hostnaam
-automatisch `~/.ssh/noki-server` gebruiken. De privésleutel zelf staat bewust
-niet in Git en moet op iedere Mac aanwezig zijn of via de versleutelde
-SSH-back-up worden hersteld.
-
 Op Ubuntu groepeert `./setup.sh` de opties onder **Dotfiles setup**,
-**Manage Ubuntu server**, **Manage Docker containers and images** en
-**SAP HANA Trial**. Onder server health vind je de algemene controle, de
+**Manage Ubuntu server** en **Manage Docker containers and images**. Onder
+server health vind je de algemene controle, de
 Matter IPv6-controle en de bestaande IPv6-reparatie. Die reparatie activeert
 de netwerkverbinding opnieuw en vraagt daarom eerst bevestiging.
 
