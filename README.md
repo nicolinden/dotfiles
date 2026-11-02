@@ -2,7 +2,7 @@
 
 Mijn macOS- en Ubuntu-configuratie, beheerd met GNU Stow. De map `home/`
 bevat configuratie die op beide platforms werkt; `macos/` bevat uitsluitend
-macOS-configuratie voor AeroSpace, Borders, Raycast en optionele lokale scripts.
+macOS-configuratie voor Raycast en optionele lokale scripts.
 
 ## Nieuwe Mac installeren
 
@@ -22,7 +22,7 @@ macOS-configuratie voor AeroSpace, Borders, Raycast en optionele lokale scripts.
 
 Het script detecteert macOS of Ubuntu en kiest automatisch de juiste route.
 Ontbrekende basissoftware wordt geïnstalleerd: op macOS Homebrew, de core
-tools, window-management en Stow; op Ubuntu de equivalente apt-pakketten,
+tools, WhichSpace en Stow; op Ubuntu de equivalente apt-pakketten,
 Starship, Oh My Zsh en de gedeelde dotfiles. Daarna opent het een interactief
 menu. Tijdens lange downloads blijft de Mac wakker.
 
@@ -45,67 +45,32 @@ wordt geladen.
   back-ups op de server. Herstel vervangt na bevestiging `~/.ssh`, maar maakt
   daarvoor altijd eerst een lokale, gecomprimeerde veiligheidskopie.
   Git bevat bewust geen boeken of `metadata.db`.
-- Kies in de manager voor optionele app-profielen. Het menu toont per profiel
-  hoeveel apps al zijn geïnstalleerd en biedt keuzes voor development,
-  persoonlijke apps, Mac App Store, Office/iWork en Docker. Hetzelfde menu
-  biedt ook een veilige verwijderlijst met alleen optionele apps en profielen.
-  Log vóór een App Store-keuze in bij de Mac App Store. Voor betaalde apps,
-  zoals Caffeinated en Pixelmator Pro, moet de app eerst aan hetzelfde
-  Apple-account zijn gekoppeld.
-- AeroSpace blijft geïnstalleerd, maar automatisch starten staat uit
-  (`start-at-login = false`). Start de app handmatig of via **Toggle AeroSpace**
-  in Raycast wanneer je hem weer wilt gebruiken. De bootstrap start AeroSpace
-  alleen als `start-at-login = true` is ingesteld.
-- De indeling gebruikt vaste globale workspaces: `1` t/m `5` op het
-  MacBook-scherm, `6` t/m `9` op het eerste externe scherm en
-  `Z/X/C/V/B` op het tweede externe scherm. Met dichtgeklapte MacBook
-  vallen `1` t/m `5` terug op het linker scherm en gaan `6` t/m `9`
-  naar de niet-hoofdmonitor. Apps worden niet automatisch aan een
-  workspace toegewezen; verplaats vensters zelf met de sneltoetsen hieronder.
-  Citrix-vensters blijven floating.
-
-  | Toets | Actie |
-  | --- | --- |
-  | `⌥H/J/K/L` | Focus venster links/onder/boven/rechts |
-  | `⌥⇧H/J/K/L` | Verplaats venster links/onder/boven/rechts |
-  | `⌥.` | Focus volgend scherm |
-  | `⌥⇧.` | Verplaats app naar volgend scherm en volg hem |
-  | `⌥1`–`⌥9`, `⌥Z/X/C/V/B` | Open de vaste workspace |
-  | `⌥⇧1`–`⌥⇧9`, `⌥⇧Z/X/C/V/B` | Verplaats app naar workspace en volg hem |
-  | `⌥M` | Maximaliseer/herstel venster |
-  | `⌥⇧Spatie` | Toggle floating/tiling |
-  | `⌥⇧;` | Open blijvende service mode voor groeperen en layouts |
-  | `⌃⌥⌘A` | Schakel AeroSpace en Borders samen uit of weer in (via Raycast) |
-
-  In service mode blijven opdrachten actief: `H/J/K/L` groepeert met het venster
-  in die richting, `A` wisselt
-  tiles/accordion, `/` wisselt de richting, `B` balanceert, `F` wisselt
-  floating/tiling, `M` maximaliseert en `R` maakt de workspace vlak. `Esc`
-  verlaat service mode.
-- Om `⌃⌥⌘A` ook te laten werken wanneer AeroSpace uitstaat, gebruik je de
-  Raycast Script Command `~/.config/raycast/script-commands/toggle-aerospace.sh`.
-  Voeg `~/.config/raycast/script-commands` toe via **Raycast Settings → Extensions
-  → Script Commands → Add Script Directory**. Zoek daarna in Raycast naar
-  **Toggle AeroSpace** en stel bij die opdracht `⌃⌥⌘A` in als hotkey. Raycast
-  moet op de achtergrond draaien. De opdracht gebruikt het bestaande
-  `~/.local/bin/toggle-aerospace` en schakelt AeroSpace en Borders samen.
+- Kies **Manage apps → Install apps** om de ingestelde apps te installeren.
+  Office en iWork hebben een aparte installatiekeuze. **Update apps** toont
+  eerst Homebrew- en Mac App Store-updates en vraagt daarna bevestiging;
+  **Remove apps** toont alleen apps uit deze configuratie. Log vóór de
+  installatie in bij de Mac App Store. Betaalde apps, zoals Caffeinated en
+  Pixelmator Pro, moeten aan hetzelfde Apple-account zijn gekoppeld.
+- WhichSpace wordt via de core Brewfile geïnstalleerd. Open de app na de installatie en
+  zet **Launch at Login** aan. Zet in **Settings → Displays** de weergave van
+  Spaces op alle schermen aan. Dan toont de menubalk de Spaces per scherm,
+  gescheiden door een verticale lijn. macOS spiegelt dezelfde menubalkindicator
+  op alle schermen; er staat dus niet een afzonderlijk nummer op elk scherm.
+- Zet in **Systeeminstellingen → Bureaublad en Dock → Mission Control**
+  **Rangschik Spaces automatisch op basis van recent gebruik** uit als je vaste
+  nummers en sneltoetsen gebruikt. Configureer eventuele sneltoetsen in
+  WhichSpace zelf en voorkom overlap met Raycast-sneltoetsen.
 - De Citrix Viewer/Caffeinated-automatisering is optioneel. Kies in
-  **Manage apps → Citrix Viewer / Caffeinated automation** voor installeren,
+  **Manage apps → Install apps → Citrix Viewer / Caffeinated automation** voor installeren,
   status of verwijderen. De achtergrondservice schakelt Caffeinated aan als
   Citrix Viewer start en uit als de laatste Viewer afsluit. Bij beide
   overgangen verschijnt een macOS-melding. Handmatig aan- en uitzetten blijft
   tussendoor mogelijk. Zet in Caffeinated zelf **Keep Awake with Lid Closed**
   aan als je de sessie met gesloten MacBook wilt behouden. De healthcheck
   controleert de service alleen wanneer deze optioneel is geïnstalleerd.
-- Installeer Docker Desktop desgewenst apart met:
-
-  ```bash
-  ./install-system-apps.sh
-  ```
-
-  Dit keuzemenu vraagt alleen voor Docker om je wachtwoord. Docker staat bewust
-  niet in de unattended bootstrap, omdat het privileged helpers in
-  systeemlocaties plaatst. Tailscale komt via de Mac App Store.
+- Docker Desktop staat in **Manage apps → Install apps**. De installatie vraagt
+  om je wachtwoord omdat Docker een privileged helper installeert. Tailscale
+  wordt via de Mac App Store geïnstalleerd.
 
 - Installeer Apple iWork en Microsoft Office los, nadat je bij de Mac App Store
   bent ingelogd:
@@ -171,41 +136,8 @@ nieuwe configuratie direct toe met:
 ./reload.sh
 ```
 
-Dit koppelt de Stow-pakketten opnieuw, herlaadt AeroSpace en de
-vensterborder, en leest de tmux-configuratie opnieuw in. Open alleen een nieuw
-terminalvenster wanneer `.zshrc` is gewijzigd.
-
-### SketchyBar en skhd verwijderen van een bestaande Mac
-
-Doe dit na een `git pull` op iedere Mac waarop de oude configuratie staat.
-Haal eerst de oude Stow-verwijzingen weg als het symlinks zijn en laad de nieuwe
-configuratie:
-
-```bash
-for path in ~/.config/sketchybar ~/.config/skhd \
-  ~/.local/bin/aerospace-refresh-sketchybar \
-  ~/.local/bin/aerospace-service-mode \
-  ~/.local/bin/toggle-sketchybar-menu; do
-  if [[ -L "$path" ]]; then unlink "$path"; fi
-done
-./reload.sh
-```
-
-Registreer dan de Raycast Script Command en geef **Toggle AeroSpace** de
-hotkey `⌃⌥⌘A` zoals hierboven beschreven. Verwijder daarna de oude services en
-apps:
-
-```bash
-brew services stop sketchybar
-skhd --uninstall-service
-brew uninstall sketchybar
-brew uninstall --cask skhd-zig
-```
-
-Op een tweede Mac gelden dezelfde stappen na het ophalen van deze versie.
-De native macOS-menubalk is daarna weer zichtbaar. Als die automatisch wordt
-verborgen, zet **Systeeminstellingen → Menubalk → Verberg en toon de menubalk
-automatisch** op **Nooit**.
+Dit koppelt de Stow-pakketten opnieuw en leest de tmux-configuratie opnieuw
+in. Open alleen een nieuw terminalvenster wanneer `.zshrc` is gewijzigd.
 
 Open het centrale menu voor installeren, verwijderen, updaten of herladen met:
 
@@ -219,20 +151,15 @@ Op Ubuntu kun je dit na de installatie ook vanuit elke map openen met:
 dotfiles
 ```
 
-Het hoofdmenu blijft bewust klein: **(Re)install and apply configuration**
-herstelt de basissoftware en past Stow opnieuw toe; **Manage apps** of
-**Manage optional tools** bevat de installaties; **Update** werkt software bij;
-en **Diagnostics** bevat de health check en logweergave.
-Gebruik **Reload configuration after git pull** om dezelfde reload na
-bevestiging vanuit het hoofdmenu uit te voeren, zonder apps te installeren of
-bij te werken.
-Elke actie die software installeert, bijwerkt, Stow opnieuw toepast of het
-systeem herstart, toont eerst een korte beschrijving en vraagt om bevestiging.
+Het macOS-hoofdmenu bevat **(Re)install and apply configuration**,
+**Manage apps**, **Diagnostics**, **Backup / restore** en **Reload
+configuration**. Binnen **Manage apps** staan installeren, bijwerken en
+verwijderen. De updateactie haalt eerst de beschikbare Homebrew- en Mac App
+Store-updates op, toont ze en vraagt daarna bevestiging. Herladen van de
+dotfiles blijft een aparte actie.
 
-De update-optie werkt alle geïnstalleerde Homebrew-apps en -tools bij, probeert
-updates uit de Mac App Store en voert daarna altijd een configuratie-reload uit.
-Gebruik op macOS **Update managed Homebrew packages only** als je uitsluitend
-de al geïnstalleerde pakketten uit jouw drie Brewfiles wilt bijwerken.
+Elke actie die software installeert, bijwerkt, Stow opnieuw toepast of het
+systeem herstart, vraagt om bevestiging.
 
 Op Ubuntu gebruikt **Update Ubuntu packages (conservative)** `apt-get upgrade --with-new-pkgs`
 om ook benodigde nieuwe afhankelijkheden te installeren, maar zonder bestaande
@@ -257,8 +184,8 @@ Controleer de basisinstallatie eventueel handmatig met:
 brew bundle check --file=Brewfile
 ```
 
-Start `./install-apps.sh` om aanvullende development-, persoonlijke, App Store-
-of Office-apps te kiezen.
+Gebruik **Manage apps** om alle geconfigureerde apps te installeren, Office en
+iWork apart te installeren, updates te bekijken of apps te verwijderen.
 
 ## Structuur
 
@@ -270,16 +197,15 @@ Brewfile.mas   Persoonlijke Mac App Store-apps
 Brewfile.office      Microsoft Office-apps via Homebrew
 Brewfile.office.mas  Apple iWork- en Microsoft Office-apps uit de App Store
 bootstrap.sh   Installatie voor macOS en Ubuntu
-setup.sh       Centrale manager voor installatie, verwijderen en updates
+setup.sh       Centrale manager voor installatie en configuratie
+manage-apps.sh Menu voor installeren, bijwerken en verwijderen van Mac-apps
 menu-ui.sh     Gedeelde ASCII-header en schermnavigatie voor menu's
 docker-manager.sh  Interactief beheer van Docker-containers op Ubuntu
 reload.sh      Pas configuratiewijzigingen toe na git pull
-update.sh      Homebrew-updates voor macOS
-update-managed-brew.sh  Update alleen geïnstalleerde Brewfile-pakketten
-update-menu.sh  Keuze tussen volledige en beheerde macOS-updates
+update.sh      Toont en installeert Homebrew- en Mac App Store-updates
 health-check.sh  Leesbare controle van de installatie zonder wijzigingen
 diagnostics.sh  Health check, service-status en logweergave
-install-apps.sh  Interactief keuzemenu voor app-profielen
+install-apps.sh  Installatie van apps en Office/iWork
 citrix-caffeinated-manager.sh  Optionele installatie, status en verwijdering
 calibre-setup.sh  Oude master/client-configuratie voor Calibre Content Server
 calibre-backup.sh  Maak een consistente masterbibliotheek-snapshot in iCloud
@@ -294,7 +220,7 @@ system-apps.conf  Gedeelde lijst van macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
 office-installer.sh  Losse installatie van Office-apps uit de App Store
 home/          Gedeelde shell-, terminal- en editorconfiguratie
-macos/         AeroSpace-, Borders- en Raycast-configuratie
+macos/         Raycast-configuratie en optionele lokale scripts
 ```
 
 De installatie gebruikt Stow en stopt bij bestaande, conflicterende bestanden

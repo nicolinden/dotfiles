@@ -205,33 +205,17 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   stow --dir="$DOTFILES_DIR" --target="$HOME" --verbose macos
   "$DOTFILES_DIR/configure-noki-ssh.sh"
 
-  # Start AeroSpace alleen als automatisch starten in de configuratie aanstaat.
-  if grep -Eq '^[[:space:]]*start-at-login[[:space:]]*=[[:space:]]*true([[:space:]]|$)' \
-    "$DOTFILES_DIR/macos/.config/aerospace/aerospace.toml"; then
-    if [[ -d "$HOME/Applications/AeroSpace.app" ]]; then
-      open "$HOME/Applications/AeroSpace.app"
-    elif [[ -d "/Applications/AeroSpace.app" ]]; then
-      open "/Applications/AeroSpace.app"
-    fi
-  fi
-
-  # Borders is a separate user service so it remains active after AeroSpace
-  # restarts and is automatically restored at the next login.
-  if command -v brew >/dev/null 2>&1 && brew list borders >/dev/null 2>&1; then
-    brew services restart borders
-  fi
-
   if [[ "$CORE_ONLY" != true ]]; then
     echo
-    read -r -p "Optionele app-profielen nu kiezen? [y/N] " install_optional_apps
+    read -r -p "Apps nu installeren? [y/N] " install_optional_apps
     case "${install_optional_apps:-}" in
       y|Y|yes|YES|Yes)
         if ! "$DOTFILES_DIR/install-apps.sh"; then
-          echo "Niet alle gekozen app-profielen konden worden geïnstalleerd; start ./install-apps.sh later opnieuw."
+          echo "Apps zijn niet allemaal verwerkt; start ./setup.sh en kies Manage apps opnieuw."
         fi
         ;;
       *)
-        echo "Optionele apps overgeslagen. Start later ./install-apps.sh."
+        echo "Apps overgeslagen. Installeer ze later via ./setup.sh → Manage apps."
         ;;
     esac
   fi

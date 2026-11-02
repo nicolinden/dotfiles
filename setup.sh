@@ -35,7 +35,7 @@ configure_homebrew_for_current_shell() {
 macos_core_ready() {
   command -v brew >/dev/null 2>&1 &&
     brew list stow >/dev/null 2>&1 &&
-    brew list --cask aerospace >/dev/null 2>&1
+    brew list --cask whichspace >/dev/null 2>&1
 }
 
 linux_core_ready() {
@@ -182,10 +182,9 @@ case "$(uname -s)" in
       print_menu_header "macOS manager"
       echo "  1) (Re)install and apply configuration"
       echo "  2) Manage apps"
-      echo "  3) Update installed apps"
-      echo "  4) Diagnostics"
-      echo "  5) Backup / restore"
-      echo "  6) Reload configuration after git pull"
+      echo "  3) Diagnostics"
+      echo "  4) Backup / restore"
+      echo "  5) Reload configuration after git pull"
       echo "  q) Quit"
       echo
       read -r -p "Choose an option: " choice
@@ -194,7 +193,7 @@ case "$(uname -s)" in
         1)
           echo
           echo "This will ensure core tooling is installed, reapply your Stow files,"
-          echo "start AeroSpace if configured and restart Borders. Optional apps are unchanged."
+          echo "install WhichSpace. Optional apps are unchanged."
           if confirm_action "(Re)install and apply configuration?"; then
             "$DOTFILES_DIR/bootstrap.sh" --core-only
             wait_for_menu_return
@@ -202,14 +201,13 @@ case "$(uname -s)" in
             echo "Cancelled."
           fi
           ;;
-        2) run_submenu "$DOTFILES_DIR/install-apps.sh" ;;
-        3) run_submenu "$DOTFILES_DIR/update-menu.sh" ;;
-        4) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
-        5) run_submenu "$DOTFILES_DIR/backup-restore-manager.sh" ;;
-        6)
+        2) run_submenu "$DOTFILES_DIR/manage-apps.sh" ;;
+        3) run_submenu "$DOTFILES_DIR/diagnostics.sh" ;;
+        4) run_submenu "$DOTFILES_DIR/backup-restore-manager.sh" ;;
+        5)
           echo
-          echo "This reapplies Stow configuration and reloads AeroSpace, Borders"
-          echo "and an active tmux server. It does not install or update apps."
+          echo "This reapplies Stow configuration and reloads an active tmux server."
+          echo "It does not install or update apps."
           if confirm_action "Reload configuration after git pull?"; then
             "$DOTFILES_DIR/reload.sh"
             wait_for_menu_return

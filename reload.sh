@@ -24,17 +24,6 @@ if [[ "$(uname -s)" == "Darwin" ]]; then
   stow --restow --dir="$DOTFILES_DIR" --target="$HOME" macos
   "$DOTFILES_DIR/configure-noki-ssh.sh"
 
-  if command -v aerospace >/dev/null 2>&1; then
-    echo "AeroSpace herladen..."
-    aerospace reload-config
-  fi
-
-  # Borders reads ~/.config/borders/bordersrc at startup. The Homebrew service
-  # keeps it alive after this script exits and also starts it at the next login.
-  if command -v brew >/dev/null 2>&1 && brew list borders >/dev/null 2>&1; then
-    echo "Vensterborder herladen..."
-    brew services restart borders
-  fi
 fi
 
 # Existing tmux servers keep their old configuration until it is sourced.

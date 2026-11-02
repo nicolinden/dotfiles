@@ -35,11 +35,11 @@ case "$(uname -s)" in
     echo
     check_command brew "Homebrew"
     check_command stow "GNU Stow"
-    check_command aerospace "AeroSpace"
-    check_command borders "Borders"
-    check_file "$HOME/.config/aerospace/aerospace.toml" "AeroSpace configuration"
-    check_file "$HOME/.local/bin/toggle-aerospace" "AeroSpace toggle command"
-    check_file "$HOME/.config/raycast/script-commands/toggle-aerospace.sh" "Raycast AeroSpace toggle script"
+    if [[ -d "$HOME/Applications/WhichSpace.app" || -d "/Applications/WhichSpace.app" ]]; then
+      ok "WhichSpace is installed"
+    else
+      missing "WhichSpace is missing"
+    fi
 
     citrix_agent="$HOME/Library/LaunchAgents/com.nico.citrix-caffeinated.plist"
     citrix_agent_source="$DOTFILES_DIR/optional/citrix-caffeinated/com.nico.citrix-caffeinated.plist"
@@ -75,14 +75,6 @@ case "$(uname -s)" in
       fi
     else
       warn "Docker Desktop is not installed"
-    fi
-
-    if command -v brew >/dev/null 2>&1; then
-      if brew services list 2>/dev/null | awk '$1 == "borders" && $2 == "started" { found = 1 } END { exit !found }'; then
-        ok "Borders service is running"
-      else
-        warn "Borders service is not running (run ./reload.sh)"
-      fi
     fi
 
     ;;
