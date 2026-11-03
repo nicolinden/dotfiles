@@ -20,6 +20,7 @@ install_configured_apps() {
   echo "This installs all configured non-Office apps:"
   echo
   echo "Homebrew apps and tools:"
+  show_brewfile_plan "$DOTFILES_DIR/Brewfile"
   show_brewfile_plan "$DOTFILES_DIR/Brewfile.dev"
   show_brewfile_plan "$DOTFILES_DIR/Brewfile.personal"
   echo "Mac App Store apps:"
@@ -35,6 +36,8 @@ install_configured_apps() {
   export DOTFILES_ASSUME_YES=1
   export DOTFILES_INSTALL_ALL=1
   mkdir -p "$HOME/Applications"
+  env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
+    caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
   env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
     caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.dev"
   env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
