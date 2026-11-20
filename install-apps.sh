@@ -1,52 +1,75 @@
 #!/usr/bin/env bash
 
-# Install the configured macOS app collection, Office apps, or Citrix automation.
+# Standard apps, optional work apps and hardware drivers share one install menu.
 set -euo pipefail
-
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$DOTFILES_DIR/menu-ui.sh"
 source "$DOTFILES_DIR/system-apps.conf"
 
-configure_homebrew_for_current_shell() {
-  if [[ -x "/opt/homebrew/bin/brew" ]]; then
+if [[ "$(uname -s)" != Darwin ]]; then
+  echo "This script is for macOS only."
+  exit 1
+fi
+if ! command -v brew >/dev/null 2>&1; then
+  if [[ -x /opt/homebrew/bin/brew ]]; then
     eval "$(/opt/homebrew/bin/brew shellenv)"
-  elif [[ -x "/usr/local/bin/brew" ]]; then
+  elif [[ -x /usr/local/bin/brew ]]; then
     eval "$(/usr/local/bin/brew shellenv)"
+  else
+    echo "Homebrew is missing. Run ./setup.sh first."
+    exit 1
   fi
-}
+fi
 
-install_configured_apps() {
-  print_menu_header "Confirm app installation"
-  echo "This installs all configured non-Office apps:"
-  echo
-  echo "Homebrew apps and tools:"
-  show_brewfile_plan "$DOTFILES_DIR/Brewfile"
-  show_brewfile_plan "$DOTFILES_DIR/Brewfile.dev"
-  show_brewfile_plan "$DOTFILES_DIR/Brewfile.personal"
-  echo "Mac App Store apps:"
-  show_mas_plan "$DOTFILES_DIR/Brewfile.mas"
-  echo "System apps:"
-  printf '  - %s\n' "${SYSTEM_LABELS[@]}"
-
-  if ! confirm_action "Install all configured apps?"; then
-    echo "Cancelled."
-    return "$MENU_CANCELLED"
+install_profiles() {
+  local failures=0 profile file index
+  local brewfiles=() masfiles=() include_base=false include_work=false
+  for profile in "$@"; do
+    case "$profile" in
+      1) brewfiles+=(Brewfile Brewfile.daily); masfiles+=(Brewfile.mas); include_base=true ;;
+      2) include_work=true ;;
+      3) brewfiles+=(Brewfile.personal); masfiles+=(Brewfile.personal.mas) ;;
+      4) brewfiles+=(Brewfile.dev) ;;
+    esac
+  done
+  print_menu_header "Confirm package installation"
+  echo "Only missing apps will be installed. Existing apps are skipped."
+  for file in ${brewfiles[@]+"${brewfiles[@]}"}; do show_brewfile_plan "$DOTFILES_DIR/$file"; done
+  for file in ${masfiles[@]+"${masfiles[@]}"}; do show_mas_plan "$DOTFILES_DIR/$file"; done
+  if [[ "$include_base" == true ]]; then
+    echo "  - Razer Synapse (official installer)"
+    printf '  - %s\n' "${SYSTEM_LABELS[@]}"
   fi
-
-  export DOTFILES_ASSUME_YES=1
-  export DOTFILES_INSTALL_ALL=1
-  mkdir -p "$HOME/Applications"
-  env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
-    caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
-  env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
-    caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.dev"
-  env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
-    caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile.personal"
-  run_menu_child "$DOTFILES_DIR/install-mac-apps.sh"
-  run_menu_child "$DOTFILES_DIR/install-system-apps.sh"
-  if [[ -d "$HOME/Applications/calibre.app" || -d "/Applications/calibre.app" ]]; then
-    run_menu_child "$DOTFILES_DIR/calibre-sync.sh"
+  if [[ "$include_work" == true ]]; then
+    show_brewfile_plan "$DOTFILES_DIR/Brewfile.office"
+    show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
   fi
+  echo "App Store sign-in and macOS permissions may still need your input."
+  if ! confirm_action "Install these packages?"; then return "$MENU_CANCELLED"; fi
+  local DOTFILES_ASSUME_YES=1 DOTFILES_INSTALL_ALL=1
+  export DOTFILES_ASSUME_YES DOTFILES_INSTALL_ALL
+  for file in ${brewfiles[@]+"${brewfiles[@]}"}; do
+    if ! install_brewfile_items "$DOTFILES_DIR/$file"; then failures=$((failures + 1)); fi
+  done
+  for file in ${masfiles[@]+"${masfiles[@]}"}; do
+    if ! install_mas_items "$DOTFILES_DIR/$file"; then failures=$((failures + 1)); fi
+  done
+  if [[ "$include_base" == true ]]; then
+    if ! app_bundle_installed "Razer Synapse"; then
+      if ! "$DOTFILES_DIR/vendor-apps.sh" razer; then failures=$((failures + 1)); fi
+    fi
+    for index in "${!SYSTEM_CASKS[@]}"; do
+      if ! install_cask "${SYSTEM_CASKS[$index]}"; then failures=$((failures + 1)); fi
+    done
+  fi
+  if [[ "$include_work" == true ]]; then
+    if ! "$DOTFILES_DIR/office-installer.sh"; then failures=$((failures + 1)); fi
+  fi
+  if (( failures > 0 )); then
+    echo "$failures installation group(s) need attention. See the errors above."
+    return 1
+  fi
+  echo "Selected packages completed. Use Backup / restore if you need your Calibre library."
 }
 
 run_install_submenu() {
@@ -55,54 +78,43 @@ run_install_submenu() {
     wait_for_menu_return
   else
     status=$?
-    if (( status == MENU_CANCELLED )); then
-      wait_for_menu_return
-    else
-      exit "$status"
-    fi
+    (( status == MENU_CANCELLED )) || return "$status"
   fi
 }
 
-if [[ "$(uname -s)" != "Darwin" ]]; then
-  echo "This script is for macOS only."
-  exit 1
-fi
-
-if ! command -v brew >/dev/null 2>&1; then
-  configure_homebrew_for_current_shell
-fi
-if ! command -v brew >/dev/null 2>&1; then
-  echo "Homebrew is missing. Run ./setup.sh first."
-  exit 1
-fi
-
 while true; do
   print_menu_header "Install apps"
-  echo "  1) Install all configured apps"
-  echo "  2) Install Office and iWork"
-  echo "  3) Citrix Viewer / Caffeinated automation"
+  echo "  1) Basis (daily apps, Codex, Tailscale and Razer)"
+  echo "  2) Work (install all or choose individual apps)"
+  echo "  3) Personal (Calibre, DaisyDisk, iWork, Goodnotes, Pixelmator, Unarchiver)"
+  echo "  4) Development / design (including Figma and Sketch)"
   echo "  b) Back"
   echo "  q) Quit"
   echo
-  read -r -p "Choose an option: " selection
-
+  echo "Choose one package or several together, for example: 1 3 4"
+  read -r -p "Choose packages: " selection
   case "$selection" in
-    1)
-      if install_configured_apps; then
-        wait_for_menu_return
-      else
-        status=$?
-        (( status == MENU_CANCELLED )) || exit "$status"
-      fi
-      ;;
-    2)
-      run_install_submenu "$DOTFILES_DIR/office-installer.sh"
-      ;;
-    3)
-      run_install_submenu "$DOTFILES_DIR/citrix-caffeinated-manager.sh"
-      ;;
     b|B|"") exit 0 ;;
     q|Q) exit "$MENU_QUIT" ;;
-    *) echo "Invalid choice."; wait_for_menu_return ;;
+    2) run_install_submenu "$DOTFILES_DIR/office-installer.sh"; continue ;;
   esac
+  selected=()
+  seen=" "
+  IFS=', ' read -r -a choices <<< "$selection"
+  valid=true
+  for choice in "${choices[@]}"; do
+    if ! [[ "$choice" =~ ^[1-4]$ ]]; then valid=false; break; fi
+    case "$seen" in *" $choice "*) ;; *) selected+=("$choice"); seen="$seen$choice " ;; esac
+  done
+  if [[ "$valid" != true ]] || (( ${#selected[@]} == 0 )); then
+    echo "Invalid selection. Choose package numbers 1 to 4."
+    wait_for_menu_return
+    continue
+  fi
+  if install_profiles "${selected[@]}"; then
+    wait_for_menu_return
+  else
+    status=$?
+    (( status == MENU_CANCELLED )) || exit "$status"
+  fi
 done

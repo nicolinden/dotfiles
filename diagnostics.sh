@@ -10,6 +10,8 @@ case "$(uname -s)" in
     print_menu_header "Diagnostics"
     echo "  1) Run health check"
     echo "  2) Manage Docker containers"
+    echo "  3) Review / remove apps outside the install profiles"
+    echo "  4) Move home-folder apps to /Applications"
     echo "  b) Back"
     echo "  q) Quit"
     echo
@@ -24,6 +26,8 @@ case "$(uname -s)" in
           echo "Docker Desktop is not installed."
         fi
         ;;
+      3) run_menu_child "$DOTFILES_DIR/audit-apps.sh" --manage || { status=$?; (( status == MENU_CANCELLED )) || exit "$status"; } ;;
+      4) run_menu_child "$DOTFILES_DIR/migrate-apps.sh" || { status=$?; (( status == MENU_CANCELLED )) || exit "$status"; } ;;
       b|B|"") exit 0 ;;
       q|Q) exit "$MENU_QUIT" ;;
       *) echo "Invalid choice." ;;

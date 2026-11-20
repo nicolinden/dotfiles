@@ -77,7 +77,7 @@ else
 fi
 
 for choice in "${selected[@]}"; do
-  if ! [[ "$choice" =~ ^[0-9]+$ ]] ||
+  if ! [[ "$choice" =~ ^[1-9][0-9]*$ ]] ||
      (( choice < 1 || choice > ${#SYSTEM_CASKS[@]} )); then
     echo "Ongeldige keuze: $choice"
     exit 1
@@ -109,7 +109,7 @@ for choice in "${selected[@]}"; do
     "$current" "$total_selected" "${SYSTEM_LABELS[$index]}"
   # Systeemapps kunnen om een beheerderswachtwoord of andere invoer vragen.
   # Laat hun uitvoer daarom rechtstreeks in de terminal zien.
-  brew install --cask "${SYSTEM_CASKS[$index]}"
+  install_cask "${SYSTEM_CASKS[$index]}"
   printf '[%d/%d] ✓ klaar: %s\n' \
     "$current" "$total_selected" "${SYSTEM_LABELS[$index]}"
 done

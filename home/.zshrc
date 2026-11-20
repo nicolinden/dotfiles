@@ -11,8 +11,8 @@ elif [[ -d "/Applications/WezTerm.app/Contents/MacOS" ]]; then
   export PATH="$PATH:/Applications/WezTerm.app/Contents/MacOS"
 fi
 
-# User-installed command-line tools on Linux
-if [[ "$OSTYPE" == linux* && -d "$HOME/.local/bin" ]]; then
+# User-installed command-line tools on macOS and Linux
+if [[ -d "$HOME/.local/bin" ]]; then
   export PATH="$HOME/.local/bin:$PATH"
 fi
 

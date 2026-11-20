@@ -1,0 +1,6 @@
+# Optional personal apps and iWork.
+mas "Goodnotes", id: 1444383602
+mas "Pixelmator Pro", id: 1289583905
+mas "Numbers", id: 361304891
+mas "Keynote", id: 361285480
+mas "Pages", id: 361309726

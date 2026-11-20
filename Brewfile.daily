@@ -1,0 +1,8 @@
+# Everyday apps; optional personal and design apps have separate profiles.
+cask "1password"
+cask "forklift"
+cask "google-chrome"
+cask "hazel"
+cask "homerow"
+cask "keka"
+cask "raindropio"

@@ -9,3 +9,6 @@ cask "bruno"
 cask "fork"
 cask "visual-studio-code"
 cask "wezterm"
+cask "sf-symbols" # Apple's package installer may request administrator access.
+cask "figma"
+cask "sketch"

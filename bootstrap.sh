@@ -103,12 +103,8 @@ case "$(uname -s)" in
     fi
 
     echo "Homebrew-pakketten installeren..."
-    # Installeer GUI-apps per gebruiker. Daardoor zijn ze zonder sudo te
-    # installeren en blijven ze gescheiden van door macOS beheerde systeemapps.
-    mkdir -p "$HOME/Applications"
-    run_with_progress "Homebrew-pakketten installeren" \
-      env HOMEBREW_CASK_OPTS="--appdir=$HOME/Applications" \
-      caffeinate -i brew bundle install --file="$DOTFILES_DIR/Brewfile"
+    # Package installers may ask for administrator access; keep their output visible.
+    install_brewfile_items "$DOTFILES_DIR/Brewfile"
 
     ;;
 

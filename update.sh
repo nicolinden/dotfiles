@@ -27,6 +27,8 @@ if ! command -v brew >/dev/null 2>&1; then
   exit 1
 fi
 
+export HOMEBREW_CASK_OPTS="--appdir=/Applications"
+
 update_kinds=()
 update_ids=()
 update_labels=()
@@ -48,8 +50,8 @@ collect_homebrew_updates() {
 
 echo "Updateoverzichten ophalen..."
 brew update
-brew_formula_updates="$(brew outdated --formula --verbose || true)"
-brew_cask_updates="$(brew outdated --cask --verbose || true)"
+brew_formula_updates="$(brew outdated --formula --verbose)"
+brew_cask_updates="$(brew outdated --cask --greedy --verbose)"
 collect_homebrew_updates "formula" "$brew_formula_updates"
 collect_homebrew_updates "cask" "$brew_cask_updates"
 brew_updates="$(printf '%s\n%s\n' "$brew_formula_updates" "$brew_cask_updates" | sed '/^[[:space:]]*$/d')"
@@ -140,7 +142,7 @@ for index in "${!update_ids[@]}"; do
       fi
       ;;
     brew-cask)
-      if ! caffeinate -i brew upgrade --cask "$app_id"; then
+      if ! caffeinate -i brew upgrade --cask --greedy "$app_id"; then
         printf '[%d/%d] ✗ mislukt: %s. De resterende %d updates zijn overgeslagen.\n' \
           "$current_update" "$total_updates" "$label" "$remaining_updates" >&2
         exit 1

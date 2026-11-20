@@ -1,2 +1,7 @@
 # Microsoft productivity apps distributed outside the Mac App Store.
 cask "microsoft-teams" # label: Microsoft Teams
+cask "displaylink" # label: DisplayLink Manager (administrator access; restart required)
+cask "citrix-workspace" # label: Citrix Workspace
+cask "okta-verify" # label: Okta Verify
+cask "docker-desktop" # label: Docker Desktop
+cask "wacom-tablet" # label: Wacom tablet driver

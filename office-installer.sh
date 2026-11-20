@@ -22,36 +22,86 @@ if ! command -v brew >/dev/null 2>&1; then
   configure_homebrew_for_current_shell
 fi
 
-if ! command -v mas >/dev/null 2>&1; then
-  echo "Mac App Store-tooling ontbreekt. Voer eerst ./bootstrap.sh uit."
-  exit 1
+print_menu_header "Work apps"
+entries=()
+while IFS='|' read -r kind id label; do
+  [[ -n "$id" ]] && entries+=("$kind|$id|$label")
+done < <(
+  sed -nE 's/^mas "([^"]+)", id: ([0-9]+).*/mas|\2|\1/p' "$DOTFILES_DIR/Brewfile.office.mas"
+  sed -nE 's/^cask "([^"]+)".*#[[:space:]]*label:[[:space:]]*(.*)$/cask|\1|\2/p' "$DOTFILES_DIR/Brewfile.office"
+)
+
+if [[ "${DOTFILES_INSTALL_ALL:-}" == "1" ]]; then
+  selection=a
+else
+  for index in "${!entries[@]}"; do
+    IFS='|' read -r kind id label <<< "${entries[$index]}"
+    printf '  %d) %s\n' "$((index + 1))" "$label"
+  done
+  echo "  c) Citrix / Caffeinated automation"
+  echo "  a) Install all work apps"
+  echo "  b) Back"
+  echo "  q) Quit"
+  read -r -p "Choose apps (for example 1 3), a, b or q: " selection
 fi
 
-print_menu_header "Office and iWork"
-echo "This will install or update:"
-show_mas_plan "$DOTFILES_DIR/Brewfile.office.mas"
-show_brewfile_plan "$DOTFILES_DIR/Brewfile.office"
-if ! confirm_action "Install Office and iWork apps?"; then
-  echo "Cancelled."
+selected=()
+case "$selection" in
+  c|C)
+    "$DOTFILES_DIR/citrix-caffeinated-manager.sh"
+    exit 0
+    ;;
+  a|A)
+    for index in "${!entries[@]}"; do selected+=("$((index + 1))"); done
+    ;;
+  b|B|"") exit "$MENU_CANCELLED" ;;
+  q|Q) exit "$MENU_QUIT" ;;
+  *) IFS=', ' read -r -a selected <<< "$selection" ;;
+esac
+
+if (( ${#selected[@]} == 0 )); then
+  echo "No work apps selected."
+  exit "$MENU_CANCELLED"
+fi
+displaylink_selected=false
+for choice in "${selected[@]}"; do
+  if ! [[ "$choice" =~ ^[1-9][0-9]*$ ]] ||
+     (( choice > ${#entries[@]} )); then
+    echo "Invalid choice: $choice"
+    exit 1
+  fi
+  IFS='|' read -r kind id label <<< "${entries[$((choice - 1))]}"
+  [[ "$id" != displaylink ]] || displaylink_selected=true
+  printf '  - %s\n' "$label"
+  if [[ "$kind" == mas ]] && ! command -v mas >/dev/null 2>&1; then
+    echo "Mac App Store tooling is missing. Run ./bootstrap.sh first."
+    exit 1
+  fi
+done
+
+if ! confirm_action "Install the selected work apps?"; then
   exit "$MENU_CANCELLED"
 fi
 
-echo
-echo "Office-apps via Homebrew installeren..."
-mkdir -p "$HOME/Applications"
-if ! install_brewfile_items "$DOTFILES_DIR/Brewfile.office" "$HOME/Applications"; then
-  echo
-  echo "Een of meer Office-apps konden niet via Homebrew worden geïnstalleerd."
+failures=0
+for choice in "${selected[@]}"; do
+  IFS='|' read -r kind id label <<< "${entries[$((choice - 1))]}"
+  echo "Installing: $label"
+  if [[ "$kind" == mas ]]; then
+    if ! install_mas_app "$id" "$label"; then
+      echo "Failed: $label (check your Mac App Store sign-in)."
+      failures=$((failures + 1))
+    fi
+  elif ! install_cask "$id"; then
+    echo "Failed: $label"
+    failures=$((failures + 1))
+  fi
+done
+if (( failures > 0 )); then
+  echo "$failures work app(s) could not be installed."
   exit 1
 fi
-
-echo
-echo "Office-apps uit de Mac App Store installeren..."
-if ! install_mas_items "$DOTFILES_DIR/Brewfile.office.mas"; then
-  echo
-  echo "Een of meer Office-apps konden niet worden geïnstalleerd."
-  echo "Controleer in de Mac App Store of ze aan je Apple-account zijn gekoppeld."
-  exit 1
+echo "Selected automatic work app installations completed. Sign in to Microsoft apps as needed."
+if [[ "$displaylink_selected" == true ]]; then
+  echo "For DisplayLink, allow Screen Recording in System Settings and restart when requested."
 fi
-
-echo "Office-installatie voltooid. Log in met je Microsoft-account in de gewenste apps."

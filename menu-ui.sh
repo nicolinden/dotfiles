@@ -66,18 +66,73 @@ run_with_progress() {
   return "$status"
 }
 
+app_bundle_installed() {
+  local helper_dir="${DOTFILES_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)}"
+  python3 "$helper_dir/app-installed.py" "$1"
+}
+
+install_formula() {
+  if brew list --formula "${1##*/}" >/dev/null 2>&1; then
+    echo "Already installed; skipped: $1"
+    return 0
+  fi
+  HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_UPGRADE=1 \
+    caffeinate -i brew install "$1"
+}
+
+install_mas_app() {
+  local app_id="$1" label="$2" installed
+  installed="$(mas list 2>/dev/null)" || installed=""
+  if printf '%s\n' "$installed" | awk -v id="$app_id" '$1 == id { found=1 } END { exit !found }' ||
+     app_bundle_installed "$label"; then
+    echo "Already installed; skipped: $label"
+    return 0
+  fi
+  caffeinate -i mas install "$app_id"
+}
+
+install_cask() {
+  local name="$1"
+  if brew list --cask "${name##*/}" >/dev/null 2>&1; then
+    echo "Already installed; skipped: $name"
+    return 0
+  fi
+  case "$name" in
+    codex)
+      if command -v codex >/dev/null 2>&1; then echo "Already installed; skipped: Codex CLI"; return 0; fi
+      ;;
+    android-platform-tools)
+      if command -v adb >/dev/null 2>&1; then echo "Already installed; skipped: Android platform tools"; return 0; fi
+      ;;
+    *)
+      if app_bundle_installed "$name"; then
+        echo "Already installed; skipped: $name"
+        return 0
+      fi
+      ;;
+  esac
+  if [[ "$name" == "tailscale-app" ]] &&
+     { [[ -e "/Applications/Tailscale.app/Contents/_MASReceipt/receipt" ]] ||
+       [[ -e "$HOME/Applications/Tailscale.app/Contents/_MASReceipt/receipt" ]]; }; then
+    echo "Tailscale from the Mac App Store is installed."
+    echo "Remove that variant and restart macOS before installing standalone Tailscale."
+    return 1
+  fi
+  HOMEBREW_CASK_OPTS="--appdir=/Applications" HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_UPGRADE=1 \
+    caffeinate -i brew install --cask --appdir=/Applications "$name"
+}
+
 install_brewfile_items() {
   local brewfile="$1"
-  local app_dir="$2"
-  local kinds=() names=() kind name total index current=0
+  local kinds=() names=() kind name total index current=0 failures=0
 
-  while IFS=$'\t' read -r kind name; do
+  while IFS='|' read -r kind name; do
     [[ -n "$kind" && -n "$name" ]] || continue
     kinds+=("$kind")
     names+=("$name")
   done < <(sed -nE \
-    -e 's/^brew "([^"]+)".*/brew\t\1/p' \
-    -e 's/^cask "([^"]+)".*/cask\t\1/p' \
+    -e 's/^brew "([^"]+)".*/brew|\1/p' \
+    -e 's/^cask "([^"]+)".*/cask|\1/p' \
     "$brewfile")
 
   total=${#names[@]}
@@ -88,31 +143,33 @@ install_brewfile_items() {
     printf '\n[%d/%d] ● bezig: %s\n' "$current" "$total" "$name"
 
     if [[ "$kind" == "cask" ]]; then
-      if ! HOMEBREW_CASK_OPTS="--appdir=$app_dir" \
-        caffeinate -i brew install --cask "$name"; then
+      if ! install_cask "$name"; then
         printf '[%d/%d] ✗ mislukt: %s\n' "$current" "$total" "$name"
-        return 1
+        failures=$((failures + 1))
+        continue
       fi
     else
-      if ! caffeinate -i brew install "$name"; then
+      if ! install_formula "$name"; then
         printf '[%d/%d] ✗ mislukt: %s\n' "$current" "$total" "$name"
-        return 1
+        failures=$((failures + 1))
+        continue
       fi
     fi
 
     printf '[%d/%d] ✓ klaar: %s\n' "$current" "$total" "$name"
   done
+  (( failures == 0 ))
 }
 
 install_mas_items() {
   local brewfile="$1"
-  local names=() ids=() name app_id total index current=0
+  local names=() ids=() name app_id total index current=0 failures=0
 
-  while IFS=$'\t' read -r name app_id; do
+  while IFS='|' read -r name app_id; do
     [[ -n "$name" && -n "$app_id" ]] || continue
     names+=("$name")
     ids+=("$app_id")
-  done < <(sed -nE 's/^mas "([^"]+)", id: ([0-9]+).*/\1\t\2/p' "$brewfile")
+  done < <(sed -nE 's/^mas "([^"]+)", id: ([0-9]+).*/\1|\2/p' "$brewfile")
 
   total=${#names[@]}
   for index in "${!names[@]}"; do
@@ -120,12 +177,14 @@ install_mas_items() {
     app_id=${ids[$index]}
     current=$((current + 1))
     printf '\n[%d/%d] ● bezig: %s\n' "$current" "$total" "$name"
-    if ! caffeinate -i mas install "$app_id"; then
+    if ! install_mas_app "$app_id" "$name"; then
       printf '[%d/%d] ✗ mislukt: %s\n' "$current" "$total" "$name"
-      return 1
+      failures=$((failures + 1))
+      continue
     fi
     printf '[%d/%d] ✓ klaar: %s\n' "$current" "$total" "$name"
   done
+  (( failures == 0 ))
 }
 
 print_menu_header() {

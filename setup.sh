@@ -32,12 +32,6 @@ configure_homebrew_for_current_shell() {
   fi
 }
 
-macos_core_ready() {
-  command -v brew >/dev/null 2>&1 &&
-    brew list stow >/dev/null 2>&1 &&
-    brew list --cask whichspace >/dev/null 2>&1
-}
-
 linux_core_ready() {
   command -v git >/dev/null 2>&1 &&
     command -v stow >/dev/null 2>&1 &&
@@ -172,11 +166,6 @@ linux_server_menu() {
 case "$(uname -s)" in
   Darwin)
     configure_homebrew_for_current_shell
-    if ! macos_core_ready; then
-      echo "Core macOS tooling is missing. Installing it now..."
-      "$DOTFILES_DIR/bootstrap.sh" --core-only
-      configure_homebrew_for_current_shell
-    fi
 
     while true; do
       print_menu_header "macOS manager"
@@ -192,8 +181,8 @@ case "$(uname -s)" in
       case "$choice" in
         1)
           echo
-          echo "This will ensure core tooling is installed, reapply your Stow files,"
-          echo "install WhichSpace. Optional apps are unchanged."
+          echo "This installs missing core tooling, Codex and WhichSpace,"
+          echo "and reapplies your Stow files. Optional apps are unchanged."
           if confirm_action "(Re)install and apply configuration?"; then
             "$DOTFILES_DIR/bootstrap.sh" --core-only
             wait_for_menu_return

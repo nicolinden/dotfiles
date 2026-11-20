@@ -1,8 +1,4 @@
 # ---------------------------------------------------------------------
-# Homebrew taps
-# ---------------------------------------------------------------------
-
-# ---------------------------------------------------------------------
 # Core command-line tools
 # ---------------------------------------------------------------------
 
@@ -30,5 +26,7 @@ cask "font-meslo-lg-nerd-font"
 # Core macOS workflow
 # ---------------------------------------------------------------------
 
-cask "whichspace"
 cask "raycast"
+cask "whichspace"
+cask "codex" # Codex CLI
+cask "chatgpt" # Current desktop app with Codex; not ChatGPT Classic or deprecated codex-app.

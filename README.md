@@ -2,7 +2,7 @@
 
 Mijn macOS- en Ubuntu-configuratie, beheerd met GNU Stow. De map `home/`
 bevat configuratie die op beide platforms werkt; `macos/` bevat uitsluitend
-macOS-configuratie voor Raycast en optionele lokale scripts.
+optionele lokale macOS-scripts.
 
 ## Nieuwe Mac installeren
 
@@ -20,18 +20,26 @@ macOS-configuratie voor Raycast en optionele lokale scripts.
    ./setup.sh
    ```
 
-Het script detecteert macOS of Ubuntu en kiest automatisch de juiste route.
-Ontbrekende basissoftware wordt geïnstalleerd: op macOS Homebrew, de core
-tools, WhichSpace en Stow; op Ubuntu de equivalente apt-pakketten,
-Starship, Oh My Zsh en de gedeelde dotfiles. Daarna opent het een interactief
-menu. Tijdens lange downloads blijft de Mac wakker.
+Het script detecteert macOS of Ubuntu. Op macOS opent `./setup.sh` direct het
+menu, zonder apps te installeren of bij te werken. Kies op een nieuwe Mac eerst
+**1) (Re)install and apply configuration** voor Homebrew, de core tools, Codex,
+WhichSpace, Stow en de dotfiles. Aanvullende apps kies je daarna via **Manage
+apps → Install apps**. Op Ubuntu worden ontbrekende basispakketten automatisch
+geïnstalleerd voordat het menu verschijnt. Tijdens lange downloads blijft de Mac
+wakker.
 
 Na afloop open je een nieuw terminalvenster zodat de nieuwe shellconfiguratie
 wordt geladen.
 
 ### Handmatige stappen na de installatie
 
-- Log in bij 1Password, Tailscale, WhatsApp, ChatGPT en andere account-apps.
+De actuele desktop-app met Codex heet in Homebrew `chatgpt`; dit is de nieuwe
+gecombineerde app met Codex, Chat en Work. `codex-app` is uitgefaseerd en wordt
+niet geïnstalleerd. ChatGPT Classic is een andere app en wordt ook niet
+geïnstalleerd. Kies na aanmelden desgewenst Codex als standaardweergave en het
+Codex-appicoon. Zie [de officiële uitleg over de nieuwe desktop-app](https://help.openai.com/en/articles/20001276-moving-to-the-new-chatgpt-desktop-app).
+
+- Log in bij 1Password, Tailscale, WhatsApp, Codex en andere account-apps.
 - Calibre staat lokaal op iedere Mac, zodat Kobo via USB en de Calibre-plug-ins
   normaal werken. Kies in de centrale manager **Backup / restore** om één
   Mac als startbibliotheek te uploaden naar `server.nokionline.com`. Daarna
@@ -46,7 +54,15 @@ wordt geladen.
   daarvoor altijd eerst een lokale, gecomprimeerde veiligheidskopie.
   Git bevat bewust geen boeken of `metadata.db`.
 - Kies **Manage apps → Install apps** om de ingestelde apps te installeren.
-  Office en iWork hebben een aparte installatiekeuze. **Update apps** toont
+  Kies pakketten: **1 Basis**, **2 Werk**, **3 Persoonlijk** en
+  **4 Development/design**. Basis bevat dagelijkse apps, Codex, Tailscale en Razer.
+  Persoonlijk bevat Calibre, DaisyDisk, iWork, Goodnotes, Pixelmator Pro en The
+  Unarchiver. Figma en Sketch horen bij Development/design. Je hoeft niet per app
+  te kiezen: voer bijvoorbeeld `1 3 4` in en bevestig één keer om die pakketten
+  samen te installeren. Elk pakket slaat bestaande apps over; updates blijven
+  apart. Alleen `2` opent het werkmenu met een keuze per app of alle werkapps
+  tegelijk. Wanneer je `2` met andere pakketnummers combineert, worden alle
+  werkapps meegenomen. Er is geen aparte algemene alles-installerenkeuze. **Update apps** toont
   eerst Homebrew- en Mac App Store-updates en vraagt daarna bevestiging;
   **Remove apps** toont alleen apps uit deze configuratie. Log vóór de
   installatie in bij de Mac App Store. Betaalde apps, zoals Caffeinated en
@@ -61,32 +77,68 @@ wordt geladen.
   nummers en sneltoetsen gebruikt. Configureer eventuele sneltoetsen in
   WhichSpace zelf en voorkom overlap met Raycast-sneltoetsen.
 - De Citrix Viewer/Caffeinated-automatisering is optioneel. Kies in
-  **Manage apps → Install apps → Citrix Viewer / Caffeinated automation** voor installeren,
+  **Manage apps → Install apps → Work apps → c) Citrix / Caffeinated automation** voor installeren,
   status of verwijderen. De achtergrondservice schakelt Caffeinated aan als
   Citrix Viewer start en uit als de laatste Viewer afsluit. Bij beide
   overgangen verschijnt een macOS-melding. Handmatig aan- en uitzetten blijft
   tussendoor mogelijk. Zet in Caffeinated zelf **Keep Awake with Lid Closed**
   aan als je de sessie met gesloten MacBook wilt behouden. De healthcheck
   controleert de service alleen wanneer deze optioneel is geïnstalleerd.
-- Docker Desktop staat in **Manage apps → Install apps**. De installatie vraagt
-  om je wachtwoord omdat Docker een privileged helper installeert. Tailscale
-  wordt via de Mac App Store geïnstalleerd.
+- De standaardinstallatie gebruikt de zelfstandige Tailscale-versie via Homebrew.
+  Hiervoor is geen App Store-account nodig. Log daarna bij Tailscale in en keur
+  de systeemextensie goed. Een bestaande Tailscale-installatie wordt overgeslagen,
+  ook wanneer het de App Store-versie is. Als je zelf naar de zelfstandige versie
+  wilt overstappen, verwijder je eerst de oude variant en herstart je de Mac. Zie [de varianten van Tailscale](https://tailscale.com/docs/concepts/macos-variants).
+- **Install apps → Work apps** toont Outlook, Word, Excel, PowerPoint, Teams,
+  DisplayLink Manager, Citrix Workspace, Okta Verify, Docker Desktop, Wacom en
+  Caffeinated. Kies één nummer, meerdere
+  nummers of **a** voor alle werkapps. Een Microsoft 365-account of -licentie
+  kan nodig zijn. DisplayLink heeft toestemming voor schermopname nodig en kan
+  om een herstart vragen. VMware Fusion is bewust niet opgenomen.
+- Razer Synapse komt bij de standaardapps, via de officiële, door macOS
+  gecontroleerde installer voor Apple Silicon en macOS 15 of hoger. Voltooi
+  eventuele eerste-startvragen en gebruik daarna de eigen updater van Razer.
+  Docker, Wacom, Citrix en Caffeinated zijn optionele werkapps en worden niet
+  meegenomen met **1 Basis**.
 
-- Installeer Apple iWork en Microsoft Office los, nadat je bij de Mac App Store
-  bent ingelogd:
+Alle gewone apps worden in `/Applications` geïnstalleerd. Homebrew zelf draait
+als gewone gebruiker; alleen macOS of een installer kan waar nodig om je
+beheerderswachtwoord vragen. Toestemmingen, aanmeldingen en App Store-aankopen
+kunnen niet volledig automatisch worden afgehandeld.
 
-  ```bash
-  ./office-installer.sh
-  ```
+### Bestaande Mac opschonen
 
-  Dit installeert Numbers, Keynote, Pages, Excel, Outlook, Word en PowerPoint.
-  Een Microsoft 365-licentie of -account kan daarna nog nodig zijn om de
-  Microsoft-apps te gebruiken.
+Onder **Diagnostics** staan ook de controle- en verplaatsopties:
 
-Apps uit de Brewfiles komen in `~/Applications`, niet in de systeemmap
-`/Applications`. Daardoor hoeft Homebrew voor gewone GUI-apps niet om
-beheerdersrechten te vragen. Command Line Tools, macOS-permissies en de twee
-bewust handmatige systeemapps kunnen nog wel een systeemdialoog tonen.
+- **Review / remove apps outside the install profiles** vergelijkt apps in `/Applications`
+  en `~/Applications` en lokale Homebrew-installatiegegevens met alle profielen,
+  inclusief optionele werkapps. Ingebouwde Apple-apps en automatisch geïnstalleerde
+  Homebrew-afhankelijkheden worden overgeslagen. De lijst meet geen daadwerkelijk appgebruik. Kies nummers om ongewenste
+  onderdelen te verwijderen; pas na een afzonderlijke bevestiging gebeurt er
+  iets. Homebrew-apps en tools worden zonder `--zap` verwijderd; overige apps
+  gaan naar de prullenmand. Voorkeuren en documenten blijven staan. Alleen
+  kijken kan met `./audit-apps.sh` (zonder `--manage`).
+- Het losse script `./cleanup-retired-apps.sh` verwijdert
+  AeroSpace, Borders, SketchyBar, skhd, het SketchyBar-lettertype,
+  `switchaudio-osx` en Proton Pass voor zover die via Homebrew zijn geïnstalleerd.
+  Deze eenmalige opruimactie staat niet in het blijvende menu. Oude configuratie wordt naar `~/.local/share/dotfiles-backups/retired.*`
+  verplaatst. Appgegevens worden niet gewist met `--zap`. Verwijder een eventueel
+  oud Toggle AeroSpace-sneltoetscommando ook uit Raycast.
+- **Move home-folder apps to /Applications** zet bestaande apps over.
+  Homebrew-apps worden opnieuw geïnstalleerd zodat ook de installatiegegevens
+  en commandoreferenties kloppen. Overige appbundels worden verplaatst. Bestaande
+  bestemmingen worden nooit overschreven; dubbele exemplaren worden gemeld en
+  moeten eerst afzonderlijk worden opgelost. Sluit de betrokken apps vooraf.
+  Ruim eerst de uitgefaseerde apps op. Een overzicht zonder wijzigingen krijg je
+  ook met `./migrate-apps.sh --dry-run`.
+
+De screenshots bevatten daarnaast Draw Things, Scroll Reverser en Simple Comic.
+Deze zijn niet opgenomen, omdat je ze niet hebt gekozen om mee te nemen. De
+Apple-systeemapps op de screenshots hoeven niet via deze scripts te worden
+geïnstalleerd. SF Symbols staat bij development (de stabiele versie, geen beta),
+UniFi, The Unarchiver en PastePal staan bij de gewone apps. Caffeinated staat
+bij Werk; Figma, Sketch en `cmatrix` blijven behouden.
+
 
 ## Linux (Ubuntu)
 
@@ -145,7 +197,7 @@ Open het centrale menu voor installeren, verwijderen, updaten of herladen met:
 ./setup.sh
 ```
 
-Op Ubuntu kun je dit na de installatie ook vanuit elke map openen met:
+Op macOS en Ubuntu kun je dit na de installatie ook vanuit elke map openen met:
 
 ```bash
 dotfiles
@@ -156,7 +208,11 @@ Het macOS-hoofdmenu bevat **(Re)install and apply configuration**,
 configuration**. Binnen **Manage apps** staan installeren, bijwerken en
 verwijderen. De updateactie haalt eerst de beschikbare Homebrew- en Mac App
 Store-updates op, toont ze en vraagt daarna bevestiging. Herladen van de
-dotfiles blijft een aparte actie.
+dotfiles blijft een aparte actie. Alle geïnstalleerde Homebrew-pakketten tellen
+mee, ook buiten de Brewfiles. `--greedy` neemt apps met een eigen updater en
+`latest`-versies mee; expliciet vastgezette pakketten blijven door Homebrew beheerd.
+De Homebrew-lijsten worden eerst ververst, maar installeren gebeurt pas na
+bevestiging. Razer-updates lopen via Razer zelf.
 
 Elke actie die software installeert, bijwerkt, Stow opnieuw toepast of het
 systeem herstart, vraagt om bevestiging.
@@ -184,28 +240,36 @@ Controleer de basisinstallatie eventueel handmatig met:
 brew bundle check --file=Brewfile
 ```
 
-Gebruik **Manage apps** om alle geconfigureerde apps te installeren, Office en
-iWork apart te installeren, updates te bekijken of apps te verwijderen.
+Gebruik **Manage apps** om standaardapps te installeren, werkapps en hardwaredrivers
+te kiezen, updates te bekijken of apps te verwijderen. De controle op apps
+buiten de profielen en het verplaatsen van apps staan onder **Diagnostics**.
 
 ## Structuur
 
 ```text
-Brewfile       Basisformules, taps en macOS-workflow
+Brewfile       Basisformules, Codex, WhichSpace en Raycast
 Brewfile.dev   Optionele development-tools en -apps
+Brewfile.daily  Dagelijkse apps in pakket Basis
 Brewfile.personal  Optionele persoonlijke apps
-Brewfile.mas   Persoonlijke Mac App Store-apps
-Brewfile.office      Microsoft Office-apps via Homebrew
-Brewfile.office.mas  Apple iWork- en Microsoft Office-apps uit de App Store
+Brewfile.personal.mas  Persoonlijke App Store-apps en iWork
+Brewfile.mas   Dagelijkse Mac App Store-apps
+Brewfile.office      Teams, DisplayLink, Citrix, Okta, Docker en Wacom
+Brewfile.office.mas  Microsoft Office en Caffeinated uit de App Store
 bootstrap.sh   Installatie voor macOS en Ubuntu
 setup.sh       Centrale manager voor installatie en configuratie
 manage-apps.sh Menu voor installeren, bijwerken en verwijderen van Mac-apps
 menu-ui.sh     Gedeelde ASCII-header en schermnavigatie voor menu's
 docker-manager.sh  Interactief beheer van Docker-containers op Ubuntu
 reload.sh      Pas configuratiewijzigingen toe na git pull
-update.sh      Toont en installeert Homebrew- en Mac App Store-updates
+update.sh      Toont en installeert alle Homebrew- en Mac App Store-updates
+audit-apps.sh / audit-apps.py  Vergelijking met installatielijsten en optioneel verwijderen
+app-installed.py  Herken ook handmatig geïnstalleerde appbundels
+migrate-apps.sh  Bestaande apps veilig naar /Applications overzetten
+cleanup-retired-apps.sh  Uitgefaseerde tools opruimen met configuratieback-up
+vendor-apps.sh  Officiële Razer-installer
 health-check.sh  Leesbare controle van de installatie zonder wijzigingen
 diagnostics.sh  Health check, service-status en logweergave
-install-apps.sh  Installatie van apps en Office/iWork
+install-apps.sh  Standaardapps, werkapps en optionele hardwaredrivers
 citrix-caffeinated-manager.sh  Optionele installatie, status en verwijdering
 calibre-setup.sh  Oude master/client-configuratie voor Calibre Content Server
 calibre-backup.sh  Maak een consistente masterbibliotheek-snapshot in iCloud
@@ -218,9 +282,9 @@ uninstall-apps.sh  Interactief menu voor het verwijderen van optionele apps
 install-system-apps.sh  Optionele macOS-apps met systeemcomponenten
 system-apps.conf  Gedeelde lijst van macOS-apps met systeemcomponenten
 install-mac-apps.sh  Persoonlijke Mac App Store-apps
-office-installer.sh  Losse installatie van Office-apps uit de App Store
+office-installer.sh  Werkapps individueel of allemaal installeren
 home/          Gedeelde shell-, terminal- en editorconfiguratie
-macos/         Raycast-configuratie en optionele lokale scripts
+macos/         Optionele lokale macOS-scripts
 ```
 
 De installatie gebruikt Stow en stopt bij bestaande, conflicterende bestanden

@@ -1,8 +1,5 @@
 # Mac App Store apps. Deze worden alleen geïnstalleerd wanneer je in de
 # Mac App Store bent ingelogd; zie bootstrap.sh.
 mas "PastePal", id: 1503446680
-mas "Goodnotes", id: 1444383602
-mas "Tailscale", id: 1475387142
-mas "Caffeinated", id: 1362171212
-mas "Pixelmator Pro", id: 1289583905
 mas "WhatsApp", id: 310633997
+mas "UniFi", id: 1057750338

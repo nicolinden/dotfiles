@@ -35,11 +35,9 @@ case "$(uname -s)" in
     echo
     check_command brew "Homebrew"
     check_command stow "GNU Stow"
-    if [[ -d "$HOME/Applications/WhichSpace.app" || -d "/Applications/WhichSpace.app" ]]; then
-      ok "WhichSpace is installed"
-    else
-      missing "WhichSpace is missing"
-    fi
+    check_file "$HOME/.zshrc" "Zsh configuration"
+    check_file "$HOME/.local/bin/dotfiles" "Global dotfiles command"
+    check_file "/Applications/WhichSpace.app" "WhichSpace"
 
     citrix_agent="$HOME/Library/LaunchAgents/com.nico.citrix-caffeinated.plist"
     citrix_agent_source="$DOTFILES_DIR/optional/citrix-caffeinated/com.nico.citrix-caffeinated.plist"
