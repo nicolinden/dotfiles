@@ -247,7 +247,7 @@ exit 1''')
         self.prepare_package_installation()
         result = self.run_script("install-apps.sh", "1\n\nb\n")
         self.assertEqual(result.returncode, 0, result.stderr)
-        self.assertIn("tailscale-app", self.calls())
+        self.assertIn("mas install 1475387142", self.calls())
         for excluded in ["development-only", "docker-desktop", "wacom-tablet", "citrix-workspace", "1362171212"]:
             self.assertNotIn(excluded, self.calls())
         self.assertNotIn("upgrade", self.calls())
@@ -271,7 +271,7 @@ exit 1''')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("development-only", self.calls())
         self.assertNotIn("mas install", self.calls())
-        self.assertNotIn("tailscale-app", self.calls())
+        self.assertNotIn("mas install 1475387142", self.calls())
 
     def test_diagnostics_contains_audit_and_migration(self):
         shutil.copy2(ROOT / "diagnostics.sh", self.root / "diagnostics.sh")

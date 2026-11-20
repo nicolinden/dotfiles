@@ -111,13 +111,6 @@ install_cask() {
       fi
       ;;
   esac
-  if [[ "$name" == "tailscale-app" ]] &&
-     { [[ -e "/Applications/Tailscale.app/Contents/_MASReceipt/receipt" ]] ||
-       [[ -e "$HOME/Applications/Tailscale.app/Contents/_MASReceipt/receipt" ]]; }; then
-    echo "Tailscale from the Mac App Store is installed."
-    echo "Remove that variant and restart macOS before installing standalone Tailscale."
-    return 1
-  fi
   HOMEBREW_CASK_OPTS="--appdir=/Applications" HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_UPGRADE=1 \
     caffeinate -i brew install --cask --appdir=/Applications "$name"
 }

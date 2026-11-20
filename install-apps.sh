@@ -4,7 +4,6 @@
 set -euo pipefail
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 source "$DOTFILES_DIR/menu-ui.sh"
-source "$DOTFILES_DIR/system-apps.conf"
 
 if [[ "$(uname -s)" != Darwin ]]; then
   echo "This script is for macOS only."
@@ -22,7 +21,7 @@ if ! command -v brew >/dev/null 2>&1; then
 fi
 
 install_profiles() {
-  local failures=0 profile file index
+  local failures=0 profile file
   local brewfiles=() masfiles=() include_base=false include_work=false
   for profile in "$@"; do
     case "$profile" in
@@ -38,7 +37,6 @@ install_profiles() {
   for file in ${masfiles[@]+"${masfiles[@]}"}; do show_mas_plan "$DOTFILES_DIR/$file"; done
   if [[ "$include_base" == true ]]; then
     echo "  - Razer Synapse (official installer)"
-    printf '  - %s\n' "${SYSTEM_LABELS[@]}"
   fi
   if [[ "$include_work" == true ]]; then
     show_brewfile_plan "$DOTFILES_DIR/Brewfile.office"
@@ -58,9 +56,7 @@ install_profiles() {
     if ! app_bundle_installed "Razer Synapse"; then
       if ! "$DOTFILES_DIR/vendor-apps.sh" razer; then failures=$((failures + 1)); fi
     fi
-    for index in "${!SYSTEM_CASKS[@]}"; do
-      if ! install_cask "${SYSTEM_CASKS[$index]}"; then failures=$((failures + 1)); fi
-    done
+
   fi
   if [[ "$include_work" == true ]]; then
     if ! "$DOTFILES_DIR/office-installer.sh"; then failures=$((failures + 1)); fi

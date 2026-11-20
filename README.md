@@ -84,11 +84,13 @@ Codex-appicoon. Zie [de officiële uitleg over de nieuwe desktop-app](https://he
   tussendoor mogelijk. Zet in Caffeinated zelf **Keep Awake with Lid Closed**
   aan als je de sessie met gesloten MacBook wilt behouden. De healthcheck
   controleert de service alleen wanneer deze optioneel is geïnstalleerd.
-- De standaardinstallatie gebruikt de zelfstandige Tailscale-versie via Homebrew.
-  Hiervoor is geen App Store-account nodig. Log daarna bij Tailscale in en keur
-  de systeemextensie goed. Een bestaande Tailscale-installatie wordt overgeslagen,
-  ook wanneer het de App Store-versie is. Als je zelf naar de zelfstandige versie
-  wilt overstappen, verwijder je eerst de oude variant en herstart je de Mac. Zie [de varianten van Tailscale](https://tailscale.com/docs/concepts/macos-variants).
+- Basis installeert Tailscale via de Mac App Store. Log vooraf in bij de
+  App Store; na installatie moet je Tailscale aanmelden en de VPN-configuratie
+  toestaan. Ook de App Store-versie kan een macOS-sleutelhanger- of
+  toestemmingsmelding geven. Een bestaande Tailscale-installatie wordt
+  overgeslagen, ook als het de zelfstandige versie is. De scripts wisselen
+  bestaande varianten niet automatisch om. Installeer beide varianten niet
+  naast elkaar. Zie [de varianten van Tailscale](https://tailscale.com/docs/concepts/macos-variants).
 - **Install apps → Work apps** toont Outlook, Word, Excel, PowerPoint, Teams,
   DisplayLink Manager, Citrix Workspace, Okta Verify, Docker Desktop, Wacom en
   Caffeinated. Kies één nummer, meerdere

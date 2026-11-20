@@ -51,13 +51,6 @@ add_brewfile_entries "$DOTFILES_DIR/Brewfile.daily"
 add_brewfile_entries "$DOTFILES_DIR/Brewfile.personal"
 add_brewfile_entries "$DOTFILES_DIR/Brewfile.office"
 
-source "$DOTFILES_DIR/system-apps.conf"
-for index in "${!SYSTEM_CASKS[@]}"; do
-  name=${SYSTEM_CASKS[$index]}
-  if brew list --cask "$name" >/dev/null 2>&1; then
-    entries+=("cask|$name|${SYSTEM_LABELS[$index]}|$DOTFILES_DIR/system-apps.conf|system-cask")
-  fi
-done
 
 if command -v mas >/dev/null 2>&1; then
   mas_list="$(mas list 2>/dev/null || true)"
