@@ -80,7 +80,7 @@ run_install_submenu() {
 
 while true; do
   print_menu_header "Install apps"
-  echo "  1) Basis (daily apps, WhatsApp, Tailscale, Codex and Razer)"
+  echo "  1) Basis (daily apps, WhatsApp, Tailscale, Codex CLI and Razer)"
   echo "  2) Work (install all or choose individual apps)"
   echo "  3) Personal (Calibre, DaisyDisk, iWork, Goodnotes, Pixelmator, Unarchiver)"
   echo "  4) Development / design (including Figma and Sketch)"

@@ -22,7 +22,7 @@ optionele lokale macOS-scripts.
 
 Het script detecteert macOS of Ubuntu. Op macOS opent `./setup.sh` direct het
 menu, zonder apps te installeren of bij te werken. Kies op een nieuwe Mac eerst
-**1) (Re)install and apply configuration** voor Homebrew, de core tools, Codex,
+**1) (Re)install and apply configuration** voor Homebrew, de core tools, Codex CLI,
 WhichSpace, Stow en de dotfiles. Aanvullende apps kies je daarna via **Manage
 apps → Install apps**. Op Ubuntu worden ontbrekende basispakketten automatisch
 geïnstalleerd voordat het menu verschijnt. Tijdens lange downloads blijft de Mac
@@ -55,7 +55,7 @@ Codex-appicoon. Zie [de officiële uitleg over de nieuwe desktop-app](https://he
   Git bevat bewust geen boeken of `metadata.db`.
 - Kies **Manage apps → Install apps** om de ingestelde apps te installeren.
   Kies pakketten: **1 Basis**, **2 Werk**, **3 Persoonlijk** en
-  **4 Development/design**. Basis bevat dagelijkse apps, Codex, Tailscale en Razer.
+  **4 Development/design**. Basis bevat dagelijkse apps, Codex CLI, Tailscale en Razer.
   Persoonlijk bevat Calibre, DaisyDisk, iWork, Goodnotes, Pixelmator Pro en The
   Unarchiver. Figma en Sketch horen bij Development/design. Je hoeft niet per app
   te kiezen: voer bijvoorbeeld `1 3 4` in en bevestig één keer om die pakketten
@@ -249,7 +249,7 @@ buiten de profielen en het verplaatsen van apps staan onder **Diagnostics**.
 ## Structuur
 
 ```text
-Brewfile       Basisformules, Codex, WhichSpace en Raycast
+Brewfile       Basisformules, Codex CLI, WhichSpace en Raycast
 Brewfile.dev   Optionele development-tools en -apps
 Brewfile.daily  Dagelijkse apps in pakket Basis
 Brewfile.personal  Optionele persoonlijke apps

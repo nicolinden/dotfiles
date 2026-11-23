@@ -119,6 +119,18 @@ install_mas_app() {
     echo "Already installed; skipped: $label"
     return 0
   fi
+  if [[ "$app_id" == "1057750338" ]]; then
+    echo "Opening the UniFi App Store page; mas cannot resolve this iPad-designed app."
+    open "https://apps.apple.com/nl/app/unifi/id1057750338"
+    read -r -p "Press Enter after installing UniFi from the App Store..." _
+    if app_bundle_installed "$label"; then
+      MAS_INSTALLED_CACHE="$(mas list 2>/dev/null)" || MAS_INSTALLED_CACHE=""
+      MAS_INSTALLED_CACHE_READY=true
+      return 0
+    fi
+    echo "UniFi was not found in /Applications; install it from the App Store and retry."
+    return 1
+  fi
   if caffeinate -i mas install "$app_id"; then
     MAS_INSTALLED_CACHE="$(mas list 2>/dev/null)" || MAS_INSTALLED_CACHE=""
     MAS_INSTALLED_CACHE_READY=true
