@@ -35,7 +35,7 @@ install_profiles() {
   echo "Only missing apps will be installed. Existing apps are skipped."
   for file in ${brewfiles[@]+"${brewfiles[@]}"}; do show_brewfile_plan "$DOTFILES_DIR/$file"; done
   for file in ${masfiles[@]+"${masfiles[@]}"}; do show_mas_plan "$DOTFILES_DIR/$file"; done
-  if [[ "$include_base" == true ]]; then
+  if [[ "$include_base" == true ]] && ! app_bundle_installed "Razer Synapse"; then
     echo "  - Razer Synapse (official installer)"
   fi
   if [[ "$include_work" == true ]]; then

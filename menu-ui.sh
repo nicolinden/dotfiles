@@ -71,8 +71,41 @@ app_bundle_installed() {
   python3 "$helper_dir/app-installed.py" "$1"
 }
 
+MAS_INSTALLED_CACHE=""
+MAS_INSTALLED_CACHE_READY=false
+
+load_mas_installed_cache() {
+  if [[ "$MAS_INSTALLED_CACHE_READY" != true ]]; then
+    MAS_INSTALLED_CACHE="$(mas list 2>/dev/null)" || MAS_INSTALLED_CACHE=""
+    MAS_INSTALLED_CACHE_READY=true
+  fi
+}
+
+formula_is_installed() {
+  brew list --formula "${1##*/}" >/dev/null 2>&1
+}
+
+mas_app_is_installed() {
+  local app_id="$1" label="$2"
+  load_mas_installed_cache
+  printf '%s\n' "$MAS_INSTALLED_CACHE" | awk -v id="$app_id" '$1 == id { found=1 } END { exit !found }' ||
+    app_bundle_installed "$label"
+}
+
+cask_is_installed() {
+  local name="$1"
+  if brew list --cask "${name##*/}" >/dev/null 2>&1; then
+    return 0
+  fi
+  case "$name" in
+    codex) command -v codex >/dev/null 2>&1 ;;
+    android-platform-tools) command -v adb >/dev/null 2>&1 ;;
+    *) app_bundle_installed "$name" ;;
+  esac
+}
+
 install_formula() {
-  if brew list --formula "${1##*/}" >/dev/null 2>&1; then
+  if formula_is_installed "$1"; then
     echo "Already installed; skipped: $1"
     return 0
   fi
@@ -81,36 +114,25 @@ install_formula() {
 }
 
 install_mas_app() {
-  local app_id="$1" label="$2" installed
-  installed="$(mas list 2>/dev/null)" || installed=""
-  if printf '%s\n' "$installed" | awk -v id="$app_id" '$1 == id { found=1 } END { exit !found }' ||
-     app_bundle_installed "$label"; then
+  local app_id="$1" label="$2"
+  if mas_app_is_installed "$app_id" "$label"; then
     echo "Already installed; skipped: $label"
     return 0
   fi
-  caffeinate -i mas install "$app_id"
+  if caffeinate -i mas install "$app_id"; then
+    MAS_INSTALLED_CACHE="$(mas list 2>/dev/null)" || MAS_INSTALLED_CACHE=""
+    MAS_INSTALLED_CACHE_READY=true
+  else
+    return 1
+  fi
 }
 
 install_cask() {
   local name="$1"
-  if brew list --cask "${name##*/}" >/dev/null 2>&1; then
+  if cask_is_installed "$name"; then
     echo "Already installed; skipped: $name"
     return 0
   fi
-  case "$name" in
-    codex)
-      if command -v codex >/dev/null 2>&1; then echo "Already installed; skipped: Codex CLI"; return 0; fi
-      ;;
-    android-platform-tools)
-      if command -v adb >/dev/null 2>&1; then echo "Already installed; skipped: Android platform tools"; return 0; fi
-      ;;
-    *)
-      if app_bundle_installed "$name"; then
-        echo "Already installed; skipped: $name"
-        return 0
-      fi
-      ;;
-  esac
   HOMEBREW_CASK_OPTS="--appdir=/Applications" HOMEBREW_NO_AUTO_UPDATE=1 HOMEBREW_NO_INSTALL_UPGRADE=1 \
     caffeinate -i brew install --cask --appdir=/Applications "$name"
 }
@@ -216,22 +238,35 @@ confirm_action() {
 
 show_brewfile_plan() {
   local brewfile="$1"
-  local line name label
+  local line name label kind shown=0
 
   while IFS= read -r line; do
-    name="$(printf '%s\n' "$line" | sed -nE \
-      -e 's/^brew "([^"]+)".*/\1/p' \
-      -e 's/^cask "([^"]+)".*/\1/p')"
+    kind="$(printf '%s\n' "$line" | sed -nE 's/^(brew|cask) ".*/\1/p')"
+    name="$(printf '%s\n' "$line" | sed -nE 's/^(brew|cask) "([^"]+)".*/\2/p')"
     [[ -n "$name" ]] || continue
+    if [[ "$kind" == "brew" ]]; then
+      formula_is_installed "$name" && continue
+    else
+      cask_is_installed "$name" && continue
+    fi
 
     label="$(printf '%s\n' "$line" \
       | sed -nE 's/.*#[[:space:]]*label:[[:space:]]*(.*)$/\1/p')"
     printf '  - %s\n' "${label:-$name}"
+    shown=$((shown + 1))
   done < "$brewfile"
+  (( shown > 0 )) || echo "  (no missing apps)"
 }
 
 show_mas_plan() {
   local brewfile="$1"
+  local line name app_id shown=0
 
-  sed -nE 's/^mas "([^"]+)", id: [0-9]+.*/  - \1/p' "$brewfile"
+  while IFS='|' read -r name app_id; do
+    [[ -n "$name" && -n "$app_id" ]] || continue
+    mas_app_is_installed "$app_id" "$name" && continue
+    printf '  - %s\n' "$name"
+    shown=$((shown + 1))
+  done < <(sed -nE 's/^mas "([^"]+)", id: ([0-9]+).*/\1|\2/p' "$brewfile")
+  (( shown > 0 )) || echo "  (no missing apps)"
 }

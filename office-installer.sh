@@ -25,11 +25,32 @@ fi
 print_menu_header "Work apps"
 entries=()
 while IFS='|' read -r kind id label; do
-  [[ -n "$id" ]] && entries+=("$kind|$id|$label")
+  [[ -n "$id" ]] || continue
+  if [[ "$kind" == "mas" ]]; then
+    mas_app_is_installed "$id" "$label" && continue
+  else
+    cask_is_installed "$id" && continue
+  fi
+  entries+=("$kind|$id|$label")
 done < <(
   sed -nE 's/^mas "([^"]+)", id: ([0-9]+).*/mas|\2|\1/p' "$DOTFILES_DIR/Brewfile.office.mas"
   sed -nE 's/^cask "([^"]+)".*#[[:space:]]*label:[[:space:]]*(.*)$/cask|\1|\2/p' "$DOTFILES_DIR/Brewfile.office"
 )
+
+if (( ${#entries[@]} == 0 )); then
+  echo "All configured work apps are already installed."
+  if [[ "${DOTFILES_INSTALL_ALL:-}" == "1" ]]; then exit 0; fi
+  echo "  c) Citrix / Caffeinated automation"
+  echo "  b) Back"
+  echo "  q) Quit"
+  read -r -p "Choose c, b or q: " selection
+  case "$selection" in
+    c|C) "$DOTFILES_DIR/citrix-caffeinated-manager.sh" ;;
+    q|Q) exit "$MENU_QUIT" ;;
+    *) exit "$MENU_CANCELLED" ;;
+  esac
+  exit 0
+fi
 
 if [[ "${DOTFILES_INSTALL_ALL:-}" == "1" ]]; then
   selection=a
