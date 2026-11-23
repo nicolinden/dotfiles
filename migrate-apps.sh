@@ -40,6 +40,8 @@ for config_path in sorted(pathlib.Path(sys.argv[1]).glob('*/.metadata/config.jso
     managed.update(names)
     token = config_path.parents[1].name
     if not any((home_apps / n).exists() for n in names):
+        if any(os.path.lexists('/Applications/' + n) for n in names):
+            print('repair|' + token + '|App is already in /Applications; refresh the Homebrew receipt')
         continue
     if token in retired:
         print('skip|' + token + '|Use the retired-app cleanup instead')
@@ -63,6 +65,7 @@ fi
 cat "$plan"
 [[ "${1:-}" != --dry-run ]] || exit 0
 echo "Close the listed apps first. Homebrew reinstalls may download newer versions."
+echo "Receipt repairs replace the app in /Applications and do not zap user data."
 if ! confirm_action "Apply this migration (existing destinations are skipped)?"; then
   exit "$MENU_CANCELLED"
 fi
@@ -73,6 +76,16 @@ while IFS='|' read -r kind item description; do
       if ! HOMEBREW_CASK_OPTS="--appdir=/Applications" caffeinate -i \
         brew reinstall --cask --appdir=/Applications "$item"; then
         echo "Migration failed: $item. Rerun after resolving the Homebrew error."
+        failures=$((failures + 1))
+      fi
+      ;;
+    repair)
+      if ! brew uninstall --cask --force "$item"; then
+        echo "Could not clear the stale Homebrew receipt for $item."
+        failures=$((failures + 1))
+      elif ! HOMEBREW_CASK_OPTS="--appdir=/Applications" caffeinate -i \
+        brew install --cask --force --appdir=/Applications "$item"; then
+        echo "Could not reinstall $item in /Applications. Rerun after resolving the Homebrew error."
         failures=$((failures + 1))
       fi
       ;;
