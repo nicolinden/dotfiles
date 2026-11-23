@@ -70,7 +70,17 @@ for receipt_path in (prefix / "Cellar").glob("*/*/INSTALL_RECEIPT.json"):
     receipt = read_json(receipt_path)
     token = receipt_path.parents[1].name
     if receipt.get("installed_on_request") and token not in declared["brew"]:
-        extra_formulae.add(token)
+        uses = subprocess.run(
+            ["brew", "uses", "--installed", "--recursive", token],
+            capture_output=True, text=True,
+        )
+        if uses.returncode != 0:
+            # Fail closed: do not offer removal when dependency status is unknown.
+            warnings.append(f"Could not check installed dependents of {token}; excluded from removal.")
+        elif uses.stdout.strip():
+            continue
+        else:
+            extra_formulae.add(token)
 
 extra_apps = []
 seen = set()
@@ -133,6 +143,20 @@ def manage_entries(entries):
     for kind, item in selected:
         try:
             if kind in ("cask", "formula"):
+                if kind == "formula":
+                    uses = subprocess.run(
+                        ["brew", "uses", "--installed", "--recursive", item],
+                        capture_output=True, text=True,
+                    )
+                    if uses.returncode != 0:
+                        failures += 1
+                        print(f"Could not check installed dependents of {item}; skipped removal.")
+                        continue
+                    dependents = sorted(set(uses.stdout.splitlines()))
+                    if dependents:
+                        failures += 1
+                        print(f"Skipped {item}; still required by: {', '.join(dependents)}")
+                        continue
                 if kind == "formula" and item in ("borders", "sketchybar", "skhd"):
                     subprocess.run(["brew", "services", "stop", item], check=True)
                 subprocess.run(["brew", "uninstall", "--" + kind, item], check=True)
